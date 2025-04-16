@@ -1,18 +1,12 @@
-// lib/auth.ts
-import NextAuth, { NextAuthConfig } from "next-auth";
+import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
-import { db } from "@/db";
-import { users } from "@/db/schema";
-import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
+import { createUser, getUserByEmail, updateUser } from "@/lib/actions/user";
 
-export const authConfig = {
+export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
+    Google,
     Credentials({
       credentials: {
         email: { label: "Email", type: "email" },
@@ -21,11 +15,7 @@ export const authConfig = {
       authorize: async (credentials) => {
         if (!credentials?.email || !credentials?.password) return null;
 
-        const [user] = await db
-          .select()
-          .from(users)
-          .where(eq(users.email, credentials.email as string))
-          .limit(1);
+        const user = await getUserByEmail(credentials.email as string);
 
         if (!user || !user.passwordHash) return null;
 
@@ -67,27 +57,20 @@ export const authConfig = {
     async signIn({ user, account }) {
       const provider = account?.provider ?? "credentials";
 
-      const [existing] = await db
-        .select()
-        .from(users)
-        .where(eq(users.email, user.email!))
-        .limit(1);
+      const existing = await getUserByEmail(user.email!);
 
       if (!existing) {
         // OAuth new user
-        await db.insert(users).values({
+        await createUser({
           email: user.email!,
-          name: user.name,
-          image: user.image,
+          name: user.name || null,
+          image: user.image || null,
           provider,
           passwordHash: null,
         });
       } else if (!existing.provider) {
         // Backfill legacy user
-        await db
-          .update(users)
-          .set({ provider })
-          .where(eq(users.id, existing.id));
+        await updateUser(existing.id, { provider });
       }
 
       return true;
@@ -98,6 +81,4 @@ export const authConfig = {
     error: "/login?error=OAuthError",
   },
   secret: process.env.NEXTAUTH_SECRET!,
-} satisfies NextAuthConfig;
-
-export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);
+});
