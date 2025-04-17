@@ -60,7 +60,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       const existing = await getUserByEmail(user.email!);
 
       if (!existing) {
-        // OAuth new user
         await createUser({
           email: user.email!,
           name: user.name || null,
@@ -69,7 +68,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           passwordHash: null,
         });
       } else if (!existing.provider) {
-        // Backfill legacy user
         await updateUser(existing.id, { provider });
       }
 
