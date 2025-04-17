@@ -261,10 +261,9 @@
   }
 }
 
-/* Flashcard styles without using custom utilities */
 .flashcard {
   position: relative;
-  height: 16rem; /* h-64 */
+  height: 16rem;
   width: 100%;
   perspective: 1000px;
   transition-property: transform;
@@ -291,8 +290,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0.5rem; /* rounded-lg */
-  padding: 1.5rem; /* p-6 */
+  border-radius: 0.5rem;
+  padding: 1.5rem;
   backface-visibility: hidden;
 }
 
@@ -300,23 +299,22 @@
   transform: rotateY(180deg);
 }
 
-/* Progress bar */
 .progress-container {
-  height: 0.5rem; /* h-2 */
+  height: 0.5rem;
   width: 100%;
   overflow: hidden;
-  border-radius: 9999px; /* rounded-full */
-  background-color: rgb(229 231 235); /* bg-gray-200 */
+  border-radius: 9999px;
+  background-color: rgb(229 231 235);
 }
 
 .dark .progress-container {
-  background-color: rgb(55 65 81); /* dark:bg-gray-700 */
+  background-color: rgb(55 65 81);
 }
 
 .progress-bar {
   height: 100%;
-  border-radius: 9999px; /* rounded-full */
+  border-radius: 9999px;
   transition-property: all;
   transition-duration: 300ms;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); /* ease-in-out */
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }

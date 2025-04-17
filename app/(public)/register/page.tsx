@@ -17,7 +17,7 @@ const RegisterPage = () => {
         <div className="relative hidden bg-muted md:block">
           <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 to-blue-600/20 mix-blend-multiply" />
           <Image
-            src="/placeholder.svg?height=800&width=600"
+            src="/images/login-preview.jpg"
             alt="Language assistant illustration"
             fill
             className="object-cover"
