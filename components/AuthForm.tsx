@@ -16,9 +16,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { loginSchema, registerSchema } from "@/lib/validations/auth";
+import FormInput from "./FormInput";
 
 type AuthFormProps = {
   type: "login" | "register";
@@ -108,7 +108,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input
+                    <FormInput
                       placeholder="John Doe"
                       {...field}
                     />
@@ -126,7 +126,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input
+                  <FormInput
                     type="email"
                     placeholder="example@example.com"
                     {...field}
@@ -144,8 +144,8 @@ const AuthForm = ({ type }: AuthFormProps) => {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input
-                    type="password"
+                  <FormInput
+                    variant="password"
                     {...field}
                   />
                 </FormControl>
@@ -162,8 +162,8 @@ const AuthForm = ({ type }: AuthFormProps) => {
                 <FormItem>
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    <Input
-                      type="password"
+                    <FormInput
+                      variant="password"
                       {...field}
                     />
                   </FormControl>
