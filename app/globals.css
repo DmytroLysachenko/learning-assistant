@@ -318,3 +318,20 @@
   transition-duration: 300ms;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+button {
+  cursor: pointer;
+}
+
+@keyframes roll {
+  0% {
+    transform: translateX(60vw);
+  }
+  100% {
+    transform: translateX(-60vw);
+  }
+}
+
+.animate-roll {
+  animation: roll 3s linear infinite;
+}
