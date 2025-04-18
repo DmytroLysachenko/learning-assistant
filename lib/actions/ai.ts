@@ -4,8 +4,9 @@ import { model } from "@/lib/ai";
 import { db } from "@/db";
 import { polishVocabulary, rusVocabulary, translations } from "@/db/schema";
 import { aiTranslationArraySchema, wordSchemas } from "../validations/ai";
-import { removeDuplicatesFromTable } from "./admin";
 import { LanguageLevels } from "@/types";
+import { WORD_TYPE_WEIGHTS, WORDS_CATEGORIES } from "@/constants";
+import { weightedRandomType } from "../utils";
 
 // Maps language codes to vocab table references
 const vocabTables = {
@@ -26,16 +27,28 @@ export const generateUniqueWords = async (
   const table = vocabTables[lang];
   const schema = wordSchemas[lang].arraySchema;
 
-  const existingWords = await db.select().from(table);
-  console.log(existingWords.map((w) => w.word).join(", "));
+  const randomCategory =
+    WORDS_CATEGORIES[Math.floor(Math.random() * WORDS_CATEGORIES.length)];
+
+  const selectedType = weightedRandomType(WORD_TYPE_WEIGHTS);
+
+  const randomScenario =
+    SCENARIOS[Math.floor(Math.random() * SCENARIOS.length)];
+
   const result = await generateObject({
     model,
     schema,
-    system: `You are an AI assistant generating ${lang} vocabulary for a language learning app.`,
-    prompt: `Generate ${quantity} new ${lang.toUpperCase()} vocabulary words for CEFR level ${level}. 
-Avoid duplicates from this list of already existing words: ${existingWords
-      .map((w) => w.word)
-      .join(", ")}`,
+    system: `You are a linguistic AI generating educational vocabulary for a language learning app.`,
+    prompt: `
+Generate ${quantity} unique ${lang.toUpperCase()} ${selectedType} vocabulary words for CEFR level "${level}" under the topic "${randomCategory}".
+
+Guidelines:
+- Only generate words of type: **${selectedType}**.
+- Words must be relevant to the topic: "${randomCategory}".
+- Avoid overly basic or common words.
+- Ensure uniqueness from standard beginner word lists.
+- Prefer words that might be used in a context like: "${randomScenario}"
+`,
   });
 
   const inserted = await db.insert(table).values(result.object).returning();
@@ -192,45 +205,4 @@ export const checkGeneratedDataQuality = async () => {
   }
 
   return issues;
-};
-
-export const seedWordsInChunks = async (
-  total: number,
-  level: "A0" | "A1" | "A2" | "B1" | "B2" | "C1" | "C2",
-  batchSize = 10,
-  delayMs = 5000
-) => {
-  console.log(`🚀 Starting seeding of ${total} words at level ${level}...`);
-
-  const batches = Math.ceil(total / batchSize);
-
-  for (let i = 0; i < batches; i++) {
-    console.log(
-      `🔁 Batch ${i + 1}/${batches}: Generating ${batchSize} words...`
-    );
-
-    try {
-      await generateWords(batchSize, level);
-    } catch (error) {
-      console.error(`❌ Failed at batch ${i + 1}:`, error);
-    }
-
-    // Don't wait after last batch
-    if (i < batches - 1) {
-      console.log(`⏱ Waiting ${delayMs / 1000}s before next batch...`);
-      await new Promise((resolve) => setTimeout(resolve, delayMs));
-    }
-
-    await removeDuplicatesFromTable("pl");
-    await removeDuplicatesFromTable("ru");
-  }
-
-  console.log("✅ Seeding complete. Running quality checks...");
-  const issues = await checkGeneratedDataQuality();
-
-  if (issues.length === 0) {
-    console.log("🎉 All looks good!");
-  } else {
-    console.warn(`⚠️ Found ${issues.length} issue(s) in generated content.`);
-  }
 };

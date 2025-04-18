@@ -33,7 +33,12 @@ export const russianTypeEnum = z.enum([
 
 // === Shared Word Shape Generator ===
 const baseWordSchema = z.object({
-  word: z.string().min(1).describe("The word itself in corresponding language"),
+  word: z
+    .string()
+    .min(1)
+    .describe(
+      "The word itself in its basic form (for example 'kot', but not 'koty', 'spać' but not 'śpią', 'pięć' but not 'piąty')"
+    ),
   example: z
     .string()
     .min(1)
