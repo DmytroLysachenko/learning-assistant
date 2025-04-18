@@ -206,3 +206,40 @@ export const checkGeneratedDataQuality = async () => {
 
   return issues;
 };
+
+// export const enrichPolishVocabularyWithCategories = async () => {
+//   const allWords = await db.select().from(polishVocabulary);
+//   const batchSize = 50;
+
+//   for (let i = 0; i < allWords.length; i += batchSize) {
+//     const batch = allWords.slice(i, i + batchSize);
+
+//     const response = await generateObject({
+//       model,
+//       schema: z.array(
+//         z.object({
+//           word: z.string(),
+//           category: z.enum(WORDS_CATEGORIES as [string, ...string[]]),
+//         })
+//       ),
+//       system: `You are a language learning assistant classifying vocabulary into helpful topic categories.`,
+//       prompt: `
+// Classify the following Polish words into one of these categories: ${WORDS_CATEGORIES.join(
+//         ", "
+//       )}.
+// Return an array of { word, category } objects only. Here are the words:
+// ${JSON.stringify(batch.map((w) => ({ word: w.word, example: w.example })))}
+//       `,
+//     });
+
+//     for (const item of response.object) {
+//       await db
+//         .update(polishVocabulary)
+//         .set({ category: item.category })
+//         .where(eq(polishVocabulary.word, item.word));
+//     }
+
+//     console.log(`Updated batch ${i / batchSize + 1}`);
+//     await new Promise((res) => setTimeout(res, 5000)); // wait 5 sec
+//   }
+// };
