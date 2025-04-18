@@ -32,9 +32,6 @@ export const generateUniqueWords = async (
 
   const selectedType = weightedRandomType(WORD_TYPE_WEIGHTS);
 
-  const randomScenario =
-    SCENARIOS[Math.floor(Math.random() * SCENARIOS.length)];
-
   const result = await generateObject({
     model,
     schema,
@@ -47,7 +44,6 @@ Guidelines:
 - Words must be relevant to the topic: "${randomCategory}".
 - Avoid overly basic or common words.
 - Ensure uniqueness from standard beginner word lists.
-- Prefer words that might be used in a context like: "${randomScenario}"
 `,
   });
 

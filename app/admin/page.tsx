@@ -33,7 +33,7 @@ const AdminDashboard = () => {
   const handleGenerateWords = async (isRandomLevel?: boolean) => {
     try {
       setGenerating(true);
-      toast.loading("Generating vocabulary words...");
+
       if (isRandomLevel) {
         await seedWordsLoop(quantity, batchSize, delay);
       } else {
@@ -64,7 +64,6 @@ const AdminDashboard = () => {
   const handleRemoveDuplicates = async () => {
     try {
       setIsRemovingDuplicates(true);
-      toast.loading("Removing duplicates...");
 
       await removeDuplicatesFromTable("pl");
       await removeDuplicatesFromTable("ru");
@@ -83,7 +82,6 @@ const AdminDashboard = () => {
   const handleRemoveUntranslated = async () => {
     try {
       setIsRemovingUntranslated(true);
-      toast.loading("Removing untranslated words...", { duration: 2000 });
 
       await removeUntranslatedWords();
 
@@ -101,7 +99,6 @@ const AdminDashboard = () => {
   const handleCleanAllData = async () => {
     try {
       setIsCleaningAll(true);
-      toast.loading("Cleaning all vocabulary data...");
 
       await cleanAllVocabularyData();
 
