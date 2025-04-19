@@ -1,6 +1,6 @@
 "use server";
 import { generateObject } from "ai";
-import { model } from "@/lib/ai";
+import { modelFlash as model } from "@/lib/ai";
 import { db } from "@/db";
 import { polishVocabulary, rusVocabulary, translations } from "@/db/schema";
 import { aiTranslationSchema, wordSchemas } from "../validations/ai";
@@ -37,11 +37,13 @@ export const generateUniqueWords = async (
 Generate ${quantity} unique ${lang.toUpperCase()} vocabulary words for CEFR level "${level}" under the topic "${randomCategory}".
 
 Guidelines:
-- Words must be relevant to the topic: "${randomCategory}".
+- If applicable, words must be relevant to the topic: "${randomCategory}".
 - Avoid overly basic or common words.
+- Avoid abbreviation and not translatable(same in all languages) words.
 - Ensure uniqueness from standard beginner word lists.
 ${wordType ? WORD_TYPES_PL_PROMPTS[wordType] : ""}
 `;
+
   console.log(prompt);
 
   const result = await generateObject<WordType>({

@@ -14,8 +14,8 @@ import { Input } from "@/components/ui/input";
 import { AlertCircleIcon, Loader2, Upload } from "lucide-react";
 import CustomSelect from "@/components/CustomSelect";
 import { Slider } from "../ui/slider";
-import { LanguageLevels } from "@/types";
-import { LEVEL_OPTIONS } from "@/constants";
+import { LanguageLevels, WordType } from "@/types";
+import { LEVEL_OPTIONS, WORDS_TYPES_OPTIONS } from "@/constants";
 
 interface WordGenerationFormProps {
   generating: boolean;
@@ -23,10 +23,12 @@ interface WordGenerationFormProps {
   quantity: number;
   batchSize: number;
   delay: number;
+  wordType: WordType;
   setLevel: (level: LanguageLevels | "random") => void;
   setQuantity: (quantity: number) => void;
   setBatchSize: (batchSize: number) => void;
   setDelay: (delay: number) => void;
+  setWordType: (wordType: WordType) => void;
   onGenerate: (isRandomLevel?: boolean) => Promise<void>;
 }
 
@@ -36,10 +38,12 @@ const WordGenerationForm = ({
   quantity,
   batchSize,
   delay,
+  wordType,
   setLevel,
   setQuantity,
   setBatchSize,
   setDelay,
+  setWordType,
   onGenerate,
 }: WordGenerationFormProps) => {
   return (
@@ -91,6 +95,26 @@ const WordGenerationForm = ({
                 }}
               />
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <label
+              htmlFor="wordType"
+              className="text-sm font-medium"
+            >
+              Word Type
+            </label>
+            <CustomSelect
+              options={WORDS_TYPES_OPTIONS}
+              currentValue={wordType || ""}
+              isDisabled={generating}
+              handleValueChange={(value) => setWordType(value as WordType)}
+              placeholder="Select word type"
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              Select a specific word type or leave as &quot;Any type&quot; to
+              generate mixed vocabulary
+            </p>
           </div>
 
           <div className="space-y-4 pt-2">

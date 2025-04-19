@@ -10,10 +10,11 @@ import {
   removeUntranslatedWords,
   seedWords,
 } from "@/lib/actions/admin";
-import type { LanguageLevels } from "@/types";
+import type { LanguageLevels, WordType } from "@/types";
 import StatusCard from "@/components/admin/StatusCard";
 import WordGenerationForm from "@/components/admin/WordGenerationForm";
-import MaintenanceActions from "@/components/admin/MaintainanceActions";
+import MaintenanceActions from "@/components/admin/MaintenanceActions";
+import { Button } from "@/components/ui/button";
 
 const AdminDashboard = () => {
   // State for operations
@@ -27,30 +28,91 @@ const AdminDashboard = () => {
   const [quantity, setQuantity] = useState(10);
   const [batchSize, setBatchSize] = useState(50);
   const [delay, setDelay] = useState(5000);
+  const [wordType, setWordType] = useState<WordType>("none");
 
   // Handler functions
   const handleGenerateWords = async () => {
     try {
       setGenerating(true);
 
-      if (level === "random") {
-        await seedWords({
-          total: quantity,
-          batchSize,
-          delayMs: delay,
-          randomizeLevel: true,
-        });
-      } else {
-        await seedWords({
-          total: quantity,
-          batchSize,
-          delayMs: delay,
-          level,
-        });
-      }
+      await seedWords({
+        total: quantity,
+        batchSize,
+        wordType: wordType === "none" ? undefined : wordType,
+        delayMs: delay,
+        level: level === "random" ? undefined : level,
+      });
 
       await removeDuplicatesFromTable("pl");
       await removeDuplicatesFromTable("ru");
+
+      toast.success("Words generated successfully", {
+        description: `Added ${quantity} words at level ${level} and removed duplicates.`,
+      });
+    } catch (error) {
+      toast.error("Failed to generate words", {
+        description:
+          error instanceof Error ? error.message : "An unknown error occurred",
+      });
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const handleAutoGenerateWords = async () => {
+    try {
+      setGenerating(true);
+      await seedWords({
+        total: 60,
+        batchSize: 20,
+        wordType: "pronouns",
+        delayMs: 5000,
+      });
+      await seedWords({
+        total: 100,
+        batchSize: 50,
+        wordType: "prepositions",
+        delayMs: 5000,
+      });
+      await seedWords({
+        total: 400,
+        batchSize: 50,
+        wordType: "conjunctions",
+        delayMs: 5000,
+      });
+      await seedWords({
+        total: 1000,
+        batchSize: 50,
+        wordType: "noun",
+        delayMs: 5000,
+      });
+
+      await seedWords({
+        total: 1000,
+        batchSize: 50,
+        wordType: "verb",
+        delayMs: 5000,
+      });
+
+      await seedWords({
+        total: 1000,
+        batchSize: 50,
+        wordType: "adjective",
+        delayMs: 5000,
+      });
+
+      await seedWords({
+        total: 1000,
+        batchSize: 50,
+        wordType: "adverb",
+        delayMs: 5000,
+      });
+      await seedWords({
+        total: 1000,
+        batchSize: 50,
+        wordType: "numeral",
+        delayMs: 5000,
+      });
 
       toast.success("Words generated successfully", {
         description: `Added ${quantity} words at level ${level} and removed duplicates.`,
@@ -135,6 +197,7 @@ const AdminDashboard = () => {
           isRemovingUntranslated={isRemovingUntranslated}
           isCleaningAll={isCleaningAll}
         />
+        <Button onClick={handleAutoGenerateWords}> Click me!</Button>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Word Generation Form */}
@@ -144,10 +207,12 @@ const AdminDashboard = () => {
             quantity={quantity}
             batchSize={batchSize}
             delay={delay}
+            wordType={wordType}
             setLevel={setLevel}
             setQuantity={setQuantity}
             setBatchSize={setBatchSize}
             setDelay={setDelay}
+            setWordType={setWordType}
             onGenerate={handleGenerateWords}
           />
 

@@ -18,3 +18,5 @@ export function weightedRandomType(weights: Record<string, number>) {
 
   return entries[0][0]; // fallback
 }
+
+export const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));

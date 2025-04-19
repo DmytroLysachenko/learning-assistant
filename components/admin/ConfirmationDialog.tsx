@@ -6,6 +6,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -61,26 +62,30 @@ const ConfirmationDialog = ({
         )}
 
         <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => {}}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant={isDestructive ? "destructive" : "default"}
-            onClick={onConfirm}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Processing...
-              </>
-            ) : (
-              actionLabel
-            )}
-          </Button>
+          <DialogClose asChild>
+            <Button
+              variant="outline"
+              onClick={() => {}}
+            >
+              Cancel
+            </Button>
+          </DialogClose>
+          <DialogClose asChild>
+            <Button
+              variant={isDestructive ? "destructive" : "default"}
+              onClick={onConfirm}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                actionLabel
+              )}
+            </Button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>

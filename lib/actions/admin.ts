@@ -9,8 +9,7 @@ import {
   WORDS_CATEGORIES,
   WORDS_LANGUAGE_LEVELS,
 } from "@/constants";
-
-const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
+import { sleep } from "../utils";
 
 const vocabTables = {
   pl: "polish_vocabulary",
@@ -99,7 +98,6 @@ interface SeedWordsOptions {
   total: number;
   batchSize?: number;
   delayMs?: number;
-  randomizeLevel?: boolean;
   randomizeType?: boolean;
   randomizeCategory?: boolean;
   level?: WordLevel;
@@ -111,13 +109,13 @@ export const seedWords = async ({
   total,
   batchSize = 10,
   delayMs = 5000,
-  randomizeLevel = false,
   randomizeType = false,
   level,
   wordType,
   log = true,
 }: SeedWordsOptions) => {
   const batches = Math.ceil(total / batchSize);
+
   let generated = 0;
 
   if (log) {
@@ -125,7 +123,7 @@ export const seedWords = async ({
   }
 
   for (let i = 0; i < batches; i++) {
-    const currentLevel = randomizeLevel
+    const currentLevel = !level
       ? WORDS_LANGUAGE_LEVELS[
           Math.floor(Math.random() * WORDS_LANGUAGE_LEVELS.length)
         ]
@@ -151,8 +149,9 @@ export const seedWords = async ({
     }
 
     try {
-      await generateWords(batchSize, currentLevel!, currentType);
+      await generateWords(batchSize, currentLevel, currentType);
       generated += batchSize;
+      console.log(`✅ Generated ${generated} words so far`);
     } catch (error) {
       console.error(`❌ Error generating batch ${i + 1}:`, error);
     }
@@ -160,11 +159,12 @@ export const seedWords = async ({
     // Wait between batches unless it's the last
     if (i < batches - 1) {
       if (log) console.log(`⏱ Waiting ${delayMs / 1000}s...`);
-      await new Promise((res) => setTimeout(res, delayMs));
+      await sleep(delayMs);
     }
 
     await removeDuplicatesFromTable("pl");
     await removeDuplicatesFromTable("ru");
+    await removeUntranslatedWords();
   }
 
   if (log) console.log("🔍 Running quality check...");

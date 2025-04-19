@@ -166,10 +166,16 @@ export const WORD_TYPES_PL_PROMPTS = {
   adjective:
     "- Words should be 'przymiotniki' (adjectives) in their singular masculine 'mianownik' (nominative) form.",
   adverb:
-    "- Words should be 'przysłowki' (adverbs) (the basic, non-comparative form).",
+    "- Words should be 'przysłówki' (adverbs) in their base, non-comparative form.",
   numeral:
-    "- Words should be 'liczebniki' (numerals) (cardinal numbers in their basic form).",
-};
+    "- Words should be 'liczebniki' (numerals), specifically cardinal numbers in their basic form.",
+  pronouns:
+    "- Words should be 'zaimki' (pronouns), such as personal, possessive, or demonstrative pronouns in nominative case.",
+  prepositions:
+    "- Words should be 'przyimki' (prepositions) commonly used in modern Polish.",
+  conjunctions:
+    "- Words should be 'spójniki' (conjunctions) used to connect clauses or sentences.",
+} as const;
 
 export const LEVEL_OPTIONS = [
   { value: "random", label: "Random" },
@@ -180,4 +186,13 @@ export const LEVEL_OPTIONS = [
   { value: "B2", label: "B2" },
   { value: "C1", label: "C1" },
   { value: "C2", label: "C2" },
+];
+
+export const WORDS_TYPES_OPTIONS = [
+  { value: "none", label: "Any type" },
+  { value: "noun", label: "Noun" },
+  { value: "verb", label: "Verb" },
+  { value: "adjective", label: "Adjective" },
+  { value: "adverb", label: "Adverb" },
+  { value: "numeral", label: "Numeral" },
 ];
