@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
 import { Toaster } from "@/components/ui/sonner";
-import Header from "@/components/Header";
 
 const outfit = localFont({
   src: [
@@ -101,7 +100,6 @@ const RootLayout = ({
       <body
         className={`${outfit.className} ${inter.className} font-sans antialiased`}
       >
-        <Header />
         {children}
         <Toaster
           position="top-right"

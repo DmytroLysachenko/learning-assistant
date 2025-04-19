@@ -1,4 +1,4 @@
-import { modelFlashLiteExp as model } from "@/lib/ai";
+import { modelFlashExp as model } from "@/lib/ai";
 import { generateText } from "ai";
 
 export async function GET() {
