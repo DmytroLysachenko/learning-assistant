@@ -160,15 +160,24 @@ export const WORDS_LANGUAGE_LEVELS: LanguageLevels[] = [
   "C2",
 ];
 
-export const WORD_TYPE_WEIGHTS = {
-  rzeczownik: 30, // noun
-  czasownik: 25, // verb
-  przymiotnik: 15, // adjective
-  przysłówek: 10, // adverb
-  przyimek: 5, // preposition
-  partykuła: 5, // particle
-  liczebnik: 5, // numeral
-  zaimek: 5, // pronoun
+export const WORD_TYPES_PL_PROMPTS = {
+  noun: "- Words should be 'rzeczowniki' (nouns) in their singular and 'mianownik' (nominative) forms.",
+  verb: "- Words should be 'czasowniki' (verbs) in the 'bezokolicznik' (infinitive) form.",
+  adjective:
+    "- Words should be 'przymiotniki' (adjectives) in their singular masculine 'mianownik' (nominative) form.",
+  adverb:
+    "- Words should be 'przysłowki' (adverbs) (the basic, non-comparative form).",
+  numeral:
+    "- Words should be 'liczebniki' (numerals) (cardinal numbers in their basic form).",
 };
 
-export const SCENARIOS = [];
+export const LEVEL_OPTIONS = [
+  { value: "random", label: "Random" },
+  { value: "A0", label: "A0" },
+  { value: "A1", label: "A1" },
+  { value: "A2", label: "A2" },
+  { value: "B1", label: "B1" },
+  { value: "B2", label: "B2" },
+  { value: "C1", label: "C1" },
+  { value: "C2", label: "C2" },
+];

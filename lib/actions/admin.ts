@@ -4,7 +4,11 @@ import { db } from "@/db";
 import { polishVocabulary, rusVocabulary, translations } from "@/db/schema";
 import { checkGeneratedDataQuality, generateWords } from "./ai";
 import { notInArray } from "drizzle-orm";
-import { WORDS_CATEGORIES, WORDS_LANGUAGE_LEVELS } from "@/constants";
+import {
+  WORD_TYPES_PL_PROMPTS,
+  WORDS_CATEGORIES,
+  WORDS_LANGUAGE_LEVELS,
+} from "@/constants";
 
 const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
@@ -89,79 +93,86 @@ export const removeUntranslatedWords = async () => {
   }
 };
 
-export const seedWordsInChunks = async (
-  total: number,
-  level: "A0" | "A1" | "A2" | "B1" | "B2" | "C1" | "C2",
-  batchSize = 10,
-  delayMs = 5000
-) => {
-  console.log(`🚀 Starting seeding of ${total} words at level ${level}...`);
+type WordLevel = "A0" | "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
 
+interface SeedWordsOptions {
+  total: number;
+  batchSize?: number;
+  delayMs?: number;
+  randomizeLevel?: boolean;
+  randomizeType?: boolean;
+  randomizeCategory?: boolean;
+  level?: WordLevel;
+  wordType?: keyof typeof WORD_TYPES_PL_PROMPTS;
+  log?: boolean;
+}
+
+export const seedWords = async ({
+  total,
+  batchSize = 10,
+  delayMs = 5000,
+  randomizeLevel = false,
+  randomizeType = false,
+  level,
+  wordType,
+  log = true,
+}: SeedWordsOptions) => {
   const batches = Math.ceil(total / batchSize);
+  let generated = 0;
+
+  if (log) {
+    console.log(`🚀 Starting to seed ${total} words...`);
+  }
 
   for (let i = 0; i < batches; i++) {
-    console.log(
-      `🔁 Batch ${i + 1}/${batches}: Generating ${batchSize} words...`
-    );
+    const currentLevel = randomizeLevel
+      ? WORDS_LANGUAGE_LEVELS[
+          Math.floor(Math.random() * WORDS_LANGUAGE_LEVELS.length)
+        ]
+      : level;
 
-    try {
-      await generateWords(batchSize, level);
-    } catch (error) {
-      console.error(`❌ Failed at batch ${i + 1}:`, error);
+    const currentType = randomizeType
+      ? (Object.keys(WORD_TYPES_PL_PROMPTS)[
+          Math.floor(Math.random() * Object.keys(WORD_TYPES_PL_PROMPTS).length)
+        ] as keyof typeof WORD_TYPES_PL_PROMPTS)
+      : wordType;
+
+    const currentCategory =
+      WORDS_CATEGORIES[Math.floor(Math.random() * WORDS_CATEGORIES.length)];
+
+    if (log) {
+      console.log(
+        `🔁 Batch ${i + 1}/${batches}: Generating ${batchSize} ${
+          currentType || ""
+        } words at level ${currentLevel} ${
+          currentCategory ? `on topic "${currentCategory}"` : ""
+        }`
+      );
     }
 
-    // Don't wait after last batch
+    try {
+      await generateWords(batchSize, currentLevel!, currentType);
+      generated += batchSize;
+    } catch (error) {
+      console.error(`❌ Error generating batch ${i + 1}:`, error);
+    }
+
+    // Wait between batches unless it's the last
     if (i < batches - 1) {
-      console.log(`⏱ Waiting ${delayMs / 1000}s before next batch...`);
-      await new Promise((resolve) => setTimeout(resolve, delayMs));
+      if (log) console.log(`⏱ Waiting ${delayMs / 1000}s...`);
+      await new Promise((res) => setTimeout(res, delayMs));
     }
 
     await removeDuplicatesFromTable("pl");
     await removeDuplicatesFromTable("ru");
   }
 
-  console.log("✅ Seeding complete. Running quality checks...");
+  if (log) console.log("🔍 Running quality check...");
   const issues = await checkGeneratedDataQuality();
 
-  if (issues.length === 0) {
-    console.log("🎉 All looks good!");
+  if (!issues.length) {
+    console.log("🎉 All looks clean!");
   } else {
-    console.warn(`⚠️ Found ${issues.length} issue(s) in generated content.`);
+    console.warn(`⚠️ Found ${issues.length} potential issue(s).`);
   }
-};
-
-export const seedWordsLoop = async (
-  count: number = 500,
-  batchSize = 10,
-  delay = 5000
-) => {
-  let generated = 0;
-
-  while (generated < count) {
-    const randomLevel =
-      WORDS_LANGUAGE_LEVELS[
-        Math.floor(Math.random() * WORDS_LANGUAGE_LEVELS.length)
-      ];
-    const randomTopic =
-      WORDS_CATEGORIES[Math.floor(Math.random() * WORDS_CATEGORIES.length)];
-
-    console.log(
-      `🧠 Generating ${batchSize} words at level ${randomLevel} on topic "${randomTopic}"...`
-    );
-
-    try {
-      await generateWords(batchSize, randomLevel);
-      generated += batchSize;
-      console.log(`✅ Total generated: ${generated}/${count}`);
-    } catch (err) {
-      console.error("❌ Generation failed:", err);
-    }
-
-    if (generated < count) {
-      console.log(`⏱️ Waiting ${delay / 1000}s before next batch...`);
-      await sleep(delay);
-    }
-  }
-
-  console.log("🎉 Seeding complete!");
 };

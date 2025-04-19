@@ -8,8 +8,7 @@ import {
   cleanAllVocabularyData,
   removeDuplicatesFromTable,
   removeUntranslatedWords,
-  seedWordsInChunks,
-  seedWordsLoop,
+  seedWords,
 } from "@/lib/actions/admin";
 import type { LanguageLevels } from "@/types";
 import StatusCard from "@/components/admin/StatusCard";
@@ -24,25 +23,30 @@ const AdminDashboard = () => {
   const [isCleaningAll, setIsCleaningAll] = useState(false);
 
   // State for form values
-  const [level, setLevel] = useState("A0");
+  const [level, setLevel] = useState<LanguageLevels | "random">("A0");
   const [quantity, setQuantity] = useState(10);
   const [batchSize, setBatchSize] = useState(50);
   const [delay, setDelay] = useState(5000);
 
   // Handler functions
-  const handleGenerateWords = async (isRandomLevel?: boolean) => {
+  const handleGenerateWords = async () => {
     try {
       setGenerating(true);
 
-      if (isRandomLevel) {
-        await seedWordsLoop(quantity, batchSize, delay);
-      } else {
-        await seedWordsInChunks(
-          quantity,
-          level as LanguageLevels,
+      if (level === "random") {
+        await seedWords({
+          total: quantity,
           batchSize,
-          delay
-        );
+          delayMs: delay,
+          randomizeLevel: true,
+        });
+      } else {
+        await seedWords({
+          total: quantity,
+          batchSize,
+          delayMs: delay,
+          level,
+        });
       }
 
       await removeDuplicatesFromTable("pl");

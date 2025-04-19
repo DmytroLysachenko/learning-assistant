@@ -3,10 +3,10 @@ import { generateObject } from "ai";
 import { model } from "@/lib/ai";
 import { db } from "@/db";
 import { polishVocabulary, rusVocabulary, translations } from "@/db/schema";
-import { aiTranslationArraySchema, wordSchemas } from "../validations/ai";
+import { aiTranslationSchema, wordSchemas } from "../validations/ai";
 import { LanguageLevels } from "@/types";
-import { WORD_TYPE_WEIGHTS, WORDS_CATEGORIES } from "@/constants";
-import { weightedRandomType } from "../utils";
+import { WORD_TYPES_PL_PROMPTS, WORDS_CATEGORIES } from "@/constants";
+import { z } from "zod";
 
 // Maps language codes to vocab table references
 const vocabTables = {
@@ -22,29 +22,35 @@ type LanguageCode = keyof typeof vocabTables;
 export const generateUniqueWords = async (
   lang: LanguageCode,
   quantity: number,
-  level: string
+  level: string,
+  wordType?: keyof typeof WORD_TYPES_PL_PROMPTS
 ) => {
   const table = vocabTables[lang];
-  const schema = wordSchemas[lang].arraySchema;
-
+  const schema = wordSchemas[lang];
+  type WordType = z.infer<typeof schema>;
   const randomCategory =
     WORDS_CATEGORIES[Math.floor(Math.random() * WORDS_CATEGORIES.length)];
 
-  const selectedType = weightedRandomType(WORD_TYPE_WEIGHTS);
+  const system = `You are a linguistic AI generating educational vocabulary for a language learning app.`;
 
-  const result = await generateObject({
-    model,
-    schema,
-    system: `You are a linguistic AI generating educational vocabulary for a language learning app.`,
-    prompt: `
-Generate ${quantity} unique ${lang.toUpperCase()} ${selectedType} vocabulary words for CEFR level "${level}" under the topic "${randomCategory}".
+  const prompt = `
+Generate ${quantity} unique ${lang.toUpperCase()} vocabulary words for CEFR level "${level}" under the topic "${randomCategory}".
 
 Guidelines:
-- Only generate words of type: **${selectedType}**.
 - Words must be relevant to the topic: "${randomCategory}".
 - Avoid overly basic or common words.
 - Ensure uniqueness from standard beginner word lists.
-`,
+${wordType ? WORD_TYPES_PL_PROMPTS[wordType] : ""}
+`;
+  console.log(prompt);
+
+  const result = await generateObject<WordType>({
+    model,
+    mode: "tool",
+    output: "array",
+    schema: schema,
+    system,
+    prompt,
   });
 
   const inserted = await db.insert(table).values(result.object).returning();
@@ -60,10 +66,13 @@ export const generateTranslationWords = async (
   words: { word: string; id: string }[]
 ) => {
   const toTable = vocabTables[toLang];
-  const schema = wordSchemas[toLang].arraySchema;
+  const schema = wordSchemas[toLang];
 
-  const result = await generateObject({
+  type WordType = z.infer<typeof schema>;
+
+  const result = await generateObject<WordType>({
     model,
+    output: "array",
     schema,
     system: `You are an AI translator for language learning vocabulary.`,
     prompt: `Translate the following ${fromLang.toUpperCase()} words into ${toLang.toUpperCase()} with examples, grammatical types and difficulty levels:\n${JSON.stringify(
@@ -88,9 +97,12 @@ export const generateTranslationConnections = async ({
     translation: string;
   }[];
 }) => {
-  const result = await generateObject({
+  type TranslationType = z.infer<typeof aiTranslationSchema>;
+
+  const result = await generateObject<TranslationType>({
     model,
-    schema: aiTranslationArraySchema,
+    output: "array",
+    schema: aiTranslationSchema,
     system: `You are an AI linking tool for connecting translations between languages.`,
     prompt: `Generate translation connection objects (UUID pairs) for the following vocabulary pairs:\n${JSON.stringify(
       wordPairs
@@ -103,10 +115,11 @@ export const generateTranslationConnections = async ({
 
 export const generateWords = async (
   quantity: number,
-  level: LanguageLevels
+  level: LanguageLevels,
+  wordType?: keyof typeof WORD_TYPES_PL_PROMPTS
 ) => {
   try {
-    const plWords = await generateUniqueWords("pl", quantity, level);
+    const plWords = await generateUniqueWords("pl", quantity, level, wordType);
 
     const ruWords = await generateTranslationWords("pl", "ru", plWords);
 
@@ -180,7 +193,7 @@ export const checkGeneratedDataQuality = async () => {
 
     if (pl?.word.toLowerCase() === ru?.word.toLowerCase()) {
       issues.push(
-        `Translation warning: Identical word string "${pl.word}" in both PL and RU`
+        `Translation warning: Identical word string "${pl?.word}" in both PL and RU`
       );
     }
 

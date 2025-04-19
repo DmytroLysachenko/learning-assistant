@@ -14,6 +14,8 @@ import { Input } from "@/components/ui/input";
 import { AlertCircleIcon, Loader2, Upload } from "lucide-react";
 import CustomSelect from "@/components/CustomSelect";
 import { Slider } from "../ui/slider";
+import { LanguageLevels } from "@/types";
+import { LEVEL_OPTIONS } from "@/constants";
 
 interface WordGenerationFormProps {
   generating: boolean;
@@ -21,22 +23,12 @@ interface WordGenerationFormProps {
   quantity: number;
   batchSize: number;
   delay: number;
-  setLevel: (level: string) => void;
+  setLevel: (level: LanguageLevels | "random") => void;
   setQuantity: (quantity: number) => void;
   setBatchSize: (batchSize: number) => void;
   setDelay: (delay: number) => void;
   onGenerate: (isRandomLevel?: boolean) => Promise<void>;
 }
-
-const levelOptions = [
-  { value: "A0", label: "A0" },
-  { value: "A1", label: "A1" },
-  { value: "A2", label: "A2" },
-  { value: "B1", label: "B1" },
-  { value: "B2", label: "B2" },
-  { value: "C1", label: "C1" },
-  { value: "C2", label: "C2" },
-];
 
 const WordGenerationForm = ({
   generating,
@@ -72,10 +64,12 @@ const WordGenerationForm = ({
                 Language Level
               </label>
               <CustomSelect
-                options={levelOptions}
+                options={LEVEL_OPTIONS}
                 currentValue={level}
                 isDisabled={generating}
-                handleValueChange={(value) => setLevel(value)}
+                handleValueChange={(value) =>
+                  setLevel(value as LanguageLevels | "random")
+                }
                 placeholder="Select level"
               />
             </div>
@@ -171,6 +165,7 @@ const WordGenerationForm = ({
         <Button
           onClick={async () => await onGenerate(false)}
           disabled={generating || quantity <= 0}
+          className="w-full"
         >
           {generating ? (
             <>
@@ -179,19 +174,6 @@ const WordGenerationForm = ({
             </>
           ) : (
             "Generate Words"
-          )}
-        </Button>
-        <Button
-          onClick={async () => await onGenerate(true)}
-          disabled={generating || quantity <= 0}
-        >
-          {generating ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Generating...
-            </>
-          ) : (
-            "Generate Words with Random Level"
           )}
         </Button>
       </CardFooter>

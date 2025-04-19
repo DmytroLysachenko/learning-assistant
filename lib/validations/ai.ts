@@ -55,19 +55,14 @@ const baseWordSchema = z.object({
 const aiPolishWordSchema = baseWordSchema.extend({
   type: polishTypeEnum.describe("Word type in corresponding language"),
 });
+
 const aiRussianWordSchema = baseWordSchema.extend({
   type: russianTypeEnum.describe("Word type in corresponding language"),
 });
 
 export const wordSchemas = {
-  pl: {
-    singleSchema: aiPolishWordSchema,
-    arraySchema: z.array(aiPolishWordSchema),
-  },
-  ru: {
-    singleSchema: aiRussianWordSchema,
-    arraySchema: z.array(aiRussianWordSchema),
-  },
+  pl: aiPolishWordSchema,
+  ru: aiRussianWordSchema,
 };
 
 // === Translation Schema ===
@@ -75,4 +70,3 @@ export const aiTranslationSchema = z.object({
   wordId1: z.string().describe("Id of the first word"),
   wordId2: z.string().describe("Id of the second word"),
 });
-export const aiTranslationArraySchema = z.array(aiTranslationSchema);
