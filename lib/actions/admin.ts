@@ -11,6 +11,19 @@ import {
 } from "@/constants";
 import { sleep } from "../utils";
 
+type WordLevel = "A0" | "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
+
+interface SeedWordsOptions {
+  total: number;
+  batchSize?: number;
+  delayMs?: number;
+  randomizeType?: boolean;
+  randomizeCategory?: boolean;
+  level?: WordLevel;
+  wordType?: keyof typeof WORD_TYPES_PL_PROMPTS;
+  log?: boolean;
+}
+
 const vocabTables = {
   pl: "polish_vocabulary",
   ru: "rus_vocabulary",
@@ -91,19 +104,6 @@ export const removeUntranslatedWords = async () => {
     throw err;
   }
 };
-
-type WordLevel = "A0" | "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
-
-interface SeedWordsOptions {
-  total: number;
-  batchSize?: number;
-  delayMs?: number;
-  randomizeType?: boolean;
-  randomizeCategory?: boolean;
-  level?: WordLevel;
-  wordType?: keyof typeof WORD_TYPES_PL_PROMPTS;
-  log?: boolean;
-}
 
 export const seedWords = async ({
   total,
