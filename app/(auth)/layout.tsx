@@ -6,7 +6,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth();
 
   if (session) {
-    redirect("/");
+    redirect("/dashboard");
   }
 
   return children;

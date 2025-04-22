@@ -1,4 +1,5 @@
-import { LanguageLevels } from "@/types";
+import { plVocabulary, ruVocabulary } from "@/db/schema";
+import { LanguageLevelsType } from "@/types";
 
 export const WORDS_CATEGORIES = [
   "Greetings",
@@ -150,7 +151,7 @@ export const WORDS_CATEGORIES = [
   "Effort",
 ];
 
-export const WORDS_LANGUAGE_LEVELS: LanguageLevels[] = [
+export const WORDS_LANGUAGE_LEVELS: LanguageLevelsType[] = [
   "A0",
   "A1",
   "A2",
@@ -196,3 +197,85 @@ export const WORDS_TYPES_OPTIONS = [
   { value: "adverb", label: "Adverb" },
   { value: "numeral", label: "Numeral" },
 ];
+
+export const ALPHABETS = {
+  pl: [
+    "a",
+    "ą",
+    "b",
+    "c",
+    "ć",
+    "d",
+    "e",
+    "ę",
+    "f",
+    "g",
+    "h",
+    "i",
+    "j",
+    "k",
+    "l",
+    "ł",
+    "m",
+    "n",
+    "ń",
+    "o",
+    "ó",
+    "p",
+    "r",
+    "s",
+    "ś",
+    "t",
+    "u",
+    "w",
+    "y",
+    "z",
+    "ź",
+    "ż",
+  ],
+  ru: [
+    "а",
+    "б",
+    "в",
+    "г",
+    "д",
+    "е",
+    "ё",
+    "ж",
+    "з",
+    "и",
+    "й",
+    "к",
+    "л",
+    "м",
+    "н",
+    "о",
+    "п",
+    "р",
+    "с",
+    "т",
+    "у",
+    "ф",
+    "х",
+    "ц",
+    "ч",
+    "ш",
+    "щ",
+    "ъ",
+    "ы",
+    "ь",
+    "э",
+    "ю",
+    "я",
+  ],
+};
+
+export const vocabTables = {
+  pl: plVocabulary,
+  ru: ruVocabulary,
+} as const;
+
+export const vocabTablesNames = {
+  pl: "pl_vocabulary",
+  ru: "ru_vocabulary",
+};

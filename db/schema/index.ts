@@ -1,5 +1,5 @@
 export * from "./pl";
-export * from "./rus";
+export * from "./ru";
 export * from "./users";
 export * from "./general";
 export * from "./translations";

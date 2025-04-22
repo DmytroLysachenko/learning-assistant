@@ -1,6 +1,6 @@
 import VocabularyTable from "@/components/words/VocabularyTable";
 import { db } from "@/db";
-import { polishVocabulary, rusVocabulary, translations } from "@/db/schema";
+import { plVocabulary, rusVocabulary, translations } from "@/db/schema";
 import { eq, desc, asc, or, sql, ilike } from "drizzle-orm";
 import { Suspense } from "react";
 
@@ -28,20 +28,20 @@ const WordsPage = async ({ searchParams }: PageProps) => {
 
   // Count of polish/russian words
   const [polishWordsCount, russianWordsCount] = await Promise.all([
-    db.select({ value: sql<number>`count(*)` }).from(polishVocabulary),
+    db.select({ value: sql<number>`count(*)` }).from(plVocabulary),
     db.select({ value: sql<number>`count(*)` }).from(rusVocabulary),
   ]);
 
   // Filtering condition
   const whereClause = filter
-    ? or(ilike(polishVocabulary.word, `%${filter}%`))
+    ? or(ilike(plVocabulary.word, `%${filter}%`))
     : undefined;
 
   // Count translations with or without filter
   const countQueryBase = db
     .select({ value: sql<number>`count(*)` })
     .from(translations)
-    .leftJoin(polishVocabulary, eq(translations.wordId1, polishVocabulary.id))
+    .leftJoin(plVocabulary, eq(translations.wordId1, plVocabulary.id))
     .leftJoin(rusVocabulary, eq(translations.wordId2, rusVocabulary.id));
 
   const totalCountResult = whereClause
@@ -54,28 +54,28 @@ const WordsPage = async ({ searchParams }: PageProps) => {
   const dataQuery = db
     .select({
       translations,
-      polish_vocabulary: polishVocabulary,
+      pl_vocabulary: plVocabulary,
       rus_vocabulary: rusVocabulary,
     })
     .from(translations)
-    .leftJoin(polishVocabulary, eq(translations.wordId1, polishVocabulary.id))
+    .leftJoin(plVocabulary, eq(translations.wordId1, plVocabulary.id))
     .leftJoin(rusVocabulary, eq(translations.wordId2, rusVocabulary.id))
     .where(whereClause)
     .orderBy(
       sortDirection === "asc"
         ? asc(
             sortField === "type"
-              ? polishVocabulary.type
+              ? plVocabulary.type
               : sortField === "difficulty"
-              ? polishVocabulary.difficulty
-              : polishVocabulary.word
+              ? plVocabulary.difficulty
+              : plVocabulary.word
           )
         : desc(
             sortField === "type"
-              ? polishVocabulary.type
+              ? plVocabulary.type
               : sortField === "difficulty"
-              ? polishVocabulary.difficulty
-              : polishVocabulary.word
+              ? plVocabulary.difficulty
+              : plVocabulary.word
           )
     )
     .limit(pageSize)
@@ -87,13 +87,13 @@ const WordsPage = async ({ searchParams }: PageProps) => {
     id: `${entry.translations.id}`,
     words: [
       {
-        id: entry.polish_vocabulary!.id,
-        word: entry.polish_vocabulary!.word,
-        example: entry.polish_vocabulary!.example,
-        type: entry.polish_vocabulary!.type,
-        difficulty: entry.polish_vocabulary!.difficulty,
-        createdAt: entry.polish_vocabulary!.createdAt,
-        comment: entry.polish_vocabulary!.comment,
+        id: entry.pl_vocabulary!.id,
+        word: entry.pl_vocabulary!.word,
+        example: entry.pl_vocabulary!.example,
+        type: entry.pl_vocabulary!.type,
+        difficulty: entry.pl_vocabulary!.difficulty,
+        createdAt: entry.pl_vocabulary!.createdAt,
+        comment: entry.pl_vocabulary!.comment,
         language: "polish",
       },
       {

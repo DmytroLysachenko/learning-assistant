@@ -9,6 +9,7 @@ import {
   removeDuplicatesFromTable,
   removeUntranslatedWords,
   seedWords,
+  seedWordsAlphabetically,
 } from "@/lib/actions/admin";
 import type { LanguageLevels, WordType } from "@/types";
 import StatusCard from "@/components/admin/StatusCard";
@@ -62,56 +63,12 @@ const AdminDashboard = () => {
   const handleAutoGenerateWords = async () => {
     try {
       setGenerating(true);
-      await seedWords({
-        total: 60,
-        batchSize: 20,
-        wordType: "pronouns",
-        delayMs: 5000,
-      });
-      await seedWords({
-        total: 100,
-        batchSize: 50,
-        wordType: "prepositions",
-        delayMs: 5000,
-      });
-      await seedWords({
-        total: 400,
-        batchSize: 50,
-        wordType: "conjunctions",
-        delayMs: 5000,
-      });
-      await seedWords({
-        total: 1000,
-        batchSize: 50,
-        wordType: "noun",
-        delayMs: 5000,
-      });
 
-      await seedWords({
-        total: 1000,
-        batchSize: 50,
-        wordType: "verb",
-        delayMs: 5000,
-      });
-
-      await seedWords({
-        total: 1000,
-        batchSize: 50,
-        wordType: "adjective",
-        delayMs: 5000,
-      });
-
-      await seedWords({
-        total: 1000,
-        batchSize: 50,
-        wordType: "adverb",
-        delayMs: 5000,
-      });
-      await seedWords({
-        total: 1000,
-        batchSize: 50,
-        wordType: "numeral",
-        delayMs: 5000,
+      await seedWordsAlphabetically({
+        batchSize,
+        wordType: wordType === "none" ? undefined : wordType,
+        delayMs: delay,
+        level: level === "random" ? undefined : level,
       });
 
       toast.success("Words generated successfully", {
@@ -197,7 +154,10 @@ const AdminDashboard = () => {
           isRemovingUntranslated={isRemovingUntranslated}
           isCleaningAll={isCleaningAll}
         />
-        <Button onClick={handleAutoGenerateWords}> Click me!</Button>
+        <Button onClick={handleAutoGenerateWords}>
+          {" "}
+          Alphabetical Generation!
+        </Button>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Word Generation Form */}

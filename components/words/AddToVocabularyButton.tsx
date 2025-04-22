@@ -5,6 +5,7 @@ import { useState } from "react";
 interface AddToVocabularyButtonProps {
   wordId: string;
   language: string;
+  handleAddToVocabulary: (wordId: string, language: string) => void;
   label?: string;
 }
 
@@ -12,6 +13,7 @@ const AddToVocabularyButton = ({
   wordId,
   language,
   label,
+  handleAddToVocabulary,
 }: AddToVocabularyButtonProps) => {
   const [isAdded, setIsAdded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -22,8 +24,7 @@ const AddToVocabularyButton = ({
   const handleClick = async () => {
     setIsLoading(true);
 
-    // Mock API call
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await handleAddToVocabulary(wordId, language);
 
     // Mock success
     setIsAdded(true);

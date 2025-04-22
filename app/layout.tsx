@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
 import { Toaster } from "@/components/ui/sonner";
+import Link from "next/link";
 
 const outfit = localFont({
   src: [
@@ -100,6 +101,17 @@ const RootLayout = ({
       <body
         className={`${outfit.className} ${inter.className} font-sans antialiased`}
       >
+        <div
+          className="w-full flex gap-10
+        "
+        >
+          <Link href={"/"}>HOME</Link>
+          <Link href={"/login"}>LOGIN</Link>
+          <Link href={"/register"}>REGISTER</Link>
+          <Link href={"/admin"}>ADMIN</Link>
+          <Link href={"/dashboard"}>DASHBOARD</Link>
+          <Link href={"/words"}>WORDS</Link>
+        </div>
         {children}
         <Toaster
           position="top-right"

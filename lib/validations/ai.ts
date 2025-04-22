@@ -67,6 +67,6 @@ export const wordSchemas = {
 
 // === Translation Schema ===
 export const aiTranslationSchema = z.object({
-  wordId1: z.string().describe("Id of the first word"),
-  wordId2: z.string().describe("Id of the second word"),
+  wordId1: z.string().describe("Id of the word in primary language"),
+  wordId2: z.string().describe("Id of the word in translation language"),
 });

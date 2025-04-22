@@ -50,7 +50,6 @@ export default function VocabularyTable({
   );
   const [expandedWord, setExpandedWord] = useState<string | null>(null);
 
-  // Mock function for adding to vocabulary
   const handleAddToVocabulary = (wordId: string, language: string) => {
     console.log(`Adding ${language} word with ID ${wordId} to vocabulary`);
     if (onAddToVocabulary) {
@@ -113,25 +112,6 @@ export default function VocabularyTable({
       size: e.target.value,
       page: "1", // Reset to first page when changing page size
     });
-  };
-
-  const getDifficultyColor = (difficulty: string | null) => {
-    switch (difficulty) {
-      case "A1":
-        return "bg-green-100 text-green-800";
-      case "A2":
-        return "bg-green-200 text-green-800";
-      case "B1":
-        return "bg-yellow-100 text-yellow-800";
-      case "B2":
-        return "bg-yellow-200 text-yellow-800";
-      case "C1":
-        return "bg-red-100 text-red-800";
-      case "C2":
-        return "bg-red-200 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
   };
 
   // Calculate pagination values
@@ -261,6 +241,7 @@ export default function VocabularyTable({
                   wordId={
                     pair.words.find((w) => w.language === "polish")?.id || ""
                   }
+                  handleAddToVocabulary={handleAddToVocabulary}
                   language="polish"
                   label="Add to my vocabulary"
                 />

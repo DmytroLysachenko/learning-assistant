@@ -23,7 +23,7 @@ export const russianWordTypeEnum = pgEnum("russian_word_type", [
 ]);
 
 // Russian vocabulary table
-export const rusVocabulary = pgTable("rus_vocabulary", {
+export const ruVocabulary = pgTable("ru_vocabulary", {
   id: uuid("id").primaryKey().defaultRandom(),
   word: varchar("word", { length: 255 }).notNull(),
   example: text("example"),
@@ -34,13 +34,13 @@ export const rusVocabulary = pgTable("rus_vocabulary", {
 });
 
 // User-Russian word tracking
-export const userRusWords = pgTable("user_rus_words", {
+export const userRuWords = pgTable("user_ru_words", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   wordId: uuid("word_id")
-    .references(() => rusVocabulary.id, { onDelete: "cascade" })
+    .references(() => ruVocabulary.id, { onDelete: "cascade" })
     .notNull(),
   status: wordStatusEnum("status").default("learning"),
   correctAnswersCount: integer("correct_answers_count").default(0),

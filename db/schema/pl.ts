@@ -23,7 +23,7 @@ export const polishWordTypeEnum = pgEnum("polish_word_type", [
 ]);
 
 // Polish vocabulary table
-export const polishVocabulary = pgTable("polish_vocabulary", {
+export const plVocabulary = pgTable("pl_vocabulary", {
   id: uuid("id").primaryKey().defaultRandom(),
   word: varchar("word", { length: 255 }).notNull(),
   example: text("example"),
@@ -40,7 +40,7 @@ export const userPolishWords = pgTable("user_polish_words", {
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   wordId: uuid("word_id")
-    .references(() => polishVocabulary.id, { onDelete: "cascade" })
+    .references(() => plVocabulary.id, { onDelete: "cascade" })
     .notNull(),
   status: wordStatusEnum("status").default("learning"),
   correctAnswersCount: integer("correct_answers_count").default(0),
