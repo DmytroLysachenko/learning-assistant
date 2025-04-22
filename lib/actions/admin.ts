@@ -171,7 +171,6 @@ export const seedWordsByTopic = async ({
 export const seedWordsByAlphabet = async ({
   batchSize = 10,
   delayMs = 5000,
-  level,
   wordType,
   language = "pl",
   translationLanguage = "ru",
@@ -204,12 +203,6 @@ export const seedWordsByAlphabet = async ({
       .where(ilike(mainVocabularyTable.word, `%${letter}%`))
       .then((words) => words.map((w) => w.word));
 
-    const currentLevel =
-      level ||
-      WORDS_LANGUAGE_LEVELS[
-        Math.floor(Math.random() * WORDS_LANGUAGE_LEVELS.length)
-      ];
-
     if (log) {
       console.log(
         `🔤 Generating for letter "${letter}" | Existing: ${existingWords.length}`
@@ -222,7 +215,6 @@ export const seedWordsByAlphabet = async ({
           lang: "pl",
           letter,
           quantity: batchSize,
-          level: currentLevel,
           existingWords,
           wordType,
         });

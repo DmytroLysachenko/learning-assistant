@@ -12,14 +12,12 @@ export const generateVocabularyByLetter = async ({
   lang,
   letter,
   quantity,
-  level,
   wordType,
   existingWords = [],
 }: {
   lang: LanguageCodeType;
   letter: string;
   quantity: number;
-  level: string;
   wordType?: keyof typeof WORD_TYPES_PL_PROMPTS;
   existingWords?: string[];
 }) => {
@@ -31,7 +29,6 @@ export const generateVocabularyByLetter = async ({
       lang,
       letter,
       quantity,
-      level,
       existingWords,
       wordType,
     });

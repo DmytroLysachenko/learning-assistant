@@ -33,14 +33,12 @@ export const generateVocabularyByLetterPrompt = ({
   lang,
   letter,
   quantity,
-  level,
   existingWords = [],
   wordType,
 }: {
   lang: LanguageCodeType;
   letter: string;
   quantity: number;
-  level: string;
   wordType?: keyof typeof WORD_TYPES_PL_PROMPTS;
   existingWords: string[];
 }) => {
@@ -51,14 +49,14 @@ export const generateVocabularyByLetterPrompt = ({
     : "";
 
   const prompt = `
-Generate ${quantity} unique ${lang.toUpperCase()} vocabulary words for CEFR level "${level}" that all include letters "${letter.toUpperCase()}".
+Generate ${quantity} unique ${lang.toUpperCase()} language vocabulary words that all include letters "${letter.toUpperCase()}".
 Guidelines:
-- All words must include letters: "${letter}".
-- Provide good, short examples for each word in ${lang.toUpperCase()}.
-- Examples and comments should be written only in ${lang.toUpperCase()}.
-- Comment is optional, to be written in case of additional explanations to word required.
-- Avoid duplicate or overly similar word forms.
-- Only include relevant, translatable vocabulary — no slang, abbreviations, or proper names.
+- All words must include combination of letters: "${letter}", or at least '${
+    letter[0]
+  }' and '${letter[1]}'.
+- Provide good, short examples for word use in ${lang.toUpperCase()} language.
+- Examples and comments should be written only in ${lang.toUpperCase()} language.
+- Avoid dublicate words.
 ${wordType ? WORD_TYPES_PL_PROMPTS[wordType] : ""}
 ${exclusions}
 `;
@@ -77,13 +75,12 @@ export const generateTranslationPrompt = (
 Translate the following words from **${fromLang.toUpperCase()}** into **${toLang.toUpperCase()}**.
 
 For each word:
-- Provide its translation in ${toLang.toUpperCase()} language.
-- Sentence with example of word use should be in ${toLang.toUpperCase()} language.
-- Specify the grammatical type in ${toLang.toUpperCase()} language.
-- All comments, grammatical labels, and examples must be written in **${toLang.toUpperCase()} language**.
+- Translate the word into ${toLang.toUpperCase()} language.
+- Example of word usage case can be changed to another sentence (more applicable to ${toLang.toUpperCase()} language), but it must be written in ${toLang.toUpperCase()} language.
+- All comments and examples must be written in **${toLang.toUpperCase()} language**.
 
 Words to translate:
-${JSON.stringify(words, null, 2)}
+${words.map((w) => w.word).join(", ")}
   `.trim();
 
   return { system, prompt };

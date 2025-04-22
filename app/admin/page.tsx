@@ -60,18 +60,14 @@ const AdminDashboard = () => {
   const handleGenerateAlphabeticallyWords = async () => {
     setGenerating(true);
 
-    const { success, error } = await seedWordsByAlphabet({
+    const { success } = await seedWordsByAlphabet({
       batchSize,
       wordType: wordType === "none" ? undefined : wordType,
       delayMs: delay,
-      level: level === "random" ? undefined : level,
     });
 
     if (!success) {
-      toast.error("Failed to generate words", {
-        description:
-          error instanceof Error ? error.message : "An unknown error occurred",
-      });
+      toast.error("Failed to generate words");
     }
 
     toast.success("Words generated successfully", {
