@@ -10,20 +10,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Database,
-  FileText,
-  Loader2,
-  RefreshCw,
-  Trash2,
-  X,
-} from "lucide-react";
+import { Database, FileText, Loader2, RefreshCw, X } from "lucide-react";
 
 interface StatusCardProps {
   generating: boolean;
   isRemovingDuplicates: boolean;
   isRemovingUntranslated: boolean;
-  isCleaningAll: boolean;
 }
 
 const StatusBadge = ({
@@ -52,7 +44,6 @@ const StatusCard = ({
   generating,
   isRemovingDuplicates,
   isRemovingUntranslated,
-  isCleaningAll,
 }: StatusCardProps) => {
   return (
     <Card>
@@ -88,12 +79,6 @@ const StatusCard = ({
                 active={isRemovingUntranslated}
                 icon={<X className="h-3 w-3" />}
                 label="Untranslated Removal"
-                destructive
-              />
-              <StatusBadge
-                active={isCleaningAll}
-                icon={<Trash2 className="h-3 w-3" />}
-                label="Data Cleaning"
                 destructive
               />
             </div>

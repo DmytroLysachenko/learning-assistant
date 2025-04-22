@@ -1,10 +1,9 @@
-// import { vocabTables } from "@/constants";
 import { wordSchemas } from "@/lib/validations/ai";
 
 import { generateObject } from "ai";
 import { modelFlash as model } from "../aiClient";
 import { z } from "zod";
-// import { db } from "@/db";
+
 import { generateVocabularyByLetterPrompt } from "../prompts/promptBuilders";
 import { LanguageCodeType } from "@/types";
 import { WORD_TYPES_PL_PROMPTS } from "@/constants";
@@ -25,7 +24,6 @@ export const generateVocabularyByLetter = async ({
   existingWords?: string[];
 }) => {
   try {
-    //   const table = vocabTables[lang];
     const schema = wordSchemas[lang];
     type WordType = z.infer<typeof schema>;
 
@@ -47,7 +45,6 @@ export const generateVocabularyByLetter = async ({
       prompt,
     });
 
-    //   const inserted = await db.insert(table).values(result.object).returning();
     return { success: true, data: result.object };
   } catch (error) {
     console.log(error);

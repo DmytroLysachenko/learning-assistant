@@ -265,9 +265,11 @@ export const seedWordsByAlphabet = async ({
         return { success: false, error: translatedWordsError };
       }
 
+      console.log(translatedWords);
+
       const insertedTranslatedWords = await db
         .insert(translationVocabularyTable)
-        .values(newWords)
+        .values(translatedWords)
         .returning();
 
       const mappedTranslatedWords = insertedTranslatedWords.map(
@@ -303,6 +305,10 @@ export const seedWordsByAlphabet = async ({
       }
     } catch (error) {
       console.error(`❌ Error generating for letter "${letter}":`, error);
+      return {
+        success: false,
+        error: `❌ Error generating for letter "${letter}":${error}`,
+      };
     }
 
     // Delay before next batch
@@ -319,9 +325,10 @@ export const seedWordsByAlphabet = async ({
   await removeDuplicatesFromTable("pl");
   await removeDuplicatesFromTable("ru");
 
-  if (log) {
-    console.log("🔍 Running quality check...");
-  }
+  return { success: true };
+  // if (log) {
+  //   console.log("🔍 Running quality check...");
+  // }
 
   // const issues = await checkGeneratedDataQuality();
 

@@ -1,8 +1,4 @@
-import {
-  //   vocabTables,
-  WORD_TYPES_PL_PROMPTS,
-  //   WORDS_CATEGORIES,
-} from "@/constants";
+import { WORD_TYPES_PL_PROMPTS } from "@/constants";
 import { wordSchemas } from "@/lib/validations/ai";
 
 import { generateObject } from "ai";
@@ -23,7 +19,6 @@ export const generateVocabularyByTopic = async ({
   wordType?: keyof typeof WORD_TYPES_PL_PROMPTS;
 }) => {
   try {
-    //   const table = vocabTables[lang];
     const schema = wordSchemas[lang];
     type WordType = z.infer<typeof schema>;
 
@@ -43,7 +38,6 @@ export const generateVocabularyByTopic = async ({
       prompt,
     });
 
-    //   const inserted = await db.insert(table).values(result.object).returning();
     return { success: true, data: result.object };
   } catch (error) {
     console.log(error);

@@ -2,7 +2,7 @@ import { pgTable, uuid } from "drizzle-orm/pg-core";
 import { plVocabulary } from "./pl";
 import { ruVocabulary } from "./ru";
 
-export const pl_ru_translations = pgTable("translations", {
+export const pl_ru_translations = pgTable("pl_ru_translations", {
   id: uuid("id").primaryKey().defaultRandom(),
   wordId1: uuid("word_id_1")
     .notNull()

@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { AlertCircleIcon, Loader2, Upload } from "lucide-react";
 import CustomSelect from "@/components/CustomSelect";
 import { Slider } from "../ui/slider";
-import { LanguageLevels, WordType } from "@/types";
+import { LanguageLevelsType, WordType } from "@/types";
 import { LEVEL_OPTIONS, WORDS_TYPES_OPTIONS } from "@/constants";
 
 interface WordGenerationFormProps {
@@ -24,7 +24,7 @@ interface WordGenerationFormProps {
   batchSize: number;
   delay: number;
   wordType: WordType;
-  setLevel: (level: LanguageLevels | "random") => void;
+  setLevel: (level: LanguageLevelsType | "random") => void;
   setQuantity: (quantity: number) => void;
   setBatchSize: (batchSize: number) => void;
   setDelay: (delay: number) => void;
@@ -72,7 +72,7 @@ const WordGenerationForm = ({
                 currentValue={level}
                 isDisabled={generating}
                 handleValueChange={(value) =>
-                  setLevel(value as LanguageLevels | "random")
+                  setLevel(value as LanguageLevelsType | "random")
                 }
                 placeholder="Select level"
               />

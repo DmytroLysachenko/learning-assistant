@@ -54,6 +54,7 @@ export const generateVocabularyByLetterPrompt = ({
 Generate ${quantity} unique ${lang.toUpperCase()} vocabulary words for CEFR level "${level}" that all begin with the letter "${letter.toUpperCase()}".
 Guidelines:
 - All words must start with the letter "${letter}".
+- If there is no words starts with the letter "${letter}", generate words with the letter "${letter}".
 - Provide good, short examples for each word.
 - Avoid duplicate or overly similar word forms.
 - Only include relevant, translatable vocabulary — no slang, abbreviations, or proper names.

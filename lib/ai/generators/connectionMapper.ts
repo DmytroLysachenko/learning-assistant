@@ -1,8 +1,6 @@
 import { aiTranslationSchema } from "@/lib/validations/ai";
 import { generateObject } from "ai";
 import { modelFlash as model } from "../aiClient";
-// import { db } from "@/db";
-// import { translations } from "@/db/schema";
 import { ShortWordType, TranslationType } from "@/types";
 import { generateTranslationConnectionsPrompt } from "../prompts/promptBuilders";
 
@@ -24,7 +22,6 @@ export const generateTranslationConnections = async (
       prompt,
     });
 
-    // const inserted = await db.insert(translations).values(result.object);
     return { success: true, data: result.object };
   } catch (error) {
     console.log(error);

@@ -1,6 +1,6 @@
 import VocabularyTable from "@/components/words/VocabularyTable";
 import { db } from "@/db";
-import { plVocabulary, rusVocabulary, translations } from "@/db/schema";
+import { plVocabulary, ruVocabulary, pl_ru_translations } from "@/db/schema";
 import { eq, desc, asc, or, sql, ilike } from "drizzle-orm";
 import { Suspense } from "react";
 
@@ -29,7 +29,7 @@ const WordsPage = async ({ searchParams }: PageProps) => {
   // Count of polish/russian words
   const [polishWordsCount, russianWordsCount] = await Promise.all([
     db.select({ value: sql<number>`count(*)` }).from(plVocabulary),
-    db.select({ value: sql<number>`count(*)` }).from(rusVocabulary),
+    db.select({ value: sql<number>`count(*)` }).from(ruVocabulary),
   ]);
 
   // Filtering condition
@@ -40,9 +40,9 @@ const WordsPage = async ({ searchParams }: PageProps) => {
   // Count translations with or without filter
   const countQueryBase = db
     .select({ value: sql<number>`count(*)` })
-    .from(translations)
-    .leftJoin(plVocabulary, eq(translations.wordId1, plVocabulary.id))
-    .leftJoin(rusVocabulary, eq(translations.wordId2, rusVocabulary.id));
+    .from(pl_ru_translations)
+    .leftJoin(plVocabulary, eq(pl_ru_translations.wordId1, plVocabulary.id))
+    .leftJoin(ruVocabulary, eq(pl_ru_translations.wordId2, ruVocabulary.id));
 
   const totalCountResult = whereClause
     ? await countQueryBase.where(whereClause)
@@ -53,13 +53,13 @@ const WordsPage = async ({ searchParams }: PageProps) => {
   // Build final filtered + sorted + paginated query
   const dataQuery = db
     .select({
-      translations,
+      pl_ru_translations,
       pl_vocabulary: plVocabulary,
-      rus_vocabulary: rusVocabulary,
+      ru_vocabulary: ruVocabulary,
     })
-    .from(translations)
-    .leftJoin(plVocabulary, eq(translations.wordId1, plVocabulary.id))
-    .leftJoin(rusVocabulary, eq(translations.wordId2, rusVocabulary.id))
+    .from(pl_ru_translations)
+    .leftJoin(plVocabulary, eq(pl_ru_translations.wordId1, plVocabulary.id))
+    .leftJoin(ruVocabulary, eq(pl_ru_translations.wordId2, ruVocabulary.id))
     .where(whereClause)
     .orderBy(
       sortDirection === "asc"
@@ -84,7 +84,7 @@ const WordsPage = async ({ searchParams }: PageProps) => {
   const results = await dataQuery;
 
   const entries = results.map((entry) => ({
-    id: `${entry.translations.id}`,
+    id: `${entry.pl_ru_translations.id}`,
     words: [
       {
         id: entry.pl_vocabulary!.id,
@@ -97,13 +97,13 @@ const WordsPage = async ({ searchParams }: PageProps) => {
         language: "polish",
       },
       {
-        id: entry.rus_vocabulary!.id,
-        word: entry.rus_vocabulary!.word,
-        example: entry.rus_vocabulary!.example,
-        type: entry.rus_vocabulary!.type,
-        difficulty: entry.rus_vocabulary!.difficulty,
-        createdAt: entry.rus_vocabulary!.createdAt,
-        comment: entry.rus_vocabulary!.comment,
+        id: entry.ru_vocabulary!.id,
+        word: entry.ru_vocabulary!.word,
+        example: entry.ru_vocabulary!.example,
+        type: entry.ru_vocabulary!.type,
+        difficulty: entry.ru_vocabulary!.difficulty,
+        createdAt: entry.ru_vocabulary!.createdAt,
+        comment: entry.ru_vocabulary!.comment,
         language: "russian",
       },
     ],

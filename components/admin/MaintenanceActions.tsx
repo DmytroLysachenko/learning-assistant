@@ -15,21 +15,17 @@ import ConfirmationDialog from "./ConfirmationDialog";
 interface MaintenanceActionsProps {
   isRemovingDuplicates: boolean;
   isRemovingUntranslated: boolean;
-  isCleaningAll: boolean;
   generating: boolean;
   onRemoveDuplicates: () => Promise<void>;
   onRemoveUntranslated: () => Promise<void>;
-  onCleanAllData: () => Promise<void>;
 }
 
 const MaintenanceActions = ({
   isRemovingDuplicates,
   isRemovingUntranslated,
-  isCleaningAll,
   generating,
   onRemoveDuplicates,
   onRemoveUntranslated,
-  onCleanAllData,
 }: MaintenanceActionsProps) => {
   return (
     <Card>
@@ -83,27 +79,6 @@ const MaintenanceActions = ({
                   disabled={isRemovingUntranslated || generating}
                 >
                   Remove Untranslated
-                </Button>
-              }
-            />
-
-            <ConfirmationDialog
-              title="Clean All Vocabulary Data"
-              description="This action will permanently delete ALL vocabulary data from the database. This is irreversible and will remove all words."
-              actionLabel="Confirm Deletion"
-              isLoading={isCleaningAll}
-              isDestructive={true}
-              showWarning={true}
-              warningTitle="Warning"
-              warningDescription="This is a destructive action that cannot be undone. All vocabulary data will be permanently deleted."
-              onConfirm={onCleanAllData}
-              trigger={
-                <Button
-                  variant="destructive"
-                  className="w-full"
-                  disabled={isCleaningAll || generating}
-                >
-                  Clean All Data
                 </Button>
               }
             />

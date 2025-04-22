@@ -4,28 +4,25 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
 
-import {
-  cleanAllVocabularyData,
-  removeDuplicatesFromTable,
-  removeUntranslatedWords,
-  seedWords,
-  seedWordsAlphabetically,
-} from "@/lib/actions/admin";
-import type { LanguageLevels, WordType } from "@/types";
 import StatusCard from "@/components/admin/StatusCard";
 import WordGenerationForm from "@/components/admin/WordGenerationForm";
 import MaintenanceActions from "@/components/admin/MaintenanceActions";
 import { Button } from "@/components/ui/button";
+import { LanguageLevelsType, WordType } from "@/types";
+import {
+  removeDuplicatesFromTable,
+  seedWordsByAlphabet,
+  seedWordsByTopic,
+} from "@/lib/actions/admin";
 
 const AdminDashboard = () => {
   // State for operations
   const [generating, setGenerating] = useState(false);
   const [isRemovingDuplicates, setIsRemovingDuplicates] = useState(false);
   const [isRemovingUntranslated, setIsRemovingUntranslated] = useState(false);
-  const [isCleaningAll, setIsCleaningAll] = useState(false);
 
   // State for form values
-  const [level, setLevel] = useState<LanguageLevels | "random">("A0");
+  const [level, setLevel] = useState<LanguageLevelsType | "random">("A0");
   const [quantity, setQuantity] = useState(10);
   const [batchSize, setBatchSize] = useState(50);
   const [delay, setDelay] = useState(5000);
@@ -36,7 +33,7 @@ const AdminDashboard = () => {
     try {
       setGenerating(true);
 
-      await seedWords({
+      await seedWordsByTopic({
         total: quantity,
         batchSize,
         wordType: wordType === "none" ? undefined : wordType,
@@ -60,28 +57,28 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleAutoGenerateWords = async () => {
-    try {
-      setGenerating(true);
+  const handleGenerateAlphabeticallyWords = async () => {
+    setGenerating(true);
 
-      await seedWordsAlphabetically({
-        batchSize,
-        wordType: wordType === "none" ? undefined : wordType,
-        delayMs: delay,
-        level: level === "random" ? undefined : level,
-      });
+    const { success, error } = await seedWordsByAlphabet({
+      batchSize,
+      wordType: wordType === "none" ? undefined : wordType,
+      delayMs: delay,
+      level: level === "random" ? undefined : level,
+    });
 
-      toast.success("Words generated successfully", {
-        description: `Added ${quantity} words at level ${level} and removed duplicates.`,
-      });
-    } catch (error) {
+    if (!success) {
       toast.error("Failed to generate words", {
         description:
           error instanceof Error ? error.message : "An unknown error occurred",
       });
-    } finally {
-      setGenerating(false);
     }
+
+    toast.success("Words generated successfully", {
+      description: `Added ${quantity} words at level ${level} and removed duplicates.`,
+    });
+
+    setGenerating(false);
   };
 
   const handleRemoveDuplicates = async () => {
@@ -106,7 +103,7 @@ const AdminDashboard = () => {
     try {
       setIsRemovingUntranslated(true);
 
-      await removeUntranslatedWords();
+      // await removeUntranslatedWords();
 
       toast.success("Untranslated words removed successfully");
     } catch (error) {
@@ -116,23 +113,6 @@ const AdminDashboard = () => {
       });
     } finally {
       setIsRemovingUntranslated(false);
-    }
-  };
-
-  const handleCleanAllData = async () => {
-    try {
-      setIsCleaningAll(true);
-
-      await cleanAllVocabularyData();
-
-      toast.success("All vocabulary data has been cleaned");
-    } catch (error) {
-      toast.error("Failed to clean vocabulary data", {
-        description:
-          error instanceof Error ? error.message : "An unknown error occurred",
-      });
-    } finally {
-      setIsCleaningAll(false);
     }
   };
 
@@ -152,10 +132,8 @@ const AdminDashboard = () => {
           generating={generating}
           isRemovingDuplicates={isRemovingDuplicates}
           isRemovingUntranslated={isRemovingUntranslated}
-          isCleaningAll={isCleaningAll}
         />
-        <Button onClick={handleAutoGenerateWords}>
-          {" "}
+        <Button onClick={handleGenerateAlphabeticallyWords}>
           Alphabetical Generation!
         </Button>
 
@@ -180,11 +158,9 @@ const AdminDashboard = () => {
           <MaintenanceActions
             isRemovingDuplicates={isRemovingDuplicates}
             isRemovingUntranslated={isRemovingUntranslated}
-            isCleaningAll={isCleaningAll}
             generating={generating}
             onRemoveDuplicates={handleRemoveDuplicates}
             onRemoveUntranslated={handleRemoveUntranslated}
-            onCleanAllData={handleCleanAllData}
           />
         </div>
       </div>
