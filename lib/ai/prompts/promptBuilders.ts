@@ -47,19 +47,20 @@ export const generateVocabularyByLetterPrompt = ({
   const system = `You are a linguistic AI generating useful vocabulary for language learners.`;
 
   const exclusions = existingWords.length
-    ? `Avoid these words: ${existingWords.join(", ")}`
+    ? `- Avoid these words: ${existingWords.join(", ")}`
     : "";
 
   const prompt = `
-Generate ${quantity} unique ${lang.toUpperCase()} vocabulary words for CEFR level "${level}" that all begin with the letter "${letter.toUpperCase()}".
+Generate ${quantity} unique ${lang.toUpperCase()} vocabulary words for CEFR level "${level}" that all include letters "${letter.toUpperCase()}".
 Guidelines:
-- All words must start with the letter "${letter}".
-- If there is no words starts with the letter "${letter}", generate words with the letter "${letter}".
-- Provide good, short examples for each word.
+- All words must include letters: "${letter}".
+- Provide good, short examples for each word in ${lang.toUpperCase()}.
+- Examples and comments should be written only in ${lang.toUpperCase()}.
+- Comment is optional, to be written in case of additional explanations to word required.
 - Avoid duplicate or overly similar word forms.
 - Only include relevant, translatable vocabulary — no slang, abbreviations, or proper names.
 ${wordType ? WORD_TYPES_PL_PROMPTS[wordType] : ""}
-- ${exclusions}
+${exclusions}
 `;
 
   return { system, prompt };
@@ -70,11 +71,20 @@ export const generateTranslationPrompt = (
   toLang: LanguageCodeType,
   words: { word: string; id: string }[]
 ) => {
-  const system = `You are an AI translator for language learning vocabulary.`;
+  const system = `You are an AI translator assisting with language learning vocabulary.`;
 
-  const prompt = `Translate the following ${fromLang.toUpperCase()} words into ${toLang.toUpperCase()} with examples, grammatical types and difficulty levels:\n${JSON.stringify(
-    words
-  )}`;
+  const prompt = `
+Translate the following words from **${fromLang.toUpperCase()}** into **${toLang.toUpperCase()}**.
+
+For each word:
+- Provide its translation in ${toLang.toUpperCase()} language.
+- Sentence with example of word use should be in ${toLang.toUpperCase()} language.
+- Specify the grammatical type in ${toLang.toUpperCase()} language.
+- All comments, grammatical labels, and examples must be written in **${toLang.toUpperCase()} language**.
+
+Words to translate:
+${JSON.stringify(words, null, 2)}
+  `.trim();
 
   return { system, prompt };
 };
@@ -95,6 +105,8 @@ Guidelines:
 - Words may connect one-to-many or many-to-one if appropriate.
 - Avoid duplicate or reversed duplicates.
 - Focus only on meaningful, educationally relevant matches.
+- Primary language word id suppose to be wordId1.
+- Translation language word id suppose to be wordId2.
 
 Primary Language Words:\n${JSON.stringify(primaryLanguageWords, null, 2)}
 

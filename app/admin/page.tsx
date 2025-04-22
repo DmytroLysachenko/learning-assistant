@@ -9,11 +9,11 @@ import WordGenerationForm from "@/components/admin/WordGenerationForm";
 import MaintenanceActions from "@/components/admin/MaintenanceActions";
 import { Button } from "@/components/ui/button";
 import { LanguageLevelsType, WordType } from "@/types";
+import { seedWordsByAlphabet, seedWordsByTopic } from "@/lib/actions/admin";
 import {
   removeDuplicatesFromTable,
-  seedWordsByAlphabet,
-  seedWordsByTopic,
-} from "@/lib/actions/admin";
+  removeUntranslatedWordsFromTable,
+} from "@/lib/validations/db";
 
 const AdminDashboard = () => {
   // State for operations
@@ -22,7 +22,7 @@ const AdminDashboard = () => {
   const [isRemovingUntranslated, setIsRemovingUntranslated] = useState(false);
 
   // State for form values
-  const [level, setLevel] = useState<LanguageLevelsType | "random">("A0");
+  const [level, setLevel] = useState<LanguageLevelsType | "random">("random");
   const [quantity, setQuantity] = useState(10);
   const [batchSize, setBatchSize] = useState(50);
   const [delay, setDelay] = useState(5000);
@@ -103,7 +103,7 @@ const AdminDashboard = () => {
     try {
       setIsRemovingUntranslated(true);
 
-      // await removeUntranslatedWords();
+      await removeUntranslatedWordsFromTable("pl", "ru");
 
       toast.success("Untranslated words removed successfully");
     } catch (error) {

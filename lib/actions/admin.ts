@@ -5,17 +5,19 @@ import { db } from "@/db";
 import {
   ALPHABETS,
   vocabTables,
-  vocabTablesNames,
   WORD_TYPES_PL_PROMPTS,
   WORDS_LANGUAGE_LEVELS,
 } from "@/constants";
-import { sleep } from "../utils";
+import { getShuffledLetterCombos, sleep } from "../utils";
 import { generateVocabularyByLetter } from "../ai/generators/vocabularyByAlphabet";
 import { generateTranslationWords } from "../ai/generators/translator";
 
 import { generateTranslationConnections } from "../ai/generators/connectionMapper";
 import { LanguageCodeType } from "@/types";
 import { generateVocabularyByTopic } from "../ai/generators/vocabularyByTopic";
+import { removeDuplicatesFromTable } from "../validations/db";
+import { ilike } from "drizzle-orm";
+import { translationTables } from "@/db/schema";
 
 type WordLevel = "A0" | "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
 
@@ -31,29 +33,6 @@ interface SeedWordsOptions {
   language?: LanguageCodeType;
   translationLanguage?: LanguageCodeType;
 }
-
-export const removeDuplicatesFromTable = async (table: "pl" | "ru") => {
-  const tableName = vocabTablesNames[table];
-
-  try {
-    await db.execute(`
-      DELETE FROM ${tableName}
-      WHERE id IN (
-        SELECT id FROM (
-          SELECT id,
-                 ROW_NUMBER() OVER (PARTITION BY LOWER(word) ORDER BY created_at ASC) AS rn
-          FROM ${tableName}
-        ) duplicates
-        WHERE duplicates.rn > 1
-      );
-    `);
-
-    console.log(`✅ Duplicates removed from ${tableName}`);
-  } catch (err) {
-    console.error(`❌ Failed to remove duplicates from ${tableName}`, err);
-    throw err;
-  }
-};
 
 export const seedWordsByTopic = async ({
   total,
@@ -202,14 +181,28 @@ export const seedWordsByAlphabet = async ({
   const mainVocabularyTable = vocabTables[language];
   const translationVocabularyTable = vocabTables[translationLanguage];
 
-  for (const letter of ALPHABETS[language]) {
-    const existing = await db
-      .select({ word: mainVocabularyTable.word })
-      .from(mainVocabularyTable);
+  const [firstLang, secondLang] = [language, translationLanguage].sort();
+  const key = `${firstLang}_${secondLang}`;
 
-    const existingWords = existing
-      .map((e) => e.word)
-      .filter((w) => w.toLowerCase().startsWith(letter.toLowerCase()));
+  // Find the applicable translation table
+  const translationTableMeta = translationTables.find((t) => t.key === key);
+
+  if (!translationTableMeta) {
+    throw new Error(
+      `Translation table for ${firstLang} and ${secondLang} not found.`
+    );
+  }
+
+  const translationsTable = translationTableMeta.table;
+
+  const combos = getShuffledLetterCombos(ALPHABETS[language]).slice(0, 100);
+
+  for (const letter of combos) {
+    const existingWords = await db
+      .select({ word: mainVocabularyTable.word })
+      .from(mainVocabularyTable)
+      .where(ilike(mainVocabularyTable.word, `%${letter}%`))
+      .then((words) => words.map((w) => w.word));
 
     const currentLevel =
       level ||
@@ -224,21 +217,22 @@ export const seedWordsByAlphabet = async ({
     }
 
     try {
-      const {
-        success: newWordsSuccess,
-        data: newWords,
-        error: newWordsError,
-      } = await generateVocabularyByLetter({
-        lang: "pl",
-        letter,
-        quantity: batchSize,
-        level: currentLevel,
-        existingWords,
-        wordType,
-      });
+      const { success: newWordsSuccess, data: newWords } =
+        await generateVocabularyByLetter({
+          lang: "pl",
+          letter,
+          quantity: batchSize,
+          level: currentLevel,
+          existingWords,
+          wordType,
+        });
 
       if (!newWordsSuccess || !newWords || !newWords.length) {
-        return { success: false, error: newWordsError };
+        if (log)
+          console.warn(
+            `⚠️ Skipped "${letter}" — Translation connections failed.`
+          );
+        continue;
       }
 
       const insertedNewWords = await db
@@ -246,31 +240,35 @@ export const seedWordsByAlphabet = async ({
         .values(newWords)
         .returning();
 
+      console.log(insertedNewWords.length);
+
       const mappedNewWords = insertedNewWords.map((insertedWord) => ({
         id: insertedWord.id,
         word: insertedWord.word,
       }));
 
-      const {
-        success: translatedWordsSuccess,
-        data: translatedWords,
-        error: translatedWordsError,
-      } = await generateTranslationWords(
-        language,
-        translationLanguage,
-        mappedNewWords
-      );
+      const { success: translatedWordsSuccess, data: translatedWords } =
+        await generateTranslationWords(
+          language,
+          translationLanguage,
+          mappedNewWords
+        );
 
-      if (!translatedWordsSuccess || !translatedWords || !newWords.length) {
-        return { success: false, error: translatedWordsError };
+      if (
+        !translatedWordsSuccess ||
+        !translatedWords ||
+        !translatedWords.length
+      ) {
+        if (log) console.warn(`⚠️ Skipped "${letter}" — Translation failed.`);
+        continue;
       }
-
-      console.log(translatedWords);
 
       const insertedTranslatedWords = await db
         .insert(translationVocabularyTable)
         .values(translatedWords)
         .returning();
+
+      console.log(insertedTranslatedWords.length);
 
       const mappedTranslatedWords = insertedTranslatedWords.map(
         (insertedWord) => ({
@@ -279,23 +277,29 @@ export const seedWordsByAlphabet = async ({
         })
       );
 
-      const {
-        success: translationsSuccess,
-        data: translationsConnections,
-        error: translationsError,
-      } = await generateTranslationConnections(
-        mappedNewWords,
-        mappedTranslatedWords
-      );
+      const { success: translationsSuccess, data: translationsConnections } =
+        await generateTranslationConnections(
+          mappedNewWords,
+          mappedTranslatedWords
+        );
 
       if (
         !translationsSuccess ||
         !translationsConnections ||
         !translationsConnections.length
       ) {
-        return { success: false, error: translationsError };
+        if (log)
+          console.warn(
+            `⚠️ Skipped "${letter}" — Translation connections failed.`
+          );
+        continue;
       }
 
+      const connections = await db
+        .insert(translationsTable)
+        .values(translationsConnections)
+        .returning();
+      console.log(connections.length);
       totalGenerated += batchSize;
 
       if (log) {
@@ -305,10 +309,7 @@ export const seedWordsByAlphabet = async ({
       }
     } catch (error) {
       console.error(`❌ Error generating for letter "${letter}":`, error);
-      return {
-        success: false,
-        error: `❌ Error generating for letter "${letter}":${error}`,
-      };
+      continue;
     }
 
     // Delay before next batch
@@ -317,13 +318,12 @@ export const seedWordsByAlphabet = async ({
       await sleep(delayMs);
     }
   }
-
   if (log) {
     console.log("🧹 Running post-generation cleanups...");
   }
 
-  await removeDuplicatesFromTable("pl");
-  await removeDuplicatesFromTable("ru");
+  await removeDuplicatesFromTable(language);
+  await removeDuplicatesFromTable(translationLanguage);
 
   return { success: true };
   // if (log) {

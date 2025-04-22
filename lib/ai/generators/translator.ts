@@ -10,7 +10,6 @@ export const generateTranslationWords = async (
   toLang: LanguageCodeType,
   words: { word: string; id: string }[]
 ) => {
-  console.log(fromLang, toLang);
   try {
     const schema = wordSchemas[toLang];
 

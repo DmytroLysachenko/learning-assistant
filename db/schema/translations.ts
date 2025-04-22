@@ -17,6 +17,16 @@ export const translationTableMap = {
   // "en_pl": en_pl_translations, etc.
 };
 
+export const translationTables = [
+  {
+    key: "pl_ru",
+    table: pl_ru_translations,
+    lang1: "pl",
+    lang2: "ru",
+  },
+  // Add more as needed
+];
+
 export const vocabTableMap = {
   pl: plVocabulary,
   ru: ruVocabulary,

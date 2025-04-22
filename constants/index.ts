@@ -201,13 +201,11 @@ export const WORDS_TYPES_OPTIONS = [
 export const ALPHABETS = {
   pl: [
     "a",
-    "ą",
     "b",
     "c",
     "ć",
     "d",
     "e",
-    "ę",
     "f",
     "g",
     "h",
