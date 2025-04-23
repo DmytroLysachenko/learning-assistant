@@ -1,4 +1,6 @@
 import { LanguageOption } from "@/types";
+import { WORD_TYPES } from ".";
+import { capitalize } from "lodash";
 
 export const LEVEL_OPTIONS = [
   { value: "random", label: "Random" },
@@ -18,9 +20,8 @@ export const LANGUAGE_OPTIONS: LanguageOption[] = [
 
 export const WORDS_TYPES_OPTIONS = [
   { value: "none", label: "Any type" },
-  { value: "noun", label: "Noun" },
-  { value: "verb", label: "Verb" },
-  { value: "adjective", label: "Adjective" },
-  { value: "adverb", label: "Adverb" },
-  { value: "numeral", label: "Numeral" },
+  ...Object.keys(WORD_TYPES["pl"]).map((type) => ({
+    value: type,
+    label: capitalize(type),
+  })),
 ];

@@ -168,9 +168,7 @@ export const validateVocabulary = async (
 
       if (hasChanges) {
         console.log(
-          `🔧 Word "${original.word}" (id: ${original.id}) will be updated.`,
-          normalizedOriginal,
-          normalizedValidated
+          `🔧 Word "${original.word}" (id: ${original.id}) will be updated.`
         );
 
         if (!dryRun) {
