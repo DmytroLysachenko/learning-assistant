@@ -20,6 +20,9 @@ import { toast } from "sonner";
 import { loginSchema, registerSchema } from "@/lib/validations/auth";
 import FormInput from "./FormInput";
 
+import { createUser } from "@/lib/actions/user";
+import { signIn } from "next-auth/react";
+
 type AuthFormProps = {
   type: "login" | "register";
 };
@@ -28,10 +31,8 @@ const AuthForm = ({ type }: AuthFormProps) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  // Use the appropriate schema based on form type
   const formSchema = type === "login" ? loginSchema : registerSchema;
 
-  // Define the form with React Hook Form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -41,46 +42,63 @@ const AuthForm = ({ type }: AuthFormProps) => {
     },
   });
 
-  // Handle form submission
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
 
     try {
-      // Here you would implement your authentication logic
-      // For example, calling an API endpoint to login or register
+      if (type === "register") {
+        const registerValues = values as z.infer<typeof registerSchema>;
 
-      // Simulate API call
-      console.log(values);
+        const result = await createUser({
+          email: registerValues.email,
+          name: registerValues.name,
+          image: null,
+          password: registerValues.password,
+          provider: "credentials",
+        });
 
-      // Show success message
-      toast.success(
-        type === "login"
-          ? "Logged in successfully"
-          : "Account created successfully",
-        {
-          description:
-            type === "login"
-              ? "Welcome back to your language assistant."
-              : "Your account has been created. You can now log in.",
+        if (!result.success) {
+          toast.error("Authentication failed", {
+            description:
+              typeof result.error === "string"
+                ? result.error
+                : "Something went wrong",
+          });
+          return;
         }
-      );
 
-      // Redirect after successful authentication
-      if (type === "login") {
-        router.push("/dashboard");
-      } else {
+        toast.success("Account created successfully", {
+          description: "Your account has been created. You can now log in.",
+        });
+
         router.push("/login");
+      } else {
+        const loginValues = values as z.infer<typeof loginSchema>;
+        console.log(loginValues);
+        const result = await signIn("credentials", {
+          email: loginValues.email,
+          password: loginValues.password,
+          redirect: false,
+        });
+
+        if (result?.error) {
+          throw new Error(result.error);
+        }
+
+        toast.success("Logged in successfully", {
+          description: "Welcome back to your language assistant.",
+        });
+        router.push("/dashboard");
       }
     } catch (error) {
-      console.log(error);
-      // Show error message
+      console.error(error);
       toast.error("Authentication failed", {
         description: "Please check your credentials and try again.",
       });
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="mx-auto max-w-md space-y-6 p-6">

@@ -84,7 +84,7 @@ const FuturePlans = () => {
       id="roadmap"
       className="py-20 bg-muted/30"
     >
-      <div>
+      <div className="container mx-auto px-5">
         <div className="text-center mb-16">
           <h2 className="font-heading text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
             Our <span className="text-gradient gradient-primary">Roadmap</span>

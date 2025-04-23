@@ -13,9 +13,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       authorize: async (credentials) => {
+        console.log(credentials);
+
         if (!credentials?.email || !credentials?.password) return null;
 
-        const user = await getUserByEmail(credentials.email as string);
+        const { data: user } = await getUserByEmail(
+          credentials.email as string
+        );
 
         if (!user || !user.passwordHash) return null;
 
@@ -55,17 +59,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session;
     },
     async signIn({ user, account }) {
-      const provider = account?.provider ?? "credentials";
+      if (!account || !user || !user.email) return false;
 
-      const existing = await getUserByEmail(user.email!);
+      const { provider } = account;
+
+      const existing = await getUserByEmail(user.email);
 
       if (!existing) {
         await createUser({
-          email: user.email!,
+          email: user.email,
           name: user.name || null,
           image: user.image || null,
           provider,
-          passwordHash: null,
+          password: null,
         });
       } else if (!existing.provider) {
         await updateUser(existing.id, { provider });

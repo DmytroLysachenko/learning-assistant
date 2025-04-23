@@ -11,12 +11,33 @@ export const createUser = async (user: {
   name: string | null;
   image: string | null;
   provider: string;
-  passwordHash: string | null;
+  password: string | null;
 }) => {
-  const result = await db.insert(users).values({
-    ...user,
-  });
-  return result;
+  try {
+    const existingUser = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, user.email))
+      .limit(1);
+
+    if (existingUser.length > 0) {
+      return { success: false, error: "User already exists" };
+    }
+
+    const passwordHash = user.password
+      ? await bcrypt.hash(user.password, 12)
+      : null;
+
+    const result = await db.insert(users).values({
+      ...user,
+      passwordHash,
+    });
+
+    return { success: true, data: result };
+  } catch (error) {
+    console.log(error);
+    return { success: false, error };
+  }
 };
 
 export const getUserByEmail = async (email: string) => {
@@ -25,7 +46,8 @@ export const getUserByEmail = async (email: string) => {
     .from(users)
     .where(eq(users.email, email))
     .limit(1);
-  return user;
+
+  return { success: true, data: user };
 };
 
 export const updateUser = async (

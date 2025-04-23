@@ -13,7 +13,7 @@ import { seedWordsByAlphabet, seedWordsByTopic } from "@/lib/actions/admin";
 import {
   removeDuplicatesFromTable,
   removeUntranslatedWordsFromTable,
-} from "@/lib/validations/db";
+} from "@/lib/actions/checks/vocabulary";
 
 const AdminDashboard = () => {
   // State for operations

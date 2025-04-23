@@ -65,7 +65,7 @@ const HowItWorks = () => {
       id="how-it-works"
       className="py-20"
     >
-      <div>
+      <div className="container mx-auto px-5">
         <div className="text-center mb-16">
           <h2 className="font-heading text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
             How <span className="text-gradient gradient-primary">It Works</span>

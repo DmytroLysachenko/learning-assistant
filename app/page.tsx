@@ -16,7 +16,7 @@ export default function HomePage() {
   return (
     <>
       <Header />
-      <main className="container mx-auto">
+      <main className="mx-auto">
         <HeroSection />
         <FeaturesSection />
         <HowItWorks />

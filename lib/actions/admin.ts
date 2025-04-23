@@ -15,7 +15,7 @@ import { generateTranslationWords } from "../ai/generators/translator";
 import { generateTranslationConnections } from "../ai/generators/connectionMapper";
 import { LanguageCodeType } from "@/types";
 import { generateVocabularyByTopic } from "../ai/generators/vocabularyByTopic";
-import { removeDuplicatesFromTable } from "../validations/db";
+import { removeDuplicatesFromTable } from "./checks/vocabulary";
 import { ilike } from "drizzle-orm";
 import { translationTables } from "@/db/schema";
 

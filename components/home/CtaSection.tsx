@@ -30,7 +30,7 @@ const CtaSection = () => {
 
   return (
     <section className="py-20">
-      <div>
+      <div className="container mx-auto px-5">
         <motion.div
           ref={ref}
           variants={containerVariants}

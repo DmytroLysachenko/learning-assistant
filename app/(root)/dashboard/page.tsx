@@ -1,25 +1,16 @@
 import { auth } from "@/auth";
 import UserDashboard from "@/components/dashboard/UserDashboard";
+import { getUserByEmail } from "@/lib/actions/user";
 import { redirect } from "next/navigation";
 
 const DashboardPage = async () => {
   const session = await auth();
 
-  if (!session) {
+  if (!session || !session.user || !session.user.email) {
     redirect("/login");
   }
 
-  // Mock data for the dashboard
-  const userData = {
-    name: session.user?.name || "Language Learner",
-    email: session.user?.email || "user@example.com",
-    image: session.user?.image || "/placeholder.svg?height=100&width=100",
-    joinDate: "January 2023",
-    streak: 7,
-    totalXP: 2845,
-    level: "Intermediate",
-    rank: 42,
-  };
+  const { data: user } = await getUserByEmail(session.user.email);
 
   const learningLanguages = [
     {
@@ -39,15 +30,6 @@ const DashboardPage = async () => {
       level: "A2",
       wordsLearned: 215,
       lastPracticed: "Yesterday",
-    },
-    {
-      code: "es",
-      name: "Spanish",
-      flag: "🇪🇸",
-      progress: 12,
-      level: "A1",
-      wordsLearned: 78,
-      lastPracticed: "3 days ago",
     },
   ];
 
@@ -101,7 +83,7 @@ const DashboardPage = async () => {
 
   return (
     <UserDashboard
-      user={userData}
+      user={user}
       languages={learningLanguages}
       achievements={achievements}
       statistics={statistics}

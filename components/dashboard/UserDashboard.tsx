@@ -12,8 +12,6 @@ import {
   Calendar,
   ChevronRight,
   Clock,
-  Flame,
-  GraduationCap,
   LayoutDashboard,
   LogOut,
   Settings,
@@ -34,22 +32,20 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import DashboardSidebar from "./DashboardSidebar";
 import StatisticsCard from "./StatisticsCard";
 import LanguageCard from "./LanguageCard";
 import AchievementCard from "./AchievementCard";
 
 interface UserDashboardProps {
   user: {
-    name: string;
+    id: string;
+    name: string | null;
     email: string;
-    image: string;
-    joinDate: string;
-    streak: number;
-    totalXP: number;
-    level: string;
-    rank: number;
+    image: string | null;
+    passwordHash: string | null;
+    provider: string | null;
+    createdAt: Date | null;
+    updatedAt: Date | null;
   };
   languages: Array<{
     code: string;
@@ -95,8 +91,6 @@ export default function UserDashboard({
 
   return (
     <div className="flex min-h-screen bg-background">
-      <DashboardSidebar />
-
       <main className="flex-1 p-6 pt-0 md:p-8 md:pt-0 overflow-y-auto">
         <div className="mx-auto max-w-6xl space-y-6">
           {/* User profile header */}
@@ -106,24 +100,24 @@ export default function UserDashboard({
                 <div className="h-20 w-20 rounded-full overflow-hidden border-4 border-primary/20 bg-muted">
                   <Image
                     src={user.image || "/placeholder.svg"}
-                    alt={user.name}
+                    alt={user.name || "User"}
                     width={80}
                     height={80}
                     className="object-cover"
                   />
                 </div>
-                <div className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground rounded-full h-8 w-8 flex items-center justify-center border-2 border-background">
+                {/* <div className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground rounded-full h-8 w-8 flex items-center justify-center border-2 border-background">
                   <Flame className="h-4 w-4" />
                   <span className="text-xs font-bold">{user.streak}</span>
-                </div>
+                </div> */}
               </div>
               <div>
                 <h1 className="text-2xl font-bold">{user.name}</h1>
                 <p className="text-muted-foreground text-sm">
-                  Joined {user.joinDate}
+                  Joined {user.createdAt?.toLocaleDateString()}
                 </p>
                 <div className="flex items-center gap-2 mt-1">
-                  <Badge
+                  {/* <Badge
                     variant="outline"
                     className="bg-primary/10 text-primary"
                   >
@@ -143,7 +137,7 @@ export default function UserDashboard({
                   >
                     <GraduationCap className="h-3 w-3 mr-1" />
                     {user.level}
-                  </Badge>
+                  </Badge> */}
                 </div>
               </div>
             </div>
@@ -216,13 +210,13 @@ export default function UserDashboard({
             >
               {/* Quick stats */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <StatisticsCard
+                {/* <StatisticsCard
                   title="Daily Streak"
                   value={user.streak}
                   description="days in a row"
                   icon={<Flame className="h-5 w-5 text-orange-500" />}
                   trend={+2}
-                />
+                /> */}
                 <StatisticsCard
                   title="Words Learned"
                   value={statistics.wordsLearned}

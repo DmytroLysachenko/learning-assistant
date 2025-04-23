@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 const LoginPage = () => {
   return (
-    <div className="container flex min-h-screen w-screen flex-col items-center justify-center p-4">
+    <div className="flex min-h-screen w-screen flex-col items-center justify-center p-4">
       <div className="mx-auto grid w-full max-w-[1000px] grid-cols-1 overflow-hidden rounded-2xl border shadow-xl md:grid-cols-2">
         <div className="flex items-center justify-center p-6 animate-fade-in">
           <AuthForm type="login" />

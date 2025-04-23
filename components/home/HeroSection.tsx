@@ -39,10 +39,10 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="relative overflow-hidden py-20 md:py-32">
+    <section className=" relative overflow-hidden py-20 md:py-32">
       <AnimatedGradient />
 
-      <div className="relative z-10">
+      <div className=" container mx-auto px-5 relative z-10">
         <motion.div
           ref={ref}
           variants={containerVariants}
@@ -138,11 +138,11 @@ const HeroSection = () => {
               </div>
             </div>
             <Image
-              src="/placeholder.svg?height=600&width=600"
+              src="/images/hero-image.jpg"
               alt="Language learning illustration"
               width={600}
               height={600}
-              className="relative z-10 rounded-lg object-cover"
+              className="relative -z-1 rounded-lg object-cover"
               priority
             />
           </motion.div>
