@@ -10,12 +10,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Database, FileText, Loader2, RefreshCw, X } from "lucide-react";
+import {
+  Database,
+  FileText,
+  Loader2,
+  RefreshCw,
+  X,
+  CheckCircle,
+} from "lucide-react";
+import { OperationStatus } from "@/types";
 
 interface StatusCardProps {
-  generating: boolean;
-  isRemovingDuplicates: boolean;
-  isRemovingUntranslated: boolean;
+  operationStatus: OperationStatus;
 }
 
 const StatusBadge = ({
@@ -40,11 +46,15 @@ const StatusBadge = ({
   </Badge>
 );
 
-const StatusCard = ({
-  generating,
-  isRemovingDuplicates,
-  isRemovingUntranslated,
-}: StatusCardProps) => {
+const StatusCard = ({ operationStatus }: StatusCardProps) => {
+  const {
+    isGeneratingByTopic,
+    isGeneratingByAlphabet,
+    isRemovingDuplicates,
+    isRemovingUntranslated,
+    isValidating,
+  } = operationStatus;
+
   return (
     <Card>
       <CardHeader className="pb-2">
@@ -57,17 +67,17 @@ const StatusCard = ({
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium">Operations</span>
+            <span className="text-sm font-medium">Generation</span>
             <div className="flex flex-wrap gap-2">
               <StatusBadge
-                active={generating}
+                active={isGeneratingByTopic}
                 icon={<FileText className="h-3 w-3" />}
-                label="Word Generation"
+                label="By Topic"
               />
               <StatusBadge
-                active={isRemovingDuplicates}
-                icon={<RefreshCw className="h-3 w-3" />}
-                label="Duplicate Removal"
+                active={isGeneratingByAlphabet}
+                icon={<FileText className="h-3 w-3" />}
+                label="By Alphabet"
               />
             </div>
           </div>
@@ -76,10 +86,26 @@ const StatusCard = ({
             <span className="text-sm font-medium">Maintenance</span>
             <div className="flex flex-wrap gap-2">
               <StatusBadge
+                active={isRemovingDuplicates}
+                icon={<RefreshCw className="h-3 w-3" />}
+                label="Duplicate Removal"
+              />
+              <StatusBadge
                 active={isRemovingUntranslated}
                 icon={<X className="h-3 w-3" />}
                 label="Untranslated Removal"
                 destructive
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <span className="text-sm font-medium">Validation</span>
+            <div className="flex flex-wrap gap-2">
+              <StatusBadge
+                active={isValidating}
+                icon={<CheckCircle className="h-3 w-3" />}
+                label="Vocabulary Validation"
               />
             </div>
           </div>

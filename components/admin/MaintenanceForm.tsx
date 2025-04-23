@@ -10,23 +10,37 @@ import {
 } from "@/components/ui/card";
 import { Database, Loader2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import ConfirmationDialog from "./ConfirmationDialog";
 
-interface MaintenanceActionsProps {
+import CustomSelect from "@/components/CustomSelect";
+
+import ConfirmationDialog from "./ConfirmationDialog";
+import { LanguageOption } from "@/types";
+
+// Language options
+const LANGUAGE_OPTIONS: LanguageOption[] = [
+  { value: "pl", label: "Polish" },
+  { value: "ru", label: "Russian" },
+];
+
+interface MaintenanceFormProps {
   isRemovingDuplicates: boolean;
   isRemovingUntranslated: boolean;
-  generating: boolean;
+  selectedLanguage: "pl" | "ru";
+  setSelectedLanguage: (language: "pl" | "ru") => void;
   onRemoveDuplicates: () => Promise<void>;
   onRemoveUntranslated: () => Promise<void>;
 }
 
-const MaintenanceActions = ({
+const MaintenanceForm = ({
   isRemovingDuplicates,
   isRemovingUntranslated,
-  generating,
+  selectedLanguage,
+  setSelectedLanguage,
   onRemoveDuplicates,
   onRemoveUntranslated,
-}: MaintenanceActionsProps) => {
+}: MaintenanceFormProps) => {
+  const isAnyOperationRunning = isRemovingDuplicates || isRemovingUntranslated;
+
   return (
     <Card>
       <CardHeader>
@@ -40,10 +54,28 @@ const MaintenanceActions = ({
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
+          <h3 className="text-sm font-medium">Language Selection</h3>
+          <div className="w-full max-w-xs">
+            <CustomSelect
+              options={LANGUAGE_OPTIONS}
+              currentValue={selectedLanguage}
+              isDisabled={isAnyOperationRunning}
+              handleValueChange={(value) =>
+                setSelectedLanguage(value as "pl" | "ru")
+              }
+              placeholder="Select language"
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              Select the language for maintenance operations
+            </p>
+          </div>
+        </div>
+
+        <div className="space-y-2">
           <h3 className="text-sm font-medium">Regular Maintenance</h3>
           <Button
             onClick={onRemoveDuplicates}
-            disabled={isRemovingDuplicates || generating}
+            disabled={isAnyOperationRunning}
             variant="outline"
             className="w-full"
           >
@@ -53,7 +85,7 @@ const MaintenanceActions = ({
                 Removing Duplicates...
               </>
             ) : (
-              "Remove Duplicates"
+              `Remove Duplicates (${selectedLanguage.toUpperCase()})`
             )}
           </Button>
         </div>
@@ -64,21 +96,24 @@ const MaintenanceActions = ({
           <h3 className="text-sm font-medium text-destructive">
             Destructive Actions
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3">
             <ConfirmationDialog
               title="Remove Untranslated Words"
               description="This action will permanently delete all untranslated words from the database. This cannot be undone."
               actionLabel="Confirm Removal"
               isLoading={isRemovingUntranslated}
               isDestructive={true}
+              showWarning={true}
+              warningTitle="Warning"
+              warningDescription="This will remove all words that don't have translations between Polish and Russian."
               onConfirm={onRemoveUntranslated}
               trigger={
                 <Button
                   variant="outline"
                   className="w-full border-destructive/30 hover:bg-destructive/10 hover:text-destructive"
-                  disabled={isRemovingUntranslated || generating}
+                  disabled={isAnyOperationRunning}
                 >
-                  Remove Untranslated
+                  Remove Untranslated Words
                 </Button>
               }
             />
@@ -89,4 +124,4 @@ const MaintenanceActions = ({
   );
 };
 
-export default MaintenanceActions;
+export default MaintenanceForm;

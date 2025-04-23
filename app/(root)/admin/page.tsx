@@ -1,124 +1,29 @@
 "use client";
 
 import { useState } from "react";
-import { toast } from "sonner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-
 import StatusCard from "@/components/admin/StatusCard";
-import WordGenerationForm from "@/components/admin/WordGenerationForm";
-import MaintenanceActions from "@/components/admin/MaintenanceActions";
-import { Button } from "@/components/ui/button";
-import { LanguageLevelsType, WordType } from "@/types";
-import { seedWordsByAlphabet, seedWordsByTopic } from "@/lib/actions/admin";
-import {
-  removeDuplicatesFromTable,
-  removeUntranslatedWordsFromTable,
-  validateVocabulary,
-} from "@/lib/actions/checks/vocabulary";
+
+import GenerationByTopic from "@/components/admin/GenerationByTopic";
+import GenerationByAlphabet from "@/components/admin/GenerationByAlphabet";
+import MaintenancePanel from "@/components/admin/MaintenancePanel";
+import ValidationPanel from "@/components/admin/ValidationPanel";
+import { OperationStatus } from "@/types";
 
 const AdminDashboard = () => {
-  // State for operations
-  const [generating, setGenerating] = useState(false);
-  const [isRemovingDuplicates, setIsRemovingDuplicates] = useState(false);
-  const [isRemovingUntranslated, setIsRemovingUntranslated] = useState(false);
+  // Centralized operation status state
+  const [operationStatus, setOperationStatus] = useState<OperationStatus>({
+    isGeneratingByTopic: false,
+    isGeneratingByAlphabet: false,
+    isRemovingDuplicates: false,
+    isRemovingUntranslated: false,
+    isValidating: false,
+  });
 
-  // State for form values
-  const [level, setLevel] = useState<LanguageLevelsType | "random">("random");
-  const [quantity, setQuantity] = useState(10);
-  const [batchSize, setBatchSize] = useState(50);
-  const [delay, setDelay] = useState(5000);
-  const [wordType, setWordType] = useState<WordType | "none">("none");
-
-  // Handler functions
-  const handleGenerateWords = async () => {
-    try {
-      setGenerating(true);
-
-      await seedWordsByTopic({
-        total: quantity,
-        batchSize,
-        wordType: wordType === "none" ? undefined : wordType,
-        delayMs: delay,
-        level: level === "random" ? undefined : level,
-      });
-
-      await removeDuplicatesFromTable("pl");
-      await removeDuplicatesFromTable("ru");
-
-      toast.success("Words generated successfully", {
-        description: `Added ${quantity} words at level ${level} and removed duplicates.`,
-      });
-    } catch (error) {
-      toast.error("Failed to generate words", {
-        description:
-          error instanceof Error ? error.message : "An unknown error occurred",
-      });
-    } finally {
-      setGenerating(false);
-    }
-  };
-
-  const handleGenerateAlphabeticallyWords = async () => {
-    setGenerating(true);
-
-    const { success } = await seedWordsByAlphabet({
-      batchSize,
-      wordType: wordType === "none" ? undefined : wordType,
-      delayMs: delay,
-    });
-
-    if (!success) {
-      toast.error("Failed to generate words");
-    }
-
-    toast.success("Words generated successfully", {
-      description: `Added ${quantity} words at level ${level} and removed duplicates.`,
-    });
-
-    setGenerating(false);
-  };
-
-  const handleRemoveDuplicates = async () => {
-    try {
-      setIsRemovingDuplicates(true);
-
-      await removeDuplicatesFromTable("pl");
-      await removeDuplicatesFromTable("ru");
-
-      toast.success("Duplicates removed successfully");
-    } catch (error) {
-      toast.error("Failed to remove duplicates", {
-        description:
-          error instanceof Error ? error.message : "An unknown error occurred",
-      });
-    } finally {
-      setIsRemovingDuplicates(false);
-    }
-  };
-
-  const handleRemoveUntranslated = async () => {
-    try {
-      setIsRemovingUntranslated(true);
-
-      await removeUntranslatedWordsFromTable("pl", "ru");
-
-      toast.success("Untranslated words removed successfully");
-    } catch (error) {
-      toast.error("Failed to remove untranslated words", {
-        description:
-          error instanceof Error ? error.message : "An unknown error occurred",
-      });
-    } finally {
-      setIsRemovingUntranslated(false);
-    }
-  };
-
-  const handleValidateVocabulary = async () => {
-    try {
-      validateVocabulary("pl", "particle");
-    } catch (error) {
-      console.log(error);
-    }
+  // Update operation status helper
+  const updateStatus = (key: keyof OperationStatus, value: boolean) => {
+    setOperationStatus((prev) => ({ ...prev, [key]: value }));
   };
 
   return (
@@ -133,43 +38,92 @@ const AdminDashboard = () => {
         </div>
 
         {/* Status Card */}
-        <StatusCard
-          generating={generating}
-          isRemovingDuplicates={isRemovingDuplicates}
-          isRemovingUntranslated={isRemovingUntranslated}
-        />
-        <Button onClick={handleGenerateAlphabeticallyWords}>
-          Alphabetical Generation!
-        </Button>
+        <StatusCard operationStatus={operationStatus} />
 
-        <Button onClick={handleValidateVocabulary}>Start validation</Button>
+        {/* Main Tabs */}
+        <Tabs
+          defaultValue="generation"
+          className="w-full"
+        >
+          <TabsList className="grid grid-cols-2 w-full max-w-md mb-4">
+            <TabsTrigger value="generation">Word Generation</TabsTrigger>
+            <TabsTrigger value="maintenance">
+              Maintenance & Validation
+            </TabsTrigger>
+          </TabsList>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Word Generation Form */}
-          <WordGenerationForm
-            generating={generating}
-            level={level}
-            quantity={quantity}
-            batchSize={batchSize}
-            delay={delay}
-            wordType={wordType}
-            setLevel={setLevel}
-            setQuantity={setQuantity}
-            setBatchSize={setBatchSize}
-            setDelay={setDelay}
-            setWordType={setWordType}
-            onGenerate={handleGenerateWords}
-          />
+          {/* Generation Tab */}
+          <TabsContent value="generation">
+            <Tabs
+              defaultValue="by-topic"
+              className="w-full"
+            >
+              <TabsList className="mb-4">
+                <TabsTrigger value="by-topic">Generate by Topic</TabsTrigger>
+                <TabsTrigger value="by-alphabet">
+                  Generate by Alphabet
+                </TabsTrigger>
+              </TabsList>
 
-          {/* Maintenance Actions */}
-          <MaintenanceActions
-            isRemovingDuplicates={isRemovingDuplicates}
-            isRemovingUntranslated={isRemovingUntranslated}
-            generating={generating}
-            onRemoveDuplicates={handleRemoveDuplicates}
-            onRemoveUntranslated={handleRemoveUntranslated}
-          />
-        </div>
+              <TabsContent value="by-topic">
+                <GenerationByTopic
+                  isGenerating={operationStatus.isGeneratingByTopic}
+                  setIsGenerating={(value) =>
+                    updateStatus("isGeneratingByTopic", value)
+                  }
+                />
+              </TabsContent>
+
+              <TabsContent value="by-alphabet">
+                <GenerationByAlphabet
+                  isGenerating={operationStatus.isGeneratingByAlphabet}
+                  setIsGenerating={(value) =>
+                    updateStatus("isGeneratingByAlphabet", value)
+                  }
+                />
+              </TabsContent>
+            </Tabs>
+          </TabsContent>
+
+          {/* Maintenance Tab */}
+          <TabsContent value="maintenance">
+            <Tabs
+              defaultValue="maintenance-actions"
+              className="w-full"
+            >
+              <TabsList className="mb-4">
+                <TabsTrigger value="maintenance-actions">
+                  Maintenance
+                </TabsTrigger>
+                <TabsTrigger value="validation-actions">Validation</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="maintenance-actions">
+                <MaintenancePanel
+                  isRemovingDuplicates={operationStatus.isRemovingDuplicates}
+                  isRemovingUntranslated={
+                    operationStatus.isRemovingUntranslated
+                  }
+                  setIsRemovingDuplicates={(value) =>
+                    updateStatus("isRemovingDuplicates", value)
+                  }
+                  setIsRemovingUntranslated={(value) =>
+                    updateStatus("isRemovingUntranslated", value)
+                  }
+                />
+              </TabsContent>
+
+              <TabsContent value="validation-actions">
+                <ValidationPanel
+                  isValidating={operationStatus.isValidating}
+                  setIsValidating={(value) =>
+                    updateStatus("isValidating", value)
+                  }
+                />
+              </TabsContent>
+            </Tabs>
+          </TabsContent>
+        </Tabs>
       </div>
     </main>
   );

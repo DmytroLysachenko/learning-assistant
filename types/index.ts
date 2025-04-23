@@ -23,3 +23,16 @@ export type ShortWordEntry = {
   id: string;
   word: string;
 };
+
+export interface LanguageOption {
+  value: LanguageCodeType;
+  label: string;
+}
+
+export interface OperationStatus {
+  isGeneratingByTopic: boolean;
+  isGeneratingByAlphabet: boolean;
+  isRemovingDuplicates: boolean;
+  isRemovingUntranslated: boolean;
+  isValidating: boolean;
+}

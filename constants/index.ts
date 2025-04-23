@@ -239,26 +239,6 @@ export const WORD_TYPES_PROMPTS: Record<
   },
 } as const;
 
-export const LEVEL_OPTIONS = [
-  { value: "random", label: "Random" },
-  { value: "A0", label: "A0" },
-  { value: "A1", label: "A1" },
-  { value: "A2", label: "A2" },
-  { value: "B1", label: "B1" },
-  { value: "B2", label: "B2" },
-  { value: "C1", label: "C1" },
-  { value: "C2", label: "C2" },
-];
-
-export const WORDS_TYPES_OPTIONS = [
-  { value: "none", label: "Any type" },
-  { value: "noun", label: "Noun" },
-  { value: "verb", label: "Verb" },
-  { value: "adjective", label: "Adjective" },
-  { value: "adverb", label: "Adverb" },
-  { value: "numeral", label: "Numeral" },
-];
-
 export const ALPHABETS = {
   pl: [
     "a",
@@ -332,7 +312,7 @@ export const ALPHABETS = {
 export const vocabTables = {
   pl: plVocabulary,
   ru: ruVocabulary,
-} as const;
+};
 
 export const vocabTablesNames = {
   pl: "pl_vocabulary",
