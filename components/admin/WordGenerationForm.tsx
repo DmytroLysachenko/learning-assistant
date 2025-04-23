@@ -23,12 +23,12 @@ interface WordGenerationFormProps {
   quantity: number;
   batchSize: number;
   delay: number;
-  wordType: WordType;
+  wordType: WordType | "none";
   setLevel: (level: LanguageLevelsType | "random") => void;
   setQuantity: (quantity: number) => void;
   setBatchSize: (batchSize: number) => void;
   setDelay: (delay: number) => void;
-  setWordType: (wordType: WordType) => void;
+  setWordType: (wordType: WordType | "none") => void;
   onGenerate: (isRandomLevel?: boolean) => Promise<void>;
 }
 

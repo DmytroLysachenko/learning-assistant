@@ -1,5 +1,6 @@
 import { plVocabulary, ruVocabulary } from "@/db/schema";
-import { LanguageLevelsType } from "@/types";
+import { LanguageWordType } from "@/db/types";
+import { LanguageCodeType, LanguageLevelsType, WordType } from "@/types";
 
 export const WORDS_CATEGORIES = [
   "Greetings",
@@ -161,21 +162,71 @@ export const WORDS_LANGUAGE_LEVELS: LanguageLevelsType[] = [
   "C2",
 ];
 
-export const WORD_TYPES_PL_PROMPTS = {
-  noun: "- Words should be 'rzeczowniki' (nouns) in their singular and 'mianownik' (nominative) forms.",
-  verb: "- Words should be 'czasowniki' (verbs) in the 'bezokolicznik' (infinitive) form.",
-  adjective:
-    "- Words should be 'przymiotniki' (adjectives) in their singular masculine 'mianownik' (nominative) form.",
-  adverb:
-    "- Words should be 'przysłówki' (adverbs) in their base, non-comparative form.",
-  numeral:
-    "- Words should be 'liczebniki' (numerals), specifically cardinal numbers in their basic form.",
-  pronouns:
-    "- Words should be 'zaimki' (pronouns), such as personal, possessive, or demonstrative pronouns in nominative case.",
-  prepositions:
-    "- Words should be 'przyimki' (prepositions) commonly used in modern Polish.",
-  conjunctions:
-    "- Words should be 'spójniki' (conjunctions) used to connect clauses or sentences.",
+export const WORD_TYPES: Record<
+  LanguageCodeType,
+  Record<WordType, LanguageWordType[LanguageCodeType]>
+> = {
+  pl: {
+    noun: "rzeczownik",
+    verb: "czasownik",
+    adjective: "przymiotnik",
+    adverb: "przysłówek",
+    numeral: "liczebnik",
+    pronoun: "zaimek",
+    preposition: "przyimek",
+    conjunction: "spójnik",
+    particle: "partykuła",
+  },
+  ru: {
+    noun: "существительное",
+    verb: "глагол",
+    adjective: "прилагательное",
+    adverb: "наречие",
+    numeral: "числительное",
+    pronoun: "местоимение",
+    preposition: "предлог",
+    conjunction: "союз",
+    particle: "частица",
+  },
+};
+
+export const WORD_TYPES_PROMPTS: Record<
+  LanguageCodeType,
+  Record<WordType, string>
+> = {
+  pl: {
+    noun: "- Słowa powinny być 'rzeczownikami' w liczbie pojedynczej i w 'mianowniku'.",
+    verb: "- Słowa powinny być 'czasownikami' w formie podstawowej (bezokolicznik).",
+    adjective:
+      "- Słowa powinny być 'przymiotnikami' w rodzaju męskim, liczbie pojedynczej i w 'mianowniku'.",
+    adverb:
+      "- Słowa powinny być 'przysłówkami' w podstawowej, nieodmiennej formie.",
+    numeral:
+      "- Słowa powinny być 'liczebnikami', najlepiej głównymi, w formie podstawowej.",
+    pronoun:
+      "- Słowa powinny być 'zaimkami' — osobowymi, dzierżawczymi lub wskazującymi w mianowniku.",
+    preposition:
+      "- Słowa powinny być 'przyimkami' powszechnie używanymi we współczesnym języku polskim.",
+    conjunction:
+      "- Słowa powinny być 'spójnikami', które łączą zdania lub ich części.",
+    particle: "- Słowa powinny być 'partykulami'.",
+  },
+  ru: {
+    noun: "- Слова должны быть 'существительными' в единственном числе и в 'именительном падеже'.",
+    verb: "- Слова должны быть 'глаголами' в начальной форме (инфинитив).",
+    adjective:
+      "- Слова должны быть 'прилагательными' в мужском роде, единственном числе и в 'именительном падеже'.",
+    adverb: "- Слова должны быть 'наречиями' в базовой, несклоняемой форме.",
+    numeral:
+      "- Слова должны быть 'числительными', предпочтительно количественными в их начальной форме.",
+    pronoun:
+      "- Слова должны быть 'местоимениями' — личными, притяжательными или указательными в именительном падеже.",
+    preposition:
+      "- Слова должны быть 'предлогами', часто используемыми в современном русском языке.",
+    conjunction:
+      "- Слова должны быть 'союзами', которые соединяют предложения или части предложений.",
+    particle: "- Слова должны быть 'частицами'.",
+  },
 } as const;
 
 export const LEVEL_OPTIONS = [

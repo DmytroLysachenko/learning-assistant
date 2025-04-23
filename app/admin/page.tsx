@@ -26,7 +26,7 @@ const AdminDashboard = () => {
   const [quantity, setQuantity] = useState(10);
   const [batchSize, setBatchSize] = useState(50);
   const [delay, setDelay] = useState(5000);
-  const [wordType, setWordType] = useState<WordType>("none");
+  const [wordType, setWordType] = useState<WordType | "none">("none");
 
   // Handler functions
   const handleGenerateWords = async () => {

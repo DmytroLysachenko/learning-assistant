@@ -5,7 +5,7 @@ import { db } from "@/db";
 import {
   ALPHABETS,
   vocabTables,
-  WORD_TYPES_PL_PROMPTS,
+  WORD_TYPES_PROMPTS,
   WORDS_LANGUAGE_LEVELS,
 } from "@/constants";
 import { getShuffledLetterCombos, sleep } from "../utils";
@@ -13,7 +13,7 @@ import { generateVocabularyByLetter } from "../ai/generators/vocabularyByAlphabe
 import { generateTranslationWords } from "../ai/generators/translator";
 
 import { generateTranslationConnections } from "../ai/generators/connectionMapper";
-import { LanguageCodeType } from "@/types";
+import { LanguageCodeType, WordType } from "@/types";
 import { generateVocabularyByTopic } from "../ai/generators/vocabularyByTopic";
 import { removeDuplicatesFromTable } from "./checks/vocabulary";
 import { ilike } from "drizzle-orm";
@@ -28,7 +28,7 @@ interface SeedWordsOptions {
   randomizeType?: boolean;
   randomizeCategory?: boolean;
   level?: WordLevel;
-  wordType?: keyof typeof WORD_TYPES_PL_PROMPTS;
+  wordType?: WordType;
   log?: boolean;
   language?: LanguageCodeType;
   translationLanguage?: LanguageCodeType;
@@ -63,9 +63,9 @@ export const seedWordsByTopic = async ({
       ];
 
     const currentType = randomizeType
-      ? (Object.keys(WORD_TYPES_PL_PROMPTS)[
-          Math.floor(Math.random() * Object.keys(WORD_TYPES_PL_PROMPTS).length)
-        ] as keyof typeof WORD_TYPES_PL_PROMPTS)
+      ? (Object.keys(WORD_TYPES_PROMPTS[language])[
+          Math.floor(Math.random() * Object.keys(WORD_TYPES_PROMPTS).length)
+        ] as WordType)
       : wordType;
 
     try {

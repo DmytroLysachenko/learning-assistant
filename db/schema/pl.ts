@@ -20,6 +20,7 @@ export const polishWordTypeEnum = pgEnum("polish_word_type", [
   "przysłówek", // adverb
   "przyimek", // preposition
   "partykuła", // particle
+  "spójnik", // conjunction
 ]);
 
 // Polish vocabulary table

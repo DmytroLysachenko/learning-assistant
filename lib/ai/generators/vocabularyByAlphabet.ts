@@ -2,11 +2,10 @@ import { wordSchemas } from "@/lib/validations/ai";
 
 import { generateObject } from "ai";
 import { modelFlash as model } from "../aiClient";
-import { z } from "zod";
 
 import { generateVocabularyByLetterPrompt } from "../prompts/promptBuilders";
-import { LanguageCodeType } from "@/types";
-import { WORD_TYPES_PL_PROMPTS } from "@/constants";
+import { LanguageCodeType, WordType } from "@/types";
+import { z } from "zod";
 
 export const generateVocabularyByLetter = async ({
   lang,
@@ -18,7 +17,7 @@ export const generateVocabularyByLetter = async ({
   lang: LanguageCodeType;
   letter: string;
   quantity: number;
-  wordType?: keyof typeof WORD_TYPES_PL_PROMPTS;
+  wordType?: WordType;
   existingWords?: string[];
 }) => {
   try {

@@ -1,5 +1,6 @@
-import { WORD_TYPES_PL_PROMPTS, WORDS_CATEGORIES } from "@/constants";
-import { LanguageCodeType, ShortWordType } from "@/types";
+import { WORD_TYPES_PROMPTS, WORDS_CATEGORIES } from "@/constants";
+import { GetWordType } from "@/db/types";
+import { LanguageCodeType, ShortWordEntry, WordType } from "@/types";
 
 export const generateVocabularyByTopicPrompt = ({
   lang,
@@ -10,7 +11,7 @@ export const generateVocabularyByTopicPrompt = ({
   lang: LanguageCodeType;
   quantity: number;
   level: string;
-  wordType?: keyof typeof WORD_TYPES_PL_PROMPTS;
+  wordType?: WordType;
 }) => {
   const system = `You are a linguistic AI generating educational vocabulary for a language learning app.`;
 
@@ -23,7 +24,7 @@ Generate ${quantity} unique ${lang.toUpperCase()} vocabulary words for CEFR leve
 Guidelines:
 - If applicable, words must be relevant to the topic: "${randomCategory}".
 - Only include relevant, translatable vocabulary — no slang, abbreviations, or proper names.
-${wordType ? WORD_TYPES_PL_PROMPTS[wordType] : ""}
+${wordType ? WORD_TYPES_PROMPTS[lang][wordType] : ""}
 `;
 
   return { system, prompt };
@@ -39,7 +40,7 @@ export const generateVocabularyByLetterPrompt = ({
   lang: LanguageCodeType;
   letter: string;
   quantity: number;
-  wordType?: keyof typeof WORD_TYPES_PL_PROMPTS;
+  wordType?: WordType;
   existingWords: string[];
 }) => {
   const system = `You are a linguistic AI generating useful vocabulary for language learners.`;
@@ -57,7 +58,7 @@ Guidelines:
 - Provide good, short examples for word use in ${lang.toUpperCase()} language.
 - Examples and comments should be written only in ${lang.toUpperCase()} language.
 - Avoid dublicate words.
-${wordType ? WORD_TYPES_PL_PROMPTS[wordType] : ""}
+${wordType ? WORD_TYPES_PROMPTS[lang][wordType] : ""}
 ${exclusions}
 `;
 
@@ -87,8 +88,8 @@ ${words.map((w) => w.word).join(", ")}
 };
 
 export const generateTranslationConnectionsPrompt = (
-  primaryLanguageWords: ShortWordType[],
-  translationLanguageWords: ShortWordType[]
+  primaryLanguageWords: ShortWordEntry[],
+  translationLanguageWords: ShortWordEntry[]
 ) => {
   const system = `You are an AI linking tool for connecting translations between languages.`;
 
@@ -112,6 +113,40 @@ Translation Language Words:\n${JSON.stringify(
     null,
     2
   )}
+`;
+
+  return { system, prompt };
+};
+
+export const validateVocabularyWordsPrompt = ({
+  lang,
+  words,
+  wordType,
+}: {
+  lang: LanguageCodeType;
+  words: GetWordType[typeof lang][];
+  wordType: WordType;
+}) => {
+  const system = `You are a ${lang.toUpperCase()} language linguist validating vocabulary for a language learning application.`;
+
+  const wordTypeInstructions = WORD_TYPES_PROMPTS[lang]?.[wordType] ?? "";
+
+  const prompt = `
+You are given a list of ${lang.toUpperCase()} vocabulary words used in a language learning application.
+
+Your task is to **validate and correct** each word entry using the following rules:
+
+1. Ensure the **word** is in its correct, base dictionary form.
+2. Validate the **grammatical type** is correct and matches the specified type.
+3. Ensure the **example sentence** is correct, natural, and in proper ${lang.toUpperCase()} language.
+4. Ensure the **comment**, if present, is helpful, relevant, and also written in ${lang.toUpperCase()}.
+5. The example must clearly illustrate **how the word is used** in context.
+6. Return the corrected entries in the same structure.
+
+${wordTypeInstructions}
+
+Proceed to validate the following entries:
+${JSON.stringify(words, null, 2)}
 `;
 
   return { system, prompt };

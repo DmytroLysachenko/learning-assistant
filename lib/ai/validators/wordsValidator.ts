@@ -1,30 +1,28 @@
-import { wordSchemas } from "@/lib/validations/ai";
-
-import { generateObject } from "ai";
-import { z } from "zod";
-import { modelFlash as model } from "../aiClient";
-import { generateVocabularyByTopicPrompt } from "../prompts/promptBuilders";
 import { LanguageCodeType, WordType } from "@/types";
 
-export const generateVocabularyByTopic = async ({
+import { GetWordType } from "@/db/types";
+import { wordSchemas } from "@/lib/validations/ai";
+import { z } from "zod";
+import { generateObject } from "ai";
+import { modelFlash as model } from "../aiClient";
+import { validateVocabularyWordsPrompt } from "../prompts/promptBuilders";
+
+export const validateVocabularyWords = async ({
   lang,
-  quantity,
-  level,
+  words = [],
   wordType,
 }: {
   lang: LanguageCodeType;
-  quantity: number;
-  level: string;
-  wordType?: WordType;
+  words: GetWordType[typeof lang][];
+  wordType: WordType;
 }) => {
   try {
     const schema = wordSchemas[lang];
     type WordType = z.infer<typeof schema>;
 
-    const { system, prompt } = generateVocabularyByTopicPrompt({
+    const { system, prompt } = validateVocabularyWordsPrompt({
       lang,
-      quantity,
-      level,
+      words,
       wordType,
     });
 

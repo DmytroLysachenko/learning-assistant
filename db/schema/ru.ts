@@ -20,6 +20,7 @@ export const russianWordTypeEnum = pgEnum("russian_word_type", [
   "наречие", // adverb
   "предлог", // preposition
   "частица", // particle
+  "союз", // conjunction
 ]);
 
 // Russian vocabulary table

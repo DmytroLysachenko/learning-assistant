@@ -10,16 +10,16 @@ export type WordType =
   | "adjective"
   | "adverb"
   | "numeral"
-  | "pronouns"
-  | "prepositions"
-  | "conjunctions"
-  | "none";
+  | "pronoun"
+  | "preposition"
+  | "conjunction"
+  | "particle";
 
 export type LanguageCodeType = keyof typeof vocabTables;
 
 export type TranslationType = z.infer<typeof aiTranslationSchema>;
 
-export type ShortWordType = {
+export type ShortWordEntry = {
   id: string;
   word: string;
 };

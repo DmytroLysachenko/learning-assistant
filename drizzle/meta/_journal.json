@@ -29,6 +29,13 @@
       "when": 1745323332559,
       "tag": "0003_breezy_paladin",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1745414399377,
+      "tag": "0004_absurd_chimera",
+      "breakpoints": true
     }
   ]
 }
