@@ -1,7 +1,7 @@
 import { LanguageCodeType, WordType } from "@/types";
 
 import { GetWordType } from "@/db/types";
-import { wordSchemas } from "@/lib/validations/ai";
+import { wordsValidationSchemas } from "@/lib/validations/ai";
 import { z } from "zod";
 import { generateObject } from "ai";
 import { modelFlash as model } from "../aiClient";
@@ -17,7 +17,7 @@ export const validateVocabularyWords = async ({
   wordType: WordType;
 }) => {
   try {
-    const schema = wordSchemas[lang];
+    const schema = wordsValidationSchemas[lang];
     type WordType = z.infer<typeof schema>;
 
     const { system, prompt } = validateVocabularyWordsPrompt({

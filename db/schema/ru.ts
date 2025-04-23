@@ -31,6 +31,7 @@ export const ruVocabulary = pgTable("ru_vocabulary", {
   type: russianWordTypeEnum("type").notNull(),
   difficulty: languageLevelEnum("difficulty").default("A1"),
   createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
   comment: text("comment"),
 });
 

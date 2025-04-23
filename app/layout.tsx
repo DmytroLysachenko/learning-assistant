@@ -3,12 +3,6 @@ import "./globals.css";
 import localFont from "next/font/local";
 import { Toaster } from "@/components/ui/sonner";
 
-// import { db } from "@/db";
-// import { plVocabulary } from "@/db/schema";
-
-// import { WORD_TYPES } from "@/constants";
-// import { eq } from "drizzle-orm";
-
 const outfit = localFont({
   src: [
     {
@@ -98,15 +92,6 @@ const RootLayout = async ({
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
-  // const res = WORD_TYPES["pl"].noun;
-
-  // const words = await db
-  //   .select()
-  //   .from(plVocabulary)
-  //   .limit(5)
-  //   .where(eq(plVocabulary.type, WORD_TYPES["pl"].noun));
-  // // const result = await validateVocabularyWords({ lang: "pl", words });
-
   return (
     <html
       lang="en"

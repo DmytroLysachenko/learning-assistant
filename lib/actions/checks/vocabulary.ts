@@ -1,10 +1,13 @@
 "use server";
 
-import { vocabTables, vocabTablesNames } from "@/constants";
+import { vocabTables, vocabTablesNames, WORD_TYPES } from "@/constants";
 import { db } from "@/db";
-import { translationTables } from "@/db/schema";
-import { LanguageCodeType } from "@/types";
-import { inArray } from "drizzle-orm";
+import { translationTables, vocabTableMap } from "@/db/schema";
+import { validateVocabularyWords } from "@/lib/ai/validators/wordsValidator";
+import { sleep } from "@/lib/utils";
+import { LanguageCodeType, WordType } from "@/types";
+import { eq, inArray } from "drizzle-orm";
+import { chunk } from "lodash";
 
 export const removeDuplicatesFromTable = async (table: LanguageCodeType) => {
   const tableName = vocabTablesNames[table];
@@ -108,76 +111,83 @@ export const removeUntranslatedWordsFromTable = async (
   }
 };
 
-// export const checkGeneratedDataQualityDynamic = async (
-//   langs: LanguageCodeType[],
-//   translationTables: TranslationTableMeta[]
-// ) => {
-//   const issues: string[] = [];
-//   const vocabMaps: Record<LanguageCodeType, Map<string, any>> = {} as any;
+export const validateVocabulary = async (
+  lang: LanguageCodeType,
+  wordType: WordType,
+  dryRun = false
+) => {
+  const table = vocabTableMap[lang];
+  const BATCH_SIZE = 5;
 
-//   for (const lang of langs) {
-//     const vocabTable = vocabTables[lang];
-//     const words = await db.select().from(vocabTable);
-//     vocabMaps[lang] = new Map(words.map((w) => [w.id, w]));
+  const allWords = await db
+    .select()
+    .from(table)
+    .where(eq(table.type, WORD_TYPES[lang][wordType]));
 
-//     for (const word of words) {
-//       if (!word.word || word.word.length < 2) {
-//         issues.push(
-//           `${lang.toUpperCase()}: Word "${word.word}" seems invalid.`
-//         );
-//       }
-//       if (!word.example || word.example.length < 4) {
-//         issues.push(
-//           `${lang.toUpperCase()}: Word "${
-//             word.word
-//           }" has a weak or missing example.`
-//         );
-//       }
-//     }
-//   }
+  console.log(
+    `🔍 Validating ${
+      allWords.length
+    } "${wordType}" words in ${lang.toUpperCase()}`
+  );
 
-//   for (const t of translationTables) {
-//     const links = await db.select().from(t.table);
+  const wordBatches = chunk(allWords, BATCH_SIZE);
 
-//     for (const link of links) {
-//       const word1 = vocabMaps[t.lang1].get(link.wordId1);
-//       const word2 = vocabMaps[t.lang2].get(link.wordId2);
+  for (const batch of wordBatches) {
+    const { data: validatedWords } = await validateVocabularyWords({
+      lang,
+      words: batch,
+      wordType,
+    });
 
-//       if (!word1) {
-//         issues.push(
-//           `Translation issue: Missing ${t.lang1} word for ID ${link.wordId1}`
-//         );
-//       }
-//       if (!word2) {
-//         issues.push(
-//           `Translation issue: Missing ${t.lang2} word for ID ${link.wordId2}`
-//         );
-//       }
+    if (!validatedWords) {
+      console.warn("⚠️ Validation failed or returned no results for batch.");
+      continue;
+    }
 
-//       if (word1?.word?.toLowerCase() === word2?.word?.toLowerCase()) {
-//         issues.push(
-//           `Translation warning: Identical word "${
-//             word1?.word
-//           }" in both ${t.lang1.toUpperCase()} and ${t.lang2.toUpperCase()}`
-//         );
-//       }
+    for (const validated of validatedWords) {
+      const original = batch.find((w) => w.id === validated.id);
 
-//       if (word1 && word2 && word1.difficulty !== word2.difficulty) {
-//         issues.push(
-//           `Difficulty mismatch between "${word1.word}" (${word1.difficulty}) and "${word2.word}" (${word2.difficulty})`
-//         );
-//       }
-//     }
-//   }
+      if (!original) continue;
 
-//   if (!issues.length) {
-//     console.log(
-//       "✅ All generated words and translations passed quality checks."
-//     );
-//   } else {
-//     console.warn("⚠️ Issues found in vocabulary/translations:");
-//     issues.forEach((issue) => console.warn("- " + issue));
-//   }
+      const normalizedOriginal = {
+        ...original,
+        comment: original.comment || "", // normalize null to empty string
+      };
+      const normalizedValidated = {
+        ...validated,
+        comment: validated.comment || "",
+      };
 
-//   return issues;
-// };
+      // Compare only mutable fields
+      const hasChanges =
+        normalizedOriginal.word !== normalizedValidated.word ||
+        normalizedOriginal.example !== normalizedValidated.example ||
+        normalizedOriginal.type !== normalizedValidated.type ||
+        normalizedOriginal.difficulty !== normalizedValidated.difficulty ||
+        normalizedOriginal.comment !== normalizedValidated.comment;
+
+      if (hasChanges) {
+        console.log(
+          `🔧 Word "${original.word}" (id: ${original.id}) will be updated.`,
+          normalizedOriginal,
+          normalizedValidated
+        );
+
+        if (!dryRun) {
+          await db
+            .update(table)
+            .set({
+              ...validated,
+              updatedAt: new Date(),
+              comment: validated.comment || null, // restore null if needed
+            })
+            .where(eq(table.id, validated.id));
+        }
+      }
+    }
+
+    await sleep(5000);
+  }
+
+  console.log(dryRun ? "🔎 Dry run complete." : "✅ Validation complete.");
+};

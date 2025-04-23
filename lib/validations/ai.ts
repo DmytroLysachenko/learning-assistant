@@ -10,6 +10,7 @@ export const difficultyEnum = z.enum([
   "C1",
   "C2",
 ]);
+
 export const polishTypeEnum = z.enum([
   "rzeczownik",
   "czasownik",
@@ -18,8 +19,10 @@ export const polishTypeEnum = z.enum([
   "zaimek",
   "przysłówek",
   "przyimek",
+  "spójnik",
   "partykuła",
 ]);
+
 export const russianTypeEnum = z.enum([
   "существительное",
   "глагол",
@@ -28,6 +31,7 @@ export const russianTypeEnum = z.enum([
   "местоимение",
   "наречие",
   "предлог",
+  "союз",
   "частица",
 ]);
 
@@ -52,17 +56,22 @@ const baseWordSchema = z.object({
   difficulty: difficultyEnum,
 });
 
-const aiPolishWordSchema = baseWordSchema.extend({
-  type: polishTypeEnum.describe("Word type in corresponding language"),
-});
-
-const aiRussianWordSchema = baseWordSchema.extend({
-  type: russianTypeEnum.describe("Word type in corresponding language"),
-});
-
 export const wordSchemas = {
-  pl: aiPolishWordSchema,
-  ru: aiRussianWordSchema,
+  pl: baseWordSchema.extend({
+    type: polishTypeEnum.describe("Word type in corresponding language"),
+  }),
+  ru: baseWordSchema.extend({
+    type: russianTypeEnum.describe("Word type in corresponding language"),
+  }),
+};
+
+export const wordsValidationSchemas = {
+  pl: wordSchemas.pl.extend({
+    id: z.string().describe("Original unchangable word id."),
+  }),
+  ru: wordSchemas.ru.extend({
+    id: z.string().describe("Original unchangable word id."),
+  }),
 };
 
 // === Translation Schema ===

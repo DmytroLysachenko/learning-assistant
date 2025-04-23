@@ -31,6 +31,7 @@ export const plVocabulary = pgTable("pl_vocabulary", {
   type: polishWordTypeEnum("type").notNull(),
   difficulty: languageLevelEnum("difficulty").default("A1"),
   createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
   comment: text("comment"),
 });
 

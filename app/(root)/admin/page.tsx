@@ -13,6 +13,7 @@ import { seedWordsByAlphabet, seedWordsByTopic } from "@/lib/actions/admin";
 import {
   removeDuplicatesFromTable,
   removeUntranslatedWordsFromTable,
+  validateVocabulary,
 } from "@/lib/actions/checks/vocabulary";
 
 const AdminDashboard = () => {
@@ -112,6 +113,14 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleValidateVocabulary = async () => {
+    try {
+      validateVocabulary("pl", "particle");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <main className="container mx-auto py-8 px-4">
       <div className="flex flex-col gap-6">
@@ -132,6 +141,8 @@ const AdminDashboard = () => {
         <Button onClick={handleGenerateAlphabeticallyWords}>
           Alphabetical Generation!
         </Button>
+
+        <Button onClick={handleValidateVocabulary}>Start validation</Button>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Word Generation Form */}

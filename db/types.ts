@@ -1,4 +1,5 @@
 // db/types.ts
+import { WordType } from "@/types";
 import * as schema from "./schema";
 import { InferSelectModel, InferInsertModel } from "drizzle-orm";
 
@@ -26,6 +27,6 @@ type PlWordType = (typeof schema.polishWordTypeEnum.enumValues)[number];
 type RuWordType = (typeof schema.russianWordTypeEnum.enumValues)[number];
 
 export type LanguageWordType = {
-  ru: RuWordType;
-  pl: PlWordType;
+  ru: Record<WordType, RuWordType>;
+  pl: Record<WordType, PlWordType>;
 };

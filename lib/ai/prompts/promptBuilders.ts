@@ -127,25 +127,26 @@ export const validateVocabularyWordsPrompt = ({
   words: GetWordType[typeof lang][];
   wordType: WordType;
 }) => {
-  const system = `You are a ${lang.toUpperCase()} language linguist validating vocabulary for a language learning application.`;
+  const system = `You are a professional ${lang.toUpperCase()} linguist verifying vocabulary data for a language learning app.`;
 
   const wordTypeInstructions = WORD_TYPES_PROMPTS[lang]?.[wordType] ?? "";
 
   const prompt = `
-You are given a list of ${lang.toUpperCase()} vocabulary words used in a language learning application.
+You are validating a list of ${lang.toUpperCase()} vocabulary entries.
 
-Your task is to **validate and correct** each word entry using the following rules:
-
-1. Ensure the **word** is in its correct, base dictionary form.
-2. Validate the **grammatical type** is correct and matches the specified type.
-3. Ensure the **example sentence** is correct, natural, and in proper ${lang.toUpperCase()} language.
-4. Ensure the **comment**, if present, is helpful, relevant, and also written in ${lang.toUpperCase()}.
-5. The example must clearly illustrate **how the word is used** in context.
-6. Return the corrected entries in the same structure.
+🔍 For each entry:
+- Ensure the **word** is in its correct base form (dictionary form).
+- Ensure the **type** is accurate. If the word does not match the required type, correct it.
+- Ensure the **difficulty level** reflects real-world frequency and learner familiarity (A0 = basic, C2 = highly advanced).
+- Ensure the **example sentence** is correct, natural, and demonstrates how the word is used in context.
+- Ensure the **comment** (if present) is helpful and written in proper ${lang.toUpperCase()}.
+- All content must be in ${lang.toUpperCase()} only.
 
 ${wordTypeInstructions}
 
-Proceed to validate the following entries:
+✏️ Correct all errors. Only return valid, corrected entries in the same format.
+
+Data to validate:
 ${JSON.stringify(words, null, 2)}
 `;
 
