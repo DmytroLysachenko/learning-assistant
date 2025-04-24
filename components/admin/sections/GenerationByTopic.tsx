@@ -20,7 +20,7 @@ import type { LanguageLevelsType, WordType } from "@/types";
 import { LEVEL_OPTIONS, WORDS_TYPES_OPTIONS } from "@/constants/ui";
 import { seedWordsByTopic } from "@/lib/actions/admin";
 import { removeDuplicatesFromTable } from "@/lib/actions/checks/vocabulary";
-import BatchAndDelayControls from "./BatchAndDelayControls";
+import BatchAndDelayControls from "../forms/BatchAndDelayControls";
 
 interface GenerationByTopicSectionProps {
   isGenerating: boolean;

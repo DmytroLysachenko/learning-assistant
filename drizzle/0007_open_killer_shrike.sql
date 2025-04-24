@@ -1,0 +1,1 @@
+ALTER TABLE "server_state" RENAME COLUMN "locked" TO "status";

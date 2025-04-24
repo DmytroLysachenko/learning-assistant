@@ -13,26 +13,11 @@ import { generateVocabularyByLetter } from "../ai/generators/vocabularyByAlphabe
 import { generateTranslationWords } from "../ai/generators/translator";
 
 import { generateTranslationConnections } from "../ai/generators/connectionMapper";
-import { LanguageCodeType, WordType } from "@/types";
+import { SeedWordsOptions, WordType } from "@/types";
 import { generateVocabularyByTopic } from "../ai/generators/vocabularyByTopic";
 import { removeDuplicatesFromTable } from "./checks/vocabulary";
 import { ilike } from "drizzle-orm";
 import { translationTables } from "@/db/schema";
-
-type WordLevel = "A0" | "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
-
-interface SeedWordsOptions {
-  total: number;
-  batchSize?: number;
-  delayMs?: number;
-  randomizeType?: boolean;
-  randomizeCategory?: boolean;
-  level?: WordLevel;
-  wordType?: WordType;
-  log?: boolean;
-  language?: LanguageCodeType;
-  translationLanguage?: LanguageCodeType;
-}
 
 export const seedWordsByTopic = async ({
   total,

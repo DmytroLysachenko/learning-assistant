@@ -43,6 +43,20 @@
       "when": 1745415147395,
       "tag": "0005_fast_klaw",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1745484714802,
+      "tag": "0006_thankful_bucky",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1745484805991,
+      "tag": "0007_open_killer_shrike",
+      "breakpoints": true
     }
   ]
 }

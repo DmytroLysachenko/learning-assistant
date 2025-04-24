@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { validateVocabulary } from "@/lib/actions/checks/vocabulary";
-import ValidationForm from "./ValidationForm";
+import ValidationForm from "../forms/ValidationForm";
 
 import type { WordType } from "@/types";
 

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import type { WordType } from "@/types";
 import { seedWordsByAlphabet } from "@/lib/actions/admin";
-import AlphabetGenerationForm from "./AlphabetGenerationForm";
+import AlphabetGenerationForm from "./forms/AlphabetGenerationForm";
 
 interface GenerationBaseProps {
   isGenerating: boolean;

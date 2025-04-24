@@ -13,7 +13,7 @@ import { Separator } from "@/components/ui/separator";
 
 import CustomSelect from "@/components/CustomSelect";
 
-import ConfirmationDialog from "./ConfirmationDialog";
+import ConfirmationDialog from "../ConfirmationDialog";
 import { LanguageOption } from "@/types";
 
 // Language options

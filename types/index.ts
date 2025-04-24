@@ -36,3 +36,16 @@ export interface OperationStatus {
   isRemovingUntranslated: boolean;
   isValidating: boolean;
 }
+
+export interface SeedWordsOptions {
+  total: number;
+  batchSize?: number;
+  delayMs?: number;
+  randomizeType?: boolean;
+  randomizeCategory?: boolean;
+  level?: LanguageLevelsType;
+  wordType?: WordType;
+  log?: boolean;
+  language?: LanguageCodeType;
+  translationLanguage?: LanguageCodeType;
+}

@@ -6,7 +6,7 @@ import {
   removeDuplicatesFromTable,
   removeUntranslatedWordsFromTable,
 } from "@/lib/actions/checks/vocabulary";
-import MaintenanceForm from "./MaintenanceForm";
+import MaintenanceForm from "../forms/MaintenanceForm";
 
 interface MaintenanceProps {
   isRemovingDuplicates: boolean;
