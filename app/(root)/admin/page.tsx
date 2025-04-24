@@ -6,10 +6,11 @@ import { Separator } from "@/components/ui/separator";
 import StatusCard from "@/components/admin/StatusCard";
 
 import GenerationByTopic from "@/components/admin/sections/GenerationByTopic";
-import GenerationByAlphabet from "@/components/admin/GenerationByAlphabet";
+
 import MaintenancePanel from "@/components/admin/sections/MaintenancePanel";
 import ValidationPanel from "@/components/admin/sections/ValidationPanel";
 import { OperationStatus } from "@/types";
+import GenerationByAlphabet from "@/components/admin/sections/GenerationByAlphabet";
 
 const AdminDashboard = () => {
   // Centralized operation status state

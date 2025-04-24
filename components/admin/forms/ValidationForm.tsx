@@ -1,27 +1,51 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { CheckCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CheckCircle, Loader2 } from "lucide-react";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import CustomSelect from "@/components/CustomSelect";
 
-import type { WordType } from "@/types";
+import type { LanguageCodeType, WordType } from "@/types";
 import { LANGUAGE_OPTIONS, WORDS_TYPES_OPTIONS } from "@/constants/ui";
 
-// Language options
+const enumValues = LANGUAGE_OPTIONS.map((option) => option.value) as [
+  string,
+  ...string[]
+];
+
+// Define the form schema with Zod
+const formSchema = z.object({
+  language: z.enum(enumValues, {
+    required_error: "Please select a language",
+  }),
+  wordType: z.string().refine((val) => val !== "none", {
+    message: "Please select a word type",
+  }),
+});
 
 interface ValidationFormProps {
   isValidating: boolean;
-  language: "pl" | "ru";
+  language: LanguageCodeType;
   wordType: WordType | "none";
-  setLanguage: (language: "pl" | "ru") => void;
+  setLanguage: (language: LanguageCodeType) => void;
   setWordType: (wordType: WordType | "none") => void;
   onValidate: () => Promise<void>;
 }
@@ -34,6 +58,25 @@ const ValidationForm = ({
   setWordType,
   onValidate,
 }: ValidationFormProps) => {
+  // Initialize the form
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      language,
+      wordType,
+    },
+  });
+
+  // Submit handler
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    // Update parent state with form values
+    setLanguage(values.language as LanguageCodeType);
+    setWordType(values.wordType as WordType | "none");
+
+    // Call the validate function
+    await onValidate();
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -45,61 +88,74 @@ const ValidationForm = ({
           Validate vocabulary entries for correctness and completeness
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label
-              htmlFor="language"
-              className="text-sm font-medium"
+      <CardContent>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-6"
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="language"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Language</FormLabel>
+                    <FormControl>
+                      <CustomSelect
+                        options={LANGUAGE_OPTIONS}
+                        currentValue={field.value}
+                        isDisabled={isValidating}
+                        handleValueChange={field.onChange}
+                        placeholder="Select language"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="wordType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Word Type</FormLabel>
+                    <FormControl>
+                      <CustomSelect
+                        options={WORDS_TYPES_OPTIONS}
+                        currentValue={field.value}
+                        isDisabled={isValidating}
+                        handleValueChange={field.onChange}
+                        placeholder="Select word type"
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Select a specific word type to validate
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <Button
+              type="submit"
+              disabled={isValidating}
+              className="w-full"
             >
-              Language
-            </label>
-            <CustomSelect
-              options={LANGUAGE_OPTIONS}
-              currentValue={language}
-              isDisabled={isValidating}
-              handleValueChange={(value) => setLanguage(value as "pl" | "ru")}
-              placeholder="Select language"
-            />
-          </div>
-          <div className="space-y-2">
-            <label
-              htmlFor="wordType"
-              className="text-sm font-medium"
-            >
-              Word Type
-            </label>
-            <CustomSelect
-              options={WORDS_TYPES_OPTIONS}
-              currentValue={wordType}
-              isDisabled={isValidating}
-              handleValueChange={(value) =>
-                setWordType(value as WordType | "none")
-              }
-              placeholder="Select word type"
-            />
-            <p className="text-xs text-muted-foreground mt-1">
-              Select a specific word type to validate
-            </p>
-          </div>
-        </div>
+              {isValidating ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Validating...
+                </>
+              ) : (
+                "Start Validation"
+              )}
+            </Button>
+          </form>
+        </Form>
       </CardContent>
-      <CardFooter>
-        <Button
-          onClick={onValidate}
-          disabled={isValidating || wordType === "none"}
-          className="w-full"
-        >
-          {isValidating ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Validating...
-            </>
-          ) : (
-            "Start Validation"
-          )}
-        </Button>
-      </CardFooter>
     </Card>
   );
 };

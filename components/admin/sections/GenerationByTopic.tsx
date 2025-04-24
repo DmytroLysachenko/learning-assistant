@@ -18,7 +18,7 @@ const GenerationByTopicSection = ({
 }: GenerationByTopicSectionProps) => {
   // State for form values
   const [level, setLevel] = useState<LanguageLevelsType | "random">("random");
-  const [quantity, setQuantity] = useState(10);
+  const [total, setTotal] = useState(10);
   const [batchSize, setBatchSize] = useState(50);
   const [delay, setDelay] = useState(5000);
   const [wordType, setWordType] = useState<WordType | "none">("none");
@@ -31,7 +31,7 @@ const GenerationByTopicSection = ({
       setIsGenerating(true);
 
       await seedWordsByTopic({
-        total: quantity,
+        total: total,
         batchSize,
         wordType: wordType === "none" ? undefined : wordType,
         delayMs: delay,
@@ -45,7 +45,7 @@ const GenerationByTopicSection = ({
       await removeDuplicatesFromTable(translationLanguage);
 
       toast.success("Words generated successfully", {
-        description: `Added ${quantity} words at level ${level} and removed duplicates.`,
+        description: `Added ${total} words at level ${level} and removed duplicates.`,
       });
     } catch (error) {
       toast.error("Failed to generate words", {
@@ -62,14 +62,14 @@ const GenerationByTopicSection = ({
       <TopicGenerationForm
         isDisabled={isGenerating}
         level={level}
-        quantity={quantity}
+        total={total}
         batchSize={batchSize}
         delay={delay}
         wordType={wordType}
         language={language}
         translationLanguage={translationLanguage}
         setLevel={setLevel}
-        setQuantity={setQuantity}
+        setTotal={setTotal}
         setBatchSize={setBatchSize}
         setDelay={setDelay}
         setWordType={setWordType}

@@ -1,15 +1,26 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { AlertCircleIcon, Loader2, Upload } from "lucide-react";
 import CustomSelect from "@/components/CustomSelect";
@@ -19,19 +30,44 @@ import {
   LEVEL_OPTIONS,
   WORDS_TYPES_OPTIONS,
 } from "@/constants/ui";
-import BatchAndDelayControls from "./BatchAndDelayControls";
+
+const enumValues = LANGUAGE_OPTIONS.map((option) => option.value) as [
+  string,
+  ...string[]
+];
+
+// Define the form schema with Zod
+const formSchema = z.object({
+  level: z.string(),
+  language: z.enum(enumValues, {
+    required_error: "Please select a language",
+  }),
+  translationLanguage: z.enum(enumValues, {
+    required_error: "Please select a translation language",
+  }),
+  total: z.coerce
+    .number({
+      required_error: "Please enter the total number of words",
+      invalid_type_error: "Total must be a number",
+    })
+    .min(30, { message: "Total must be at least 30" })
+    .max(500, { message: "Total cannot exceed 500" }),
+  wordType: z.string(),
+  batchSize: z.coerce.number().min(5).max(30),
+  delay: z.coerce.number().min(3000).max(8000),
+});
 
 interface TopicGenerationFormProps {
   isDisabled: boolean;
   level: LanguageLevelsType | "random";
-  quantity: number;
+  total: number;
   batchSize: number;
   delay: number;
   wordType: WordType | "none";
   language: "pl" | "ru";
   translationLanguage: "pl" | "ru";
   setLevel: (level: LanguageLevelsType | "random") => void;
-  setQuantity: (quantity: number) => void;
+  setTotal: (total: number) => void;
   setBatchSize: (batchSize: number) => void;
   setDelay: (delay: number) => void;
   setWordType: (wordType: WordType | "none") => void;
@@ -43,14 +79,14 @@ interface TopicGenerationFormProps {
 const TopicGenerationForm = ({
   isDisabled,
   level,
-  quantity,
+  total,
   batchSize,
   delay,
   wordType,
   language,
   translationLanguage,
   setLevel,
-  setQuantity,
+  setTotal,
   setBatchSize,
   setDelay,
   setWordType,
@@ -58,6 +94,35 @@ const TopicGenerationForm = ({
   setTranslationLanguage,
   onGenerate,
 }: TopicGenerationFormProps) => {
+  // Initialize the form
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      level,
+      total,
+      language,
+      translationLanguage,
+      wordType,
+      batchSize,
+      delay,
+    },
+  });
+
+  // Submit handler
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    // Update parent state with form values
+    setLevel(values.level as LanguageLevelsType | "random");
+    setTotal(values.total);
+    setLanguage(values.language as LanguageCodeType);
+    setTranslationLanguage(values.translationLanguage as "pl" | "ru");
+    setWordType(values.wordType as WordType | "none");
+    setBatchSize(values.batchSize);
+    setDelay(values.delay);
+
+    // Call the generate function
+    await onGenerate();
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -70,138 +135,221 @@ const TopicGenerationForm = ({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-col gap-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label
-                htmlFor="level"
-                className="text-sm font-medium"
-              >
-                Language Level
-              </label>
-              <CustomSelect
-                options={LEVEL_OPTIONS}
-                currentValue={level}
-                isDisabled={isDisabled}
-                handleValueChange={(value) => setLevel(value as typeof level)}
-                placeholder="Select level"
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-6"
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="level"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Language Level</FormLabel>
+                    <FormControl>
+                      <CustomSelect
+                        options={LEVEL_OPTIONS}
+                        currentValue={field.value}
+                        isDisabled={isDisabled}
+                        handleValueChange={field.onChange}
+                        placeholder="Select level"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            <div className="space-y-2">
-              <label
-                htmlFor="quantity"
-                className="text-sm font-medium"
-              >
-                Number of Words
-              </label>
-              <Input
-                id="quantity"
-                placeholder="Enter number of words"
-                type="number"
-                disabled={isDisabled}
-                value={quantity}
-                onChange={(e) => {
-                  setQuantity(Number(e.target.value));
-                }}
-              />
-            </div>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label
-                htmlFor="language"
-                className="text-sm font-medium"
-              >
-                Language
-              </label>
-              <CustomSelect
-                options={LANGUAGE_OPTIONS}
-                currentValue={language}
-                isDisabled={isDisabled}
-                handleValueChange={(value) =>
-                  setLanguage(value as LanguageCodeType)
-                }
-                placeholder="Select language"
+              <FormField
+                control={form.control}
+                name="total"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Number of Words</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        disabled={isDisabled}
+                        placeholder="Enter number of words"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
             </div>
-            <div className="space-y-2">
-              <label
-                htmlFor="translationLanguage"
-                className="text-sm font-medium"
-              >
-                Translation Language
-              </label>
-              <CustomSelect
-                options={LANGUAGE_OPTIONS}
-                currentValue={translationLanguage}
-                isDisabled={isDisabled}
-                handleValueChange={(value) =>
-                  setTranslationLanguage(value as LanguageCodeType)
-                }
-                placeholder="Select translation language"
-              />
-            </div>
-          </div>
 
-          <div className="space-y-2">
-            <label
-              htmlFor="wordType"
-              className="text-sm font-medium"
-            >
-              Word Type
-            </label>
-            <CustomSelect
-              options={WORDS_TYPES_OPTIONS}
-              currentValue={wordType}
-              isDisabled={isDisabled}
-              handleValueChange={(value) =>
-                setWordType(value as WordType | "none")
-              }
-              placeholder="Select word type"
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="language"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Language</FormLabel>
+                    <FormControl>
+                      <CustomSelect
+                        options={LANGUAGE_OPTIONS}
+                        currentValue={field.value}
+                        isDisabled={isDisabled}
+                        handleValueChange={field.onChange}
+                        placeholder="Select language"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="translationLanguage"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Translation Language</FormLabel>
+                    <FormControl>
+                      <CustomSelect
+                        options={LANGUAGE_OPTIONS}
+                        currentValue={field.value}
+                        isDisabled={isDisabled}
+                        handleValueChange={field.onChange}
+                        placeholder="Select translation language"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="wordType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Word Type</FormLabel>
+                  <FormControl>
+                    <CustomSelect
+                      options={WORDS_TYPES_OPTIONS}
+                      currentValue={field.value}
+                      isDisabled={isDisabled}
+                      handleValueChange={field.onChange}
+                      placeholder="Select word type"
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Select a specific word type or leave as &quot;Any type&quot;
+                    to generate mixed vocabulary
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <p className="text-xs text-muted-foreground mt-1">
-              Select a specific word type or leave as &quot;Any type&quot; to
-              generate mixed vocabulary
-            </p>
-          </div>
 
-          <BatchAndDelayControls
-            batchSize={batchSize}
-            delay={delay}
-            isDisabled={isDisabled}
-            setBatchSize={setBatchSize}
-            setDelay={setDelay}
-          />
+            <FormField
+              control={form.control}
+              name="batchSize"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <FormLabel>Batch Size: {field.value}</FormLabel>
+                      <span className="text-xs text-muted-foreground">
+                        Words per batch
+                      </span>
+                    </div>
+                    <FormControl>
+                      <div className="flex gap-4 items-center">
+                        <span className="text-xs">10</span>
+                        <input
+                          type="range"
+                          min={10}
+                          max={100}
+                          step={5}
+                          disabled={isDisabled}
+                          value={field.value}
+                          onChange={(e) => {
+                            field.onChange(Number(e.target.value));
+                            setBatchSize(Number(e.target.value));
+                          }}
+                          className="flex-1"
+                        />
+                        <span className="text-xs">100</span>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
 
-          <Alert>
-            <AlertCircleIcon className="h-4 w-4" />
-            <AlertTitle>Information</AlertTitle>
-            <AlertDescription>
-              {quantity} words will be generated in batches of {batchSize} with
-              a {delay}ms delay between batches. Language:{" "}
-              {language.toUpperCase()}, Translation:{" "}
-              {translationLanguage.toUpperCase()}.
-            </AlertDescription>
-          </Alert>
-        </div>
+            <FormField
+              control={form.control}
+              name="delay"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <FormLabel>Delay: {field.value}ms</FormLabel>
+                      <span className="text-xs text-muted-foreground">
+                        Time between batches
+                      </span>
+                    </div>
+                    <FormControl>
+                      <div className="flex gap-4 items-center">
+                        <span className="text-xs">1000ms</span>
+                        <input
+                          type="range"
+                          min={1000}
+                          max={10000}
+                          step={500}
+                          disabled={isDisabled}
+                          value={field.value}
+                          onChange={(e) => {
+                            field.onChange(Number(e.target.value));
+                            setDelay(Number(e.target.value));
+                          }}
+                          className="flex-1"
+                        />
+                        <span className="text-xs">10000ms</span>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
+
+            <Alert>
+              <AlertCircleIcon className="h-4 w-4" />
+              <AlertTitle>Information</AlertTitle>
+              <AlertDescription>
+                {form.watch("total")} words will be generated in batches of{" "}
+                {form.watch("batchSize")} with a {form.watch("delay")}ms delay
+                between batches. Language:{" "}
+                {form.watch("language").toUpperCase()}, Translation:{" "}
+                {form.watch("translationLanguage").toUpperCase()}.
+              </AlertDescription>
+            </Alert>
+
+            <Button
+              type="submit"
+              disabled={isDisabled}
+              className="w-full"
+            >
+              {isDisabled ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                "Generate Words by Topic"
+              )}
+            </Button>
+          </form>
+        </Form>
       </CardContent>
-      <CardFooter>
-        <Button
-          onClick={onGenerate}
-          disabled={isDisabled || quantity <= 0}
-          className="w-full"
-        >
-          {isDisabled ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Generating...
-            </>
-          ) : (
-            "Generate Words by Topic"
-          )}
-        </Button>
-      </CardFooter>
     </Card>
   );
 };
