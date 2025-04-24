@@ -155,13 +155,15 @@ export const seedWordsByTopic = async ({
 
 export const seedWordsByAlphabet = async ({
   batchSize = 10,
+  total = 100,
   delayMs = 5000,
   wordType,
   language = "pl",
   translationLanguage = "ru",
   log = true,
-}: Omit<SeedWordsOptions, "total">) => {
+}: SeedWordsOptions) => {
   let totalGenerated = 0;
+
   const mainVocabularyTable = vocabTables[language];
   const translationVocabularyTable = vocabTables[translationLanguage];
 
@@ -172,14 +174,15 @@ export const seedWordsByAlphabet = async ({
   const translationTableMeta = translationTables.find((t) => t.key === key);
 
   if (!translationTableMeta) {
-    throw new Error(
-      `Translation table for ${firstLang} and ${secondLang} not found.`
-    );
+    return {
+      success: false,
+      error: `Translation table for ${firstLang} and ${secondLang} not found.`,
+    };
   }
 
   const translationsTable = translationTableMeta.table;
 
-  const combos = getShuffledLetterCombos(ALPHABETS[language]).slice(0, 100);
+  const combos = getShuffledLetterCombos(ALPHABETS[language]);
 
   for (const letter of combos) {
     const existingWords = await db
@@ -289,13 +292,27 @@ export const seedWordsByAlphabet = async ({
       continue;
     }
 
+    if (totalGenerated >= total) {
+      if (log) {
+        console.log(`✅ Generated ${totalGenerated} words, completing...`);
+        console.log("🧹 Running post-generation cleanups...");
+      }
+
+      await removeDuplicatesFromTable(language);
+      await removeDuplicatesFromTable(translationLanguage);
+
+      return { success: true };
+    }
+
     // Delay before next batch
     if (delayMs > 0) {
       if (log) console.log(`⏱ Waiting ${delayMs / 1000}s...`);
       await sleep(delayMs);
     }
   }
+
   if (log) {
+    console.log(`✅ Generated ${totalGenerated} words, completing...`);
     console.log("🧹 Running post-generation cleanups...");
   }
 

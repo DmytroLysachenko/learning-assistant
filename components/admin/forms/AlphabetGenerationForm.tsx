@@ -16,8 +16,9 @@ import {
   Loader2,
 } from "lucide-react";
 import CustomSelect from "@/components/CustomSelect";
+import { Input } from "@/components/ui/input";
 
-import { WordType } from "@/types";
+import type { LanguageCodeType, WordType } from "@/types";
 import { WORDS_TYPES_OPTIONS } from "@/constants/ui";
 import BatchAndDelayControls from "./BatchAndDelayControls";
 
@@ -33,10 +34,14 @@ interface AlphabetGenerationFormExtendedProps {
   delay: number;
   wordType: WordType | "none";
   language: "pl" | "ru";
+  translationLanguage: "pl" | "ru";
+  total: number;
   setBatchSize: (batchSize: number) => void;
   setDelay: (delay: number) => void;
   setWordType: (wordType: WordType | "none") => void;
   setLanguage: (language: "pl" | "ru") => void;
+  setTranslationLanguage: (language: "pl" | "ru") => void;
+  setTotal: (total: number) => void;
   onGenerate: () => Promise<void>;
 }
 
@@ -46,10 +51,14 @@ const AlphabetGenerationForm = ({
   delay,
   wordType,
   language,
+  translationLanguage,
+  total,
   setBatchSize,
   setDelay,
   setWordType,
   setLanguage,
+  setTranslationLanguage,
+  setTotal,
   onGenerate,
 }: AlphabetGenerationFormExtendedProps) => {
   return (
@@ -77,8 +86,46 @@ const AlphabetGenerationForm = ({
                 options={LANGUAGE_OPTIONS}
                 currentValue={language}
                 isDisabled={isDisabled}
-                handleValueChange={(value) => setLanguage(value as "pl" | "ru")}
+                handleValueChange={(value) =>
+                  setLanguage(value as LanguageCodeType)
+                }
                 placeholder="Select language"
+              />
+            </div>
+            <div className="space-y-2">
+              <label
+                htmlFor="translationLanguage"
+                className="text-sm font-medium"
+              >
+                Translation Language
+              </label>
+              <CustomSelect
+                options={LANGUAGE_OPTIONS}
+                currentValue={translationLanguage}
+                isDisabled={isDisabled}
+                handleValueChange={(value) =>
+                  setTranslationLanguage(value as LanguageCodeType)
+                }
+                placeholder="Select translation language"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label
+                htmlFor="total"
+                className="text-sm font-medium"
+              >
+                Total Words
+              </label>
+              <Input
+                id="total"
+                type="number"
+                value={total}
+                onChange={(e) => setTotal(Number(e.target.value))}
+                disabled={isDisabled}
+                placeholder="Enter total words"
               />
             </div>
             <div className="space-y-2">
@@ -112,9 +159,19 @@ const AlphabetGenerationForm = ({
             <AlertCircleIcon className="h-4 w-4" />
             <AlertTitle>Information</AlertTitle>
             <AlertDescription>
-              Words will be generated alphabetically for{" "}
-              {language === "pl" ? "Polish" : "Russian"} language in batches of{" "}
-              {batchSize} with a {delay}ms delay between batches.
+              {total} words will be generated alphabetically for{" "}
+              {
+                LANGUAGE_OPTIONS.find((option) => option.value === language)
+                  ?.label
+              }{" "}
+              language with{" "}
+              {
+                LANGUAGE_OPTIONS.find(
+                  (option) => option.value === translationLanguage
+                )?.label
+              }{" "}
+              translations in batches of {batchSize} with a {delay}ms delay
+              between batches.
             </AlertDescription>
           </Alert>
         </div>

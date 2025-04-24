@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import type { WordType } from "@/types";
+import type { LanguageCodeType, WordType } from "@/types";
 import { seedWordsByAlphabet } from "@/lib/actions/admin";
-import AlphabetGenerationForm from "./forms/AlphabetGenerationForm";
+import AlphabetGenerationForm from "../forms/AlphabetGenerationForm";
 
 interface GenerationBaseProps {
   isGenerating: boolean;
@@ -19,17 +19,22 @@ const GenerationByAlphabet = ({
   const [batchSize, setBatchSize] = useState(50);
   const [delay, setDelay] = useState(5000);
   const [wordType, setWordType] = useState<WordType | "none">("none");
-  const [language, setLanguage] = useState<"pl" | "ru">("pl");
+  const [language, setLanguage] = useState<LanguageCodeType>("pl");
+  const [translationLanguage, setTranslationLanguage] =
+    useState<LanguageCodeType>("ru");
+  const [total, setTotal] = useState(100);
 
   const handleGenerateWords = async () => {
     try {
       setIsGenerating(true);
 
       const { success } = await seedWordsByAlphabet({
+        total,
         batchSize,
         wordType: wordType === "none" ? undefined : wordType,
         delayMs: delay,
         language,
+        translationLanguage,
       });
 
       if (!success) {
@@ -58,10 +63,14 @@ const GenerationByAlphabet = ({
         delay={delay}
         wordType={wordType}
         language={language}
+        translationLanguage={translationLanguage}
+        total={total}
         setBatchSize={setBatchSize}
         setDelay={setDelay}
         setWordType={setWordType}
         setLanguage={setLanguage}
+        setTranslationLanguage={setTranslationLanguage}
+        setTotal={setTotal}
         onGenerate={handleGenerateWords}
       />
     </div>

@@ -46,6 +46,6 @@ export interface SeedWordsOptions {
   level?: LanguageLevelsType;
   wordType?: WordType;
   log?: boolean;
-  language?: LanguageCodeType;
-  translationLanguage?: LanguageCodeType;
+  language: LanguageCodeType;
+  translationLanguage: LanguageCodeType;
 }
