@@ -26,21 +26,21 @@ export function weightedRandomType(weights: Record<string, number>) {
 export const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
 export const getTranslationTable = (
-  lang1: LanguageCodeType,
-  lang2: LanguageCodeType
+  language1: LanguageCodeType,
+  language2: LanguageCodeType
 ) => {
-  const pairKey = [lang1, lang2]
+  const pairKey = [language1, language2]
     .sort()
     .join("_") as keyof typeof translationTableMap;
   const table = translationTableMap[pairKey];
   if (!table)
-    throw new Error(`No translation table for pair: ${lang1}-${lang2}`);
+    throw new Error(`No translation table for pair: ${language1}-${language2}`);
   return table;
 };
 
-export const getVocabTable = (lang: LanguageCodeType) => {
-  const table = vocabTableMap[lang];
-  if (!table) throw new Error(`No vocabulary table for: ${lang}`);
+export const getVocabTable = (language: LanguageCodeType) => {
+  const table = vocabTableMap[language];
+  if (!table) throw new Error(`No vocabulary table for: ${language}`);
   return table;
 };
 

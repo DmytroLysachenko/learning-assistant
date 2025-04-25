@@ -17,6 +17,7 @@ const ValidationPanel = ({
 }: ValidationProps) => {
   const [language, setLanguage] = useState<"pl" | "ru">("pl");
   const [wordType, setWordType] = useState<WordType | "none">("none");
+  const [batchSize, setBatchSize] = useState(10);
 
   const handleValidateVocabulary = async () => {
     if (wordType === "none") {
@@ -27,7 +28,7 @@ const ValidationPanel = ({
     try {
       setIsValidating(true);
 
-      await validateVocabulary(language, wordType as WordType);
+      await validateVocabulary({ language, wordType, batchSize });
 
       toast.success("Validation completed", {
         description: `Successfully validated ${wordType} words for ${
@@ -50,8 +51,10 @@ const ValidationPanel = ({
         isValidating={isValidating}
         language={language}
         wordType={wordType}
+        batchSize={batchSize}
         setLanguage={setLanguage}
         setWordType={setWordType}
+        setBatchSize={setBatchSize}
         onValidate={handleValidateVocabulary}
       />
     </div>

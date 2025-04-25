@@ -111,30 +111,38 @@ export const removeUntranslatedWordsFromTable = async (
   }
 };
 
-export const validateVocabulary = async (
-  lang: LanguageCodeType,
-  wordType: WordType,
-  dryRun = false
-) => {
-  const table = vocabTableMap[lang];
-  const BATCH_SIZE = 5;
+export const validateVocabulary = async ({
+  language,
+  wordType,
+  batchSize = 10,
+  dryRun = false,
+}: {
+  language: LanguageCodeType;
+  wordType: WordType;
+  batchSize: number;
+  dryRun?: boolean;
+}) => {
+  console.log(
+    `Validating words ${wordType} in ${language} with batch size ${batchSize}`
+  );
+  const table = vocabTableMap[language];
 
   const allWords = await db
     .select()
     .from(table)
-    .where(eq(table.type, WORD_TYPES[lang][wordType]));
+    .where(eq(table.type, WORD_TYPES[language][wordType]));
 
   console.log(
     `🔍 Validating ${
       allWords.length
-    } "${wordType}" words in ${lang.toUpperCase()}`
+    } "${wordType}" words in ${language.toUpperCase()}`
   );
 
-  const wordBatches = chunk(allWords, BATCH_SIZE);
+  const wordBatches = chunk(allWords, batchSize);
 
   for (const batch of wordBatches) {
     const { data: validatedWords } = await validateVocabularyWords({
-      lang,
+      language,
       words: batch,
       wordType,
     });

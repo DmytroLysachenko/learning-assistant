@@ -8,20 +8,20 @@ import { modelFlash as model } from "../aiClient";
 import { validateVocabularyWordsPrompt } from "../prompts/promptBuilders";
 
 export const validateVocabularyWords = async ({
-  lang,
+  language,
   words = [],
   wordType,
 }: {
-  lang: LanguageCodeType;
-  words: GetWordType[typeof lang][];
+  language: LanguageCodeType;
+  words: GetWordType[typeof language][];
   wordType: WordType;
 }) => {
   try {
-    const schema = wordsValidationSchemas[lang];
+    const schema = wordsValidationSchemas[language];
     type WordType = z.infer<typeof schema>;
 
     const { system, prompt } = validateVocabularyWordsPrompt({
-      lang,
+      language,
       words,
       wordType,
     });

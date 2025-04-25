@@ -3,12 +3,12 @@ import { GetWordType } from "@/db/types";
 import { LanguageCodeType, ShortWordEntry, WordType } from "@/types";
 
 export const generateVocabularyByTopicPrompt = ({
-  lang,
+  language,
   quantity,
   level,
   wordType,
 }: {
-  lang: LanguageCodeType;
+  language: LanguageCodeType;
   quantity: number;
   level: string;
   wordType?: WordType;
@@ -19,25 +19,25 @@ export const generateVocabularyByTopicPrompt = ({
     WORDS_CATEGORIES[Math.floor(Math.random() * WORDS_CATEGORIES.length)];
 
   const prompt = `
-Generate ${quantity} unique ${lang.toUpperCase()} vocabulary words for CEFR level "${level}" under the topic "${randomCategory}".
+Generate ${quantity} unique ${language.toUpperCase()} vocabulary words for CEFR level "${level}" under the topic "${randomCategory}".
 
 Guidelines:
 - If applicable, words must be relevant to the topic: "${randomCategory}".
 - Only include relevant, translatable vocabulary — no slang, abbreviations, or proper names.
-${wordType ? WORD_TYPES_PROMPTS[lang][wordType] : ""}
+${wordType ? WORD_TYPES_PROMPTS[language][wordType] : ""}
 `;
 
   return { system, prompt };
 };
 
 export const generateVocabularyByLetterPrompt = ({
-  lang,
+  language,
   letter,
   quantity,
   existingWords = [],
   wordType,
 }: {
-  lang: LanguageCodeType;
+  language: LanguageCodeType;
   letter: string;
   quantity: number;
   wordType?: WordType;
@@ -50,15 +50,15 @@ export const generateVocabularyByLetterPrompt = ({
     : "";
 
   const prompt = `
-Generate ${quantity} unique ${lang.toUpperCase()} language vocabulary words that all include letters "${letter.toUpperCase()}".
+Generate ${quantity} unique ${language.toUpperCase()} language vocabulary words that all include letters "${letter.toUpperCase()}".
 Guidelines:
 - All words must include combination of letters: "${letter}", or at least '${
     letter[0]
   }' and '${letter[1]}'.
-- Provide good, short examples for word use in ${lang.toUpperCase()} language.
-- Examples and comments should be written only in ${lang.toUpperCase()} language.
+- Provide good, short examples for word use in ${language.toUpperCase()} language.
+- Examples and comments should be written only in ${language.toUpperCase()} language.
 - Avoid dublicate words.
-${wordType ? WORD_TYPES_PROMPTS[lang][wordType] : ""}
+${wordType ? WORD_TYPES_PROMPTS[language][wordType] : ""}
 ${exclusions}
 `;
 
@@ -119,28 +119,28 @@ Translation Language Words:\n${JSON.stringify(
 };
 
 export const validateVocabularyWordsPrompt = ({
-  lang,
+  language,
   words,
   wordType,
 }: {
-  lang: LanguageCodeType;
-  words: GetWordType[typeof lang][];
+  language: LanguageCodeType;
+  words: GetWordType[typeof language][];
   wordType: WordType;
 }) => {
-  const system = `You are a professional ${lang.toUpperCase()} linguist verifying vocabulary data for a language learning app.`;
+  const system = `You are a professional ${language.toUpperCase()} linguist verifying vocabulary data for a language learning app.`;
 
-  const wordTypeInstructions = WORD_TYPES_PROMPTS[lang]?.[wordType] ?? "";
+  const wordTypeInstructions = WORD_TYPES_PROMPTS[language]?.[wordType] ?? "";
 
   const prompt = `
-You are validating a list of ${lang.toUpperCase()} vocabulary entries.
+You are validating a list of ${language.toUpperCase()} vocabulary entries.
 
 🔍 For each entry:
 - Ensure the **word** is in its correct base form (dictionary form).
 - Ensure the **type** is accurate. If the word does not match the required type, correct it.
 - Ensure the **difficulty level** reflects real-world frequency and learner familiarity (A0 = basic, C2 = highly advanced).
 - Ensure the **example sentence** is correct, natural, and demonstrates how the word is used in context.
-- Ensure the **comment** (if present) is helpful and written in proper ${lang.toUpperCase()}.
-- All content must be in ${lang.toUpperCase()} only.
+- Ensure the **comment** (if present) is helpful and written in proper ${language.toUpperCase()}.
+- All content must be in ${language.toUpperCase()} only.
 
 ${wordTypeInstructions}
 

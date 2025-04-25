@@ -7,22 +7,22 @@ import { generateVocabularyByTopicPrompt } from "../prompts/promptBuilders";
 import { LanguageCodeType, WordType } from "@/types";
 
 export const generateVocabularyByTopic = async ({
-  lang,
+  language,
   quantity,
   level,
   wordType,
 }: {
-  lang: LanguageCodeType;
+  language: LanguageCodeType;
   quantity: number;
   level: string;
   wordType?: WordType;
 }) => {
   try {
-    const schema = wordSchemas[lang];
+    const schema = wordSchemas[language];
     type WordType = z.infer<typeof schema>;
 
     const { system, prompt } = generateVocabularyByTopicPrompt({
-      lang,
+      language,
       quantity,
       level,
       wordType,

@@ -39,14 +39,17 @@ const formSchema = z.object({
   wordType: z.string().refine((val) => val !== "none", {
     message: "Please select a word type",
   }),
+  batchSize: z.coerce.number().min(5).max(30),
 });
 
 interface ValidationFormProps {
   isValidating: boolean;
   language: LanguageCodeType;
   wordType: WordType | "none";
+  batchSize: number;
   setLanguage: (language: LanguageCodeType) => void;
   setWordType: (wordType: WordType | "none") => void;
+  setBatchSize: (batchSize: number) => void;
   onValidate: () => Promise<void>;
 }
 
@@ -54,8 +57,10 @@ const ValidationForm = ({
   isValidating,
   language,
   wordType,
+  batchSize,
   setLanguage,
   setWordType,
+  setBatchSize,
   onValidate,
 }: ValidationFormProps) => {
   // Initialize the form
@@ -64,6 +69,7 @@ const ValidationForm = ({
     defaultValues: {
       language,
       wordType,
+      batchSize,
     },
   });
 
@@ -134,6 +140,42 @@ const ValidationForm = ({
                       Select a specific word type to validate
                     </FormDescription>
                     <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="batchSize"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <FormLabel>Batch Size: {field.value}</FormLabel>
+                        <span className="text-xs text-muted-foreground">
+                          Words per batch
+                        </span>
+                      </div>
+                      <FormControl>
+                        <div className="flex gap-4 items-center">
+                          <span className="text-xs">5</span>
+                          <input
+                            type="range"
+                            min={5}
+                            max={30}
+                            step={5}
+                            disabled={isValidating}
+                            value={field.value}
+                            onChange={(e) => {
+                              field.onChange(Number(e.target.value));
+                              setBatchSize(Number(e.target.value));
+                            }}
+                            className="flex-1"
+                          />
+                          <span className="text-xs">30</span>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </div>
                   </FormItem>
                 )}
               />

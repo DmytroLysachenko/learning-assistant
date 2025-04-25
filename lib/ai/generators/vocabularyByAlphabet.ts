@@ -8,24 +8,24 @@ import { LanguageCodeType, WordType } from "@/types";
 import { z } from "zod";
 
 export const generateVocabularyByLetter = async ({
-  lang,
+  language,
   letter,
   quantity,
   wordType,
   existingWords = [],
 }: {
-  lang: LanguageCodeType;
+  language: LanguageCodeType;
   letter: string;
   quantity: number;
   wordType?: WordType;
   existingWords?: string[];
 }) => {
   try {
-    const schema = wordSchemas[lang];
+    const schema = wordSchemas[language];
     type WordType = z.infer<typeof schema>;
 
     const { system, prompt } = generateVocabularyByLetterPrompt({
-      lang,
+      language,
       letter,
       quantity,
       existingWords,

@@ -59,7 +59,7 @@ export const seedWordsByTopic = async ({
         data: newWords,
         error: newWordsError,
       } = await generateVocabularyByTopic({
-        lang: language,
+        language,
         quantity: batchSize,
         level: currentLevel,
         wordType: currentType,
@@ -200,7 +200,7 @@ export const seedWordsByAlphabet = async ({
     try {
       const { success: newWordsSuccess, data: newWords } =
         await generateVocabularyByLetter({
-          lang: "pl",
+          language: "pl",
           letter,
           quantity: batchSize,
           existingWords,
