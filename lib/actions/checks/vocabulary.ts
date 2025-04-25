@@ -1,8 +1,8 @@
 "use server";
 
-import { vocabTables, vocabTablesNames, WORD_TYPES } from "@/constants";
+import { vocabTablesNames, WORD_TYPES } from "@/constants";
 import { db } from "@/db";
-import { translationTables, vocabTableMap } from "@/db/schema";
+import { translationTables, vocabTables } from "@/db/schema";
 import { validateVocabularyWords } from "@/lib/ai/validators/wordsValidator";
 import { sleep } from "@/lib/utils";
 import { LanguageCodeType, WordType } from "@/types";
@@ -32,81 +32,73 @@ export const removeDuplicatesFromTable = async (table: LanguageCodeType) => {
   }
 };
 
-export const removeUntranslatedWordsFromTable = async (
-  lang1: LanguageCodeType,
-  lang2: LanguageCodeType
+export const removeUntranslatedWordsForLang = async (
+  language: LanguageCodeType
 ) => {
-  // Sort the language pair to ensure we always get the correct order (alphabetically)
-  const [firstLang, secondLang] = [lang1, lang2].sort();
+  const vocabTable = vocabTables[language];
 
-  // Generate the key for the translation table in the correct order
-  const key = `${firstLang}_${secondLang}`;
-
-  // Find the applicable translation table
-  const translationTableMeta = translationTables.find((t) => t.key === key);
-
-  if (!translationTableMeta) {
-    throw new Error(
-      `Translation table for ${firstLang} and ${secondLang} not found.`
-    );
+  if (!vocabTable) {
+    throw new Error(`Vocab table for language "${language}" not found.`);
   }
 
-  const vocabTable1 = vocabTables[firstLang];
-  const vocabTable2 = vocabTables[secondLang];
-  const translationTable = translationTableMeta.table;
+  // Filter all translation tables that include this language
+  const relevantTranslationTables = Object.entries(translationTables).filter(
+    ([key]) => key.includes(language)
+  );
+
+  if (relevantTranslationTables.length === 0) {
+    console.warn(`⚠️ No translation tables found for language "${language}".`);
+    return;
+  }
 
   try {
-    // Get all word IDs from both vocabulary tables
-    const allWordsIdTable1 = await db
+    // Get all word IDs from this vocab table
+    const allWordIds = await db
       .select()
-      .from(vocabTable1)
-      .then((w) => w.map((w) => w.id));
+      .from(vocabTable)
+      .then((rows) => rows.map((row) => row.id));
 
-    const allWordsIdTable2 = await db
-      .select()
-      .from(vocabTable2)
-      .then((w) => w.map((w) => w.id));
+    const linkedWordIdsSet = new Set<string>();
 
-    // Get all the word IDs from the translation table for both wordId1 and wordId2
-    const linkedWordIdsTable1 = await db
-      .select({ id: translationTable.wordId1 })
-      .from(translationTable)
-      .then((w) => w.map((w) => w.id));
+    for (const [key, translationTable] of relevantTranslationTables) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const [lang1, lang2] = key.split("_");
 
-    const linkedWordIdsTable2 = await db
-      .select({ id: translationTable.wordId2 })
-      .from(translationTable)
-      .then((w) => w.map((w) => w.id));
+      const isLangFirst = language === lang1;
 
-    // Clean up words in vocabTable1 that aren't linked to any translation in table2
-    const untranslatedWordsTable1 = allWordsIdTable1.filter(
-      (id) => !linkedWordIdsTable1.includes(id)
-    );
-    if (untranslatedWordsTable1.length > 0) {
-      await db
-        .delete(vocabTable1)
-        .where(inArray(vocabTable1.id, untranslatedWordsTable1));
-      console.log(
-        `🧹 Removed ${untranslatedWordsTable1.length} untranslated words from ${firstLang} vocabulary`
-      );
+      const wordIdColumn = isLangFirst
+        ? translationTable.wordId1
+        : translationTable.wordId2;
+
+      // Collect all word IDs from the relevant column
+      const wordLinks = await db
+        .select({ id: wordIdColumn })
+        .from(translationTable);
+
+      wordLinks.forEach(({ id }) => linkedWordIdsSet.add(id));
     }
 
-    // Clean up words in vocabTable2 that aren't linked to any translation in table1
-    const untranslatedWordsTable2 = allWordsIdTable2.filter(
-      (id) => !linkedWordIdsTable2.includes(id)
+    // Figure out which words are unlinked in all translation tables
+    const untranslatedWordIds = allWordIds.filter(
+      (id) => !linkedWordIdsSet.has(id)
     );
-    if (untranslatedWordsTable2.length > 0) {
-      await db
 
-        .delete(vocabTable2)
-        .where(inArray(vocabTable2.id, untranslatedWordsTable2));
+    if (untranslatedWordIds.length > 0) {
+      await db
+        .delete(vocabTable)
+        .where(inArray(vocabTable.id, untranslatedWordIds));
 
       console.log(
-        `🧹 Removed ${untranslatedWordsTable2.length} untranslated words from ${secondLang} vocabulary`
+        `🧹 Removed ${untranslatedWordIds.length} untranslated words from ${language} vocabulary`
       );
+    } else {
+      console.log(`✅ No untranslated words found for ${language}`);
     }
   } catch (error) {
-    console.error(`❌ Error cleaning untranslated words:`, error);
+    console.error(
+      `❌ Error cleaning untranslated words for "${language}":`,
+      error
+    );
     throw error;
   }
 };
@@ -125,7 +117,7 @@ export const validateVocabulary = async ({
   console.log(
     `Validating words ${wordType} in ${language} with batch size ${batchSize}`
   );
-  const table = vocabTableMap[language];
+  const table = vocabTables[language];
 
   const allWords = await db
     .select()

@@ -5,12 +5,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import StatusCard from "@/components/admin/StatusCard";
 
-import GenerationByTopic from "@/components/admin/sections/GenerationByTopic";
+import GenerationByTopic from "@/components/admin/sections/GenerationByTopicSection";
 
-import MaintenancePanel from "@/components/admin/sections/MaintenancePanel";
-import ValidationPanel from "@/components/admin/sections/ValidationPanel";
+import MaintenancePanel from "@/components/admin/sections/MaintenanceSection";
+import ValidationPanel from "@/components/admin/sections/ValidationSection";
 import { OperationStatus } from "@/types";
-import GenerationByAlphabet from "@/components/admin/sections/GenerationByAlphabet";
+import GenerationByAlphabet from "@/components/admin/sections/GenerationByAlphabetSection";
 
 const AdminDashboard = () => {
   // Centralized operation status state

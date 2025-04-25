@@ -15,7 +15,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -44,43 +43,38 @@ const formSchema = z.object({
 
 interface ValidationFormProps {
   isValidating: boolean;
-  language: LanguageCodeType;
-  wordType: WordType | "none";
-  batchSize: number;
-  setLanguage: (language: LanguageCodeType) => void;
-  setWordType: (wordType: WordType | "none") => void;
-  setBatchSize: (batchSize: number) => void;
-  onValidate: () => Promise<void>;
+  onValidate: ({
+    language,
+    wordType,
+    batchSize,
+    dryRun,
+  }: {
+    language: LanguageCodeType;
+    wordType: WordType;
+    batchSize: number;
+    dryRun?: boolean;
+  }) => Promise<void>;
 }
 
-const ValidationForm = ({
-  isValidating,
-  language,
-  wordType,
-  batchSize,
-  setLanguage,
-  setWordType,
-  setBatchSize,
-  onValidate,
-}: ValidationFormProps) => {
+const ValidationForm = ({ isValidating, onValidate }: ValidationFormProps) => {
   // Initialize the form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      language,
-      wordType,
-      batchSize,
+      language: "pl",
+      wordType: "none",
+      batchSize: 10,
     },
   });
 
   // Submit handler
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    // Update parent state with form values
-    setLanguage(values.language as LanguageCodeType);
-    setWordType(values.wordType as WordType | "none");
-
-    // Call the validate function
-    await onValidate();
+    console.log(values);
+    await onValidate({
+      language: values.language as LanguageCodeType,
+      wordType: values.wordType as WordType,
+      batchSize: values.batchSize,
+    });
   };
 
   return (
@@ -136,9 +130,6 @@ const ValidationForm = ({
                         placeholder="Select word type"
                       />
                     </FormControl>
-                    <FormDescription>
-                      Select a specific word type to validate
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -165,10 +156,7 @@ const ValidationForm = ({
                             step={5}
                             disabled={isValidating}
                             value={field.value}
-                            onChange={(e) => {
-                              field.onChange(Number(e.target.value));
-                              setBatchSize(Number(e.target.value));
-                            }}
+                            onChange={field.onChange}
                             className="flex-1"
                           />
                           <span className="text-xs">30</span>

@@ -1,4 +1,4 @@
-import { vocabTables } from "@/constants";
+import { vocabTables } from "@/db/schema";
 import { aiTranslationSchema } from "@/lib/validations/ai";
 import { z } from "zod";
 

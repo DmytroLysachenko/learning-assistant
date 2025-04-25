@@ -4,7 +4,6 @@ import { db } from "@/db";
 
 import {
   ALPHABETS,
-  vocabTables,
   WORD_TYPES_PROMPTS,
   WORDS_LANGUAGE_LEVELS,
 } from "@/constants";
@@ -17,7 +16,7 @@ import { SeedWordsOptions, WordType } from "@/types";
 import { generateVocabularyByTopic } from "../ai/generators/vocabularyByTopic";
 import { removeDuplicatesFromTable } from "./checks/vocabulary";
 import { ilike } from "drizzle-orm";
-import { translationTables } from "@/db/schema";
+import { translationTables, vocabTables } from "@/db/schema";
 
 export const seedWordsByTopic = async ({
   total,
@@ -171,16 +170,14 @@ export const seedWordsByAlphabet = async ({
   const key = `${firstLang}_${secondLang}`;
 
   // Find the applicable translation table
-  const translationTableMeta = translationTables.find((t) => t.key === key);
+  const translationsTable = translationTables[key];
 
-  if (!translationTableMeta) {
+  if (!translationsTable) {
     return {
       success: false,
       error: `Translation table for ${firstLang} and ${secondLang} not found.`,
     };
   }
-
-  const translationsTable = translationTableMeta.table;
 
   const combos = getShuffledLetterCombos(ALPHABETS[language]);
 

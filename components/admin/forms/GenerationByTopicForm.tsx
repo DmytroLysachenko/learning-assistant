@@ -3,11 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import {
-  AlertCircleIcon,
-  ItalicIcon as AlphabetIcon,
-  Loader2,
-} from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,23 +15,30 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { AlertCircleIcon, Loader2, Upload } from "lucide-react";
 import CustomSelect from "@/components/CustomSelect";
-
-import type { WordType } from "@/types";
-import { LANGUAGE_OPTIONS, WORDS_TYPES_OPTIONS } from "@/constants/ui";
+import type { LanguageCodeType, LanguageLevelsType, WordType } from "@/types";
+import {
+  LANGUAGE_OPTIONS,
+  LEVEL_OPTIONS,
+  WORDS_TYPES_OPTIONS,
+} from "@/constants/ui";
 
 const enumValues = LANGUAGE_OPTIONS.map((option) => option.value) as [
   string,
   ...string[]
 ];
 
+// Define the form schema with Zod
 const formSchema = z.object({
+  level: z.string(),
   language: z.enum(enumValues, {
     required_error: "Please select a language",
   }),
@@ -55,75 +57,67 @@ const formSchema = z.object({
   delay: z.coerce.number().min(3000).max(8000),
 });
 
-interface AlphabetGenerationFormExtendedProps {
-  isDisabled: boolean;
-  batchSize: number;
-  delay: number;
-  wordType: WordType | "none";
-  language: "pl" | "ru";
-  translationLanguage: "pl" | "ru";
-  total: number;
-  setBatchSize: (batchSize: number) => void;
-  setDelay: (delay: number) => void;
-  setWordType: (wordType: WordType | "none") => void;
-  setLanguage: (language: "pl" | "ru") => void;
-  setTranslationLanguage: (language: "pl" | "ru") => void;
-  setTotal: (total: number) => void;
-  onGenerate: () => Promise<void>;
+interface GenerationByTopicFormProps {
+  isGenerating: boolean;
+  onGenerate: ({
+    level,
+    total,
+    batchSize,
+    delay,
+    wordType,
+    language,
+    translationLanguage,
+  }: {
+    level: LanguageLevelsType | "random";
+    total: number;
+    batchSize: number;
+    delay: number;
+    wordType: WordType | "none";
+    language: LanguageCodeType;
+    translationLanguage: LanguageCodeType;
+  }) => Promise<void>;
 }
 
-const AlphabetGenerationForm = ({
-  isDisabled,
-  batchSize,
-  delay,
-  wordType,
-  language,
-  translationLanguage,
-  total,
-  setBatchSize,
-  setDelay,
-  setWordType,
-  setLanguage,
-  setTranslationLanguage,
-  setTotal,
+const GenerationByTopicForm = ({
+  isGenerating,
   onGenerate,
-}: AlphabetGenerationFormExtendedProps) => {
+}: GenerationByTopicFormProps) => {
   // Initialize the form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      language,
-      translationLanguage,
-      total,
-      wordType,
-      batchSize,
-      delay,
+      level: "random",
+      total: 10,
+      language: "pl",
+      translationLanguage: "ru",
+      wordType: "none",
+      batchSize: 50,
+      delay: 5000,
     },
   });
 
   // Submit handler
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    // Update parent state with form values
-    setLanguage(values.language as "pl" | "ru");
-    setTranslationLanguage(values.translationLanguage as "pl" | "ru");
-    setTotal(values.total);
-    setWordType(values.wordType as WordType | "none");
-    setBatchSize(values.batchSize);
-    setDelay(values.delay);
-
-    // Call the generate function
-    await onGenerate();
+    await onGenerate({
+      level: values.level as LanguageLevelsType | "random",
+      total: values.total,
+      language: values.language as LanguageCodeType,
+      translationLanguage: values.translationLanguage as LanguageCodeType,
+      wordType: values.wordType as WordType | "none",
+      batchSize: values.batchSize,
+      delay: values.delay,
+    });
   };
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <AlphabetIcon className="h-5 w-5" />
-          Generate Words by Alphabet
+          <Upload className="h-5 w-5" />
+          Generate Words by Topic
         </CardTitle>
         <CardDescription>
-          Add new vocabulary words to the database alphabetically
+          Add new vocabulary words to the database based on topics
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -135,6 +129,47 @@ const AlphabetGenerationForm = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
+                name="level"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Language Level</FormLabel>
+                    <FormControl>
+                      <CustomSelect
+                        options={LEVEL_OPTIONS}
+                        currentValue={field.value}
+                        isDisabled={isGenerating}
+                        handleValueChange={field.onChange}
+                        placeholder="Select level"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="total"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Number of Words</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        disabled={isGenerating}
+                        placeholder="Enter number of words"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
                 name="language"
                 render={({ field }) => (
                   <FormItem>
@@ -143,7 +178,7 @@ const AlphabetGenerationForm = ({
                       <CustomSelect
                         options={LANGUAGE_OPTIONS}
                         currentValue={field.value}
-                        isDisabled={isDisabled}
+                        isDisabled={isGenerating}
                         handleValueChange={field.onChange}
                         placeholder="Select language"
                       />
@@ -163,7 +198,7 @@ const AlphabetGenerationForm = ({
                       <CustomSelect
                         options={LANGUAGE_OPTIONS}
                         currentValue={field.value}
-                        isDisabled={isDisabled}
+                        isDisabled={isGenerating}
                         handleValueChange={field.onChange}
                         placeholder="Select translation language"
                       />
@@ -174,46 +209,29 @@ const AlphabetGenerationForm = ({
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="total"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Total Words</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        disabled={isDisabled}
-                        placeholder="Enter total words"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="wordType"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Word Type</FormLabel>
-                    <FormControl>
-                      <CustomSelect
-                        options={WORDS_TYPES_OPTIONS}
-                        currentValue={field.value}
-                        isDisabled={isDisabled}
-                        handleValueChange={field.onChange}
-                        placeholder="Select word type"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="wordType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Word Type</FormLabel>
+                  <FormControl>
+                    <CustomSelect
+                      options={WORDS_TYPES_OPTIONS}
+                      currentValue={field.value}
+                      isDisabled={isGenerating}
+                      handleValueChange={field.onChange}
+                      placeholder="Select word type"
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Select a specific word type or leave as &quot;Any type&quot;
+                    to generate mixed vocabulary
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}
@@ -229,21 +247,18 @@ const AlphabetGenerationForm = ({
                     </div>
                     <FormControl>
                       <div className="flex gap-4 items-center">
-                        <span className="text-xs">5</span>
+                        <span className="text-xs">10</span>
                         <input
                           type="range"
-                          min={5}
-                          max={30}
+                          min={10}
+                          max={100}
                           step={5}
-                          disabled={isDisabled}
+                          disabled={isGenerating}
                           value={field.value}
-                          onChange={(e) => {
-                            field.onChange(Number(e.target.value));
-                            setBatchSize(Number(e.target.value));
-                          }}
+                          onChange={field.onChange}
                           className="flex-1"
                         />
-                        <span className="text-xs">30</span>
+                        <span className="text-xs">100</span>
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -266,21 +281,18 @@ const AlphabetGenerationForm = ({
                     </div>
                     <FormControl>
                       <div className="flex gap-4 items-center">
-                        <span className="text-xs">3000ms</span>
+                        <span className="text-xs">1000ms</span>
                         <input
                           type="range"
-                          min={3000}
-                          max={8000}
+                          min={1000}
+                          max={10000}
                           step={500}
-                          disabled={isDisabled}
+                          disabled={isGenerating}
                           value={field.value}
-                          onChange={(e) => {
-                            field.onChange(Number(e.target.value));
-                            setDelay(Number(e.target.value));
-                          }}
+                          onChange={field.onChange}
                           className="flex-1"
                         />
-                        <span className="text-xs">8000ms</span>
+                        <span className="text-xs">10000ms</span>
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -293,36 +305,26 @@ const AlphabetGenerationForm = ({
               <AlertCircleIcon className="h-4 w-4" />
               <AlertTitle>Information</AlertTitle>
               <AlertDescription>
-                {form.watch("total")} words will be generated alphabetically for{" "}
-                {
-                  LANGUAGE_OPTIONS.find(
-                    (option) => option.value === form.watch("language")
-                  )?.label
-                }{" "}
-                language with{" "}
-                {
-                  LANGUAGE_OPTIONS.find(
-                    (option) =>
-                      option.value === form.watch("translationLanguage")
-                  )?.label
-                }{" "}
-                translations in batches of {form.watch("batchSize")} with a{" "}
-                {form.watch("delay")}ms delay between batches.
+                {form.watch("total")} words will be generated in batches of{" "}
+                {form.watch("batchSize")} with a {form.watch("delay")}ms delay
+                between batches. Language:{" "}
+                {form.watch("language").toUpperCase()}, Translation:{" "}
+                {form.watch("translationLanguage").toUpperCase()}.
               </AlertDescription>
             </Alert>
 
             <Button
               type="submit"
-              disabled={isDisabled}
+              disabled={isGenerating}
               className="w-full"
             >
-              {isDisabled ? (
+              {isGenerating ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Generating...
                 </>
               ) : (
-                "Generate Words Alphabetically"
+                "Generate Words by Topic"
               )}
             </Button>
           </form>
@@ -332,4 +334,4 @@ const AlphabetGenerationForm = ({
   );
 };
 
-export default AlphabetGenerationForm;
+export default GenerationByTopicForm;

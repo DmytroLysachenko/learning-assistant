@@ -1,4 +1,4 @@
-import { plVocabulary, ruVocabulary } from "@/db/schema";
+import { pl_ru_translations, plVocabulary, ruVocabulary } from "@/db/schema";
 import { LanguageWordType } from "@/db/types";
 import { LanguageCodeType, LanguageLevelsType, WordType } from "@/types";
 
@@ -309,12 +309,12 @@ export const ALPHABETS = {
   ],
 };
 
-export const vocabTables = {
-  pl: plVocabulary,
-  ru: ruVocabulary,
-};
-
 export const vocabTablesNames = {
   pl: "pl_vocabulary",
   ru: "ru_vocabulary",
+};
+
+export const SUPPORTED_LANGUAGES = {
+  pl: "Polish",
+  ru: "Russian",
 };

@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { toast } from "sonner";
 import { validateVocabulary } from "@/lib/actions/checks/vocabulary";
 import ValidationForm from "../forms/ValidationForm";
 
-import type { WordType } from "@/types";
+import type { LanguageCodeType, WordType } from "@/types";
+import { SUPPORTED_LANGUAGES } from "@/constants";
 
 interface ValidationProps {
   isValidating: boolean;
@@ -15,25 +15,24 @@ const ValidationPanel = ({
   isValidating,
   setIsValidating,
 }: ValidationProps) => {
-  const [language, setLanguage] = useState<"pl" | "ru">("pl");
-  const [wordType, setWordType] = useState<WordType | "none">("none");
-  const [batchSize, setBatchSize] = useState(10);
-
-  const handleValidateVocabulary = async () => {
-    if (wordType === "none") {
-      toast.error("Please select a word type for validation");
-      return;
-    }
-
+  const handleValidateVocabulary = async ({
+    language,
+    wordType,
+    batchSize,
+    dryRun,
+  }: {
+    language: LanguageCodeType;
+    wordType: WordType;
+    batchSize: number;
+    dryRun?: boolean;
+  }) => {
     try {
       setIsValidating(true);
 
-      await validateVocabulary({ language, wordType, batchSize });
+      await validateVocabulary({ language, wordType, batchSize, dryRun });
 
       toast.success("Validation completed", {
-        description: `Successfully validated ${wordType} words for ${
-          language === "pl" ? "Polish" : "Russian"
-        } language`,
+        description: `Successfully validated ${wordType} words for ${SUPPORTED_LANGUAGES[language]} language`,
       });
     } catch (error) {
       toast.error("Validation failed", {
@@ -49,12 +48,6 @@ const ValidationPanel = ({
     <div className="w-full">
       <ValidationForm
         isValidating={isValidating}
-        language={language}
-        wordType={wordType}
-        batchSize={batchSize}
-        setLanguage={setLanguage}
-        setWordType={setWordType}
-        setBatchSize={setBatchSize}
         onValidate={handleValidateVocabulary}
       />
     </div>

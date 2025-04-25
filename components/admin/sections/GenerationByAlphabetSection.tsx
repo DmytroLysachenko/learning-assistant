@@ -1,30 +1,34 @@
 "use client";
 
-import { useState } from "react";
 import { toast } from "sonner";
 import type { LanguageCodeType, WordType } from "@/types";
 import { seedWordsByAlphabet } from "@/lib/actions/admin";
-import AlphabetGenerationForm from "../forms/AlphabetGenerationForm";
+import AlphabetGenerationForm from "../forms/GenerationByAlphabetForm";
 
-interface GenerationBaseProps {
+interface GenerationByAlphabetSectionProps {
   isGenerating: boolean;
   setIsGenerating: (value: boolean) => void;
 }
 
-const GenerationByAlphabet = ({
+const GenerationByAlphabetSection = ({
   isGenerating,
   setIsGenerating,
-}: GenerationBaseProps) => {
-  // State for form values
-  const [batchSize, setBatchSize] = useState(50);
-  const [delay, setDelay] = useState(5000);
-  const [wordType, setWordType] = useState<WordType | "none">("none");
-  const [language, setLanguage] = useState<LanguageCodeType>("pl");
-  const [translationLanguage, setTranslationLanguage] =
-    useState<LanguageCodeType>("ru");
-  const [total, setTotal] = useState(100);
-
-  const handleGenerateWords = async () => {
+}: GenerationByAlphabetSectionProps) => {
+  const handleGenerateWords = async ({
+    total,
+    batchSize,
+    wordType,
+    delay,
+    language,
+    translationLanguage,
+  }: {
+    total: number;
+    batchSize: number;
+    wordType: WordType | "none";
+    delay: number;
+    language: LanguageCodeType;
+    translationLanguage: LanguageCodeType;
+  }) => {
     try {
       setIsGenerating(true);
 
@@ -58,23 +62,11 @@ const GenerationByAlphabet = ({
   return (
     <div className="w-full">
       <AlphabetGenerationForm
-        isDisabled={isGenerating}
-        batchSize={batchSize}
-        delay={delay}
-        wordType={wordType}
-        language={language}
-        translationLanguage={translationLanguage}
-        total={total}
-        setBatchSize={setBatchSize}
-        setDelay={setDelay}
-        setWordType={setWordType}
-        setLanguage={setLanguage}
-        setTranslationLanguage={setTranslationLanguage}
-        setTotal={setTotal}
+        isGenerating={isGenerating}
         onGenerate={handleGenerateWords}
       />
     </div>
   );
 };
 
-export default GenerationByAlphabet;
+export default GenerationByAlphabetSection;

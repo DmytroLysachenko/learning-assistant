@@ -1,4 +1,4 @@
-import { translationTableMap, vocabTableMap } from "@/db/schema";
+import { translationTables, vocabTables } from "@/db/schema";
 import { LanguageCodeType } from "@/types";
 
 import { clsx, type ClassValue } from "clsx";
@@ -31,15 +31,15 @@ export const getTranslationTable = (
 ) => {
   const pairKey = [language1, language2]
     .sort()
-    .join("_") as keyof typeof translationTableMap;
-  const table = translationTableMap[pairKey];
+    .join("_") as keyof typeof translationTables;
+  const table = translationTables[pairKey];
   if (!table)
     throw new Error(`No translation table for pair: ${language1}-${language2}`);
   return table;
 };
 
 export const getVocabTable = (language: LanguageCodeType) => {
-  const table = vocabTableMap[language];
+  const table = vocabTables[language];
   if (!table) throw new Error(`No vocabulary table for: ${language}`);
   return table;
 };
