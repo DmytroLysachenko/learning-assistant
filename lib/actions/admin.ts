@@ -167,7 +167,7 @@ export const seedWordsByAlphabet = async ({
   const translationVocabularyTable = vocabTables[translationLanguage];
 
   const [firstLang, secondLang] = [language, translationLanguage].sort();
-  const key = `${firstLang}_${secondLang}`;
+  const key = `${firstLang}_${secondLang}` as keyof typeof translationTables;
 
   // Find the applicable translation table
   const translationsTable = translationTables[key];

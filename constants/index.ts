@@ -1,4 +1,3 @@
-import { pl_ru_translations, plVocabulary, ruVocabulary } from "@/db/schema";
 import { LanguageWordType } from "@/db/types";
 import { LanguageCodeType, LanguageLevelsType, WordType } from "@/types";
 

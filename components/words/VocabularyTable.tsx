@@ -220,17 +220,17 @@ export default function VocabularyTable({
                 <div>
                   {/* Polish word */}
                   <div className="text-lg font-medium text-gray-900">
-                    {pair.words.find((w) => w.language === "polish")?.word}
+                    {pair.words.find((w) => w.language === "Polish")?.word}
                   </div>
                   {/* Russian word */}
                   <div className="text-md text-gray-500">
-                    {pair.words.find((w) => w.language === "russian")?.word}
+                    {pair.words.find((w) => w.language === "Russian")?.word}
                   </div>
                 </div>
                 <div className="flex flex-col items-end">
                   {/* Word type */}
                   <span className="text-xs text-gray-500 mt-1">
-                    {pair.words.find((w) => w.language === "polish")?.type}
+                    {pair.words.find((w) => w.language === "Polish")?.type}
                   </span>
                 </div>
               </div>

@@ -17,6 +17,6 @@ export const vocabTables = {
   ru: ruVocabulary,
 };
 
-export const translationTables: Record<string, typeof pl_ru_translations> = {
+export const translationTables = {
   pl_ru: pl_ru_translations,
 };
