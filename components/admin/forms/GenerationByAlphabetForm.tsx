@@ -36,24 +36,29 @@ const enumValues = LANGUAGE_OPTIONS.map((option) => option.value) as [
   ...string[]
 ];
 
-const formSchema = z.object({
-  language: z.enum(enumValues, {
-    required_error: "Please select a language",
-  }),
-  translationLanguage: z.enum(enumValues, {
-    required_error: "Please select a translation language",
-  }),
-  total: z.coerce
-    .number({
-      required_error: "Please enter the total number of words",
-      invalid_type_error: "Total must be a number",
-    })
-    .min(30, { message: "Total must be at least 30" })
-    .max(500, { message: "Total cannot exceed 500" }),
-  wordType: z.string(),
-  batchSize: z.coerce.number().min(5).max(30),
-  delay: z.coerce.number().min(3000).max(8000),
-});
+const formSchema = z
+  .object({
+    language: z.enum(enumValues, {
+      required_error: "Please select a language",
+    }),
+    translationLanguage: z.enum(enumValues, {
+      required_error: "Please select a translation language",
+    }),
+    total: z.coerce
+      .number({
+        required_error: "Please enter the total number of words",
+        invalid_type_error: "Total must be a number",
+      })
+      .min(30, { message: "Total must be at least 30" })
+      .max(500, { message: "Total cannot exceed 500" }),
+    wordType: z.string(),
+    batchSize: z.coerce.number().min(5).max(30),
+    delay: z.coerce.number().min(3000).max(8000),
+  })
+  .refine((data) => data.language !== data.translationLanguage, {
+    message: "Language and translation language must be different",
+    path: ["translationLanguage"],
+  });
 
 interface GenerationByAlphabetFormProps {
   isGenerating: boolean;
@@ -86,7 +91,7 @@ const GenerationByAlphabetForm = ({
       translationLanguage: "ru",
       total: 100,
       wordType: "none",
-      batchSize: 50,
+      batchSize: 10,
       delay: 5000,
     },
   });
@@ -292,7 +297,7 @@ const GenerationByAlphabetForm = ({
                 {form.watch("delay")}ms delay between batches.
               </AlertDescription>
             </Alert>
-
+            <FormMessage />
             <Button
               type="submit"
               disabled={isGenerating}

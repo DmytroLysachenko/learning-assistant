@@ -37,25 +37,30 @@ const enumValues = LANGUAGE_OPTIONS.map((option) => option.value) as [
 ];
 
 // Define the form schema with Zod
-const formSchema = z.object({
-  level: z.string(),
-  language: z.enum(enumValues, {
-    required_error: "Please select a language",
-  }),
-  translationLanguage: z.enum(enumValues, {
-    required_error: "Please select a translation language",
-  }),
-  total: z.coerce
-    .number({
-      required_error: "Please enter the total number of words",
-      invalid_type_error: "Total must be a number",
-    })
-    .min(30, { message: "Total must be at least 30" })
-    .max(500, { message: "Total cannot exceed 500" }),
-  wordType: z.string(),
-  batchSize: z.coerce.number().min(5).max(30),
-  delay: z.coerce.number().min(3000).max(8000),
-});
+const formSchema = z
+  .object({
+    level: z.string(),
+    language: z.enum(enumValues, {
+      required_error: "Please select a language",
+    }),
+    translationLanguage: z.enum(enumValues, {
+      required_error: "Please select a translation language",
+    }),
+    total: z.coerce
+      .number({
+        required_error: "Please enter the total number of words",
+        invalid_type_error: "Total must be a number",
+      })
+      .min(30, { message: "Total must be at least 30" })
+      .max(500, { message: "Total cannot exceed 500" }),
+    wordType: z.string(),
+    batchSize: z.coerce.number().min(5).max(30),
+    delay: z.coerce.number().min(3000).max(8000),
+  })
+  .refine((data) => data.language !== data.translationLanguage, {
+    message: "Language and translation language must be different",
+    path: ["translationLanguage"],
+  });
 
 interface GenerationByTopicFormProps {
   isGenerating: boolean;
@@ -87,11 +92,11 @@ const GenerationByTopicForm = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       level: "random",
-      total: 10,
+      total: 100,
       language: "pl",
       translationLanguage: "ru",
       wordType: "none",
-      batchSize: 50,
+      batchSize: 10,
       delay: 5000,
     },
   });
@@ -247,18 +252,18 @@ const GenerationByTopicForm = ({
                     </div>
                     <FormControl>
                       <div className="flex gap-4 items-center">
-                        <span className="text-xs">10</span>
+                        <span className="text-xs">5</span>
                         <input
                           type="range"
-                          min={10}
-                          max={100}
+                          min={5}
+                          max={30}
                           step={5}
                           disabled={isGenerating}
                           value={field.value}
                           onChange={field.onChange}
                           className="flex-1"
                         />
-                        <span className="text-xs">100</span>
+                        <span className="text-xs">30</span>
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -281,18 +286,18 @@ const GenerationByTopicForm = ({
                     </div>
                     <FormControl>
                       <div className="flex gap-4 items-center">
-                        <span className="text-xs">1000ms</span>
+                        <span className="text-xs">3000ms</span>
                         <input
                           type="range"
-                          min={1000}
-                          max={10000}
+                          min={3000}
+                          max={8000}
                           step={500}
                           disabled={isGenerating}
                           value={field.value}
                           onChange={field.onChange}
                           className="flex-1"
                         />
-                        <span className="text-xs">10000ms</span>
+                        <span className="text-xs">8000ms</span>
                       </div>
                     </FormControl>
                     <FormMessage />
