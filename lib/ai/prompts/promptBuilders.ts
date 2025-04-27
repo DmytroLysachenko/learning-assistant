@@ -38,7 +38,7 @@ export const generateVocabularyByLetterPrompt = ({
   wordType,
 }: {
   language: LanguageCodeType;
-  letter: string;
+  letter: string; // always two letters, like 'st', 'br', etc.
   quantity: number;
   wordType?: WordType;
   existingWords: string[];
@@ -50,14 +50,16 @@ export const generateVocabularyByLetterPrompt = ({
     : "";
 
   const prompt = `
-Generate ${quantity} unique ${language.toUpperCase()} language vocabulary words that all include letters "${letter.toUpperCase()}".
+Generate ${quantity} unique vocabulary words in the ${language.toUpperCase()} language that include the combination of letters "${letter.toUpperCase()}" (the two letters together, in that order).
 Guidelines:
-- All words must include combination of letters: "${letter}", or at least '${
+- All words must include the letter combination: "${letter}" (the two letters together, in order).
+- If that is not possible, generate words that include either "${
     letter[0]
-  }' and '${letter[1]}'.
-- Provide good, short examples for word use in ${language.toUpperCase()} language.
-- Examples and comments should be written only in ${language.toUpperCase()} language.
-- Avoid dublicate words.
+  }" or "${letter[1]}" separately.
+- If neither is possible, just generate unique words in ${language.toUpperCase()}.
+- Provide short, useful example sentences for each word, written only in ${language.toUpperCase()}.
+- Avoid duplicate words.
+- Only use the ${language.toUpperCase()} language.
 ${wordType ? WORD_TYPES_PROMPTS[language][wordType] : ""}
 ${exclusions}
 `;

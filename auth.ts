@@ -61,7 +61,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       const { provider } = account;
 
-      const existing = await getUserByEmail(user.email);
+      const { data: existing } = await getUserByEmail(user.email);
 
       if (!existing) {
         await createUser({

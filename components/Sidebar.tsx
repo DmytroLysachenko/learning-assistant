@@ -33,6 +33,11 @@ export default function DashboardSidebar() {
       icon: <BookOpen className="h-5 w-5" />,
     },
     {
+      title: "Languages",
+      href: "/languages",
+      icon: <BookOpen className="h-5 w-5" />,
+    },
+    {
       title: "Admin",
       href: "/admin",
       icon: <BookOpen className="h-5 w-5" />,

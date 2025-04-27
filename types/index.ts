@@ -69,3 +69,8 @@ export interface WordPair {
 
 export type SortField = "word" | "type" | "difficulty";
 export type SortDirection = "asc" | "desc";
+
+export interface WordTypeCount {
+  type: string;
+  count: number;
+}
