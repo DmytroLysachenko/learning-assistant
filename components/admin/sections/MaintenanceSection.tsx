@@ -1,7 +1,10 @@
 "use client";
 
 import { toast } from "sonner";
-import { removeDuplicatesFromTable } from "@/lib/actions/checks/vocabulary";
+import {
+  removeDuplicatesFromTable,
+  removeUntranslatedWordsFromTable,
+} from "@/lib/actions/checks/vocabulary";
 import type { LanguageCodeType } from "@/types";
 
 import { SUPPORTED_LANGUAGES } from "@/constants";
@@ -52,9 +55,7 @@ const MaintenanceSection = ({
     try {
       setIsRemovingUntranslated(true);
 
-      // We need to pass both languages to ensure proper removal of untranslated words
-      // The selected language is the one we're focusing on for untranslated words
-      await removeDuplicatesFromTable(language);
+      await removeUntranslatedWordsFromTable(language);
 
       toast.success(
         `Untranslated words removed successfully for ${SUPPORTED_LANGUAGES[language]} language`

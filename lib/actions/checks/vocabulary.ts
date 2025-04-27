@@ -32,7 +32,7 @@ export const removeDuplicatesFromTable = async (table: LanguageCodeType) => {
   }
 };
 
-export const removeUntranslatedWordsForLang = async (
+export const removeUntranslatedWordsFromTable = async (
   language: LanguageCodeType
 ) => {
   const vocabTable = vocabTables[language];
