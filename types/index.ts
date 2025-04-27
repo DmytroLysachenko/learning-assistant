@@ -19,10 +19,10 @@ export type LanguageCodeType = keyof typeof vocabTables;
 
 export type TranslationType = z.infer<typeof aiTranslationSchema>;
 
-export type ShortWordEntry = {
+export interface ShortWordEntry {
   id: string;
   word: string;
-};
+}
 
 export interface LanguageOption {
   value: LanguageCodeType;
@@ -49,3 +49,23 @@ export interface SeedWordsOptions {
   language: LanguageCodeType;
   translationLanguage: LanguageCodeType;
 }
+
+export interface Word {
+  id: string;
+  word: string;
+  example: string | null;
+  type: string;
+  difficulty: string | null;
+  createdAt: Date | null;
+  comment: string | null;
+  language: string;
+  primary?: boolean;
+}
+
+export interface WordPair {
+  id: string;
+  words: Word[];
+}
+
+export type SortField = "word" | "type" | "difficulty";
+export type SortDirection = "asc" | "desc";

@@ -28,8 +28,8 @@ export default function DashboardSidebar() {
       icon: <LayoutDashboard className="h-5 w-5" />,
     },
     {
-      title: "Words",
-      href: "/words",
+      title: "Vocabularies",
+      href: "/vocabulary",
       icon: <BookOpen className="h-5 w-5" />,
     },
     {

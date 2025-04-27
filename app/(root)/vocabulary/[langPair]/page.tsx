@@ -1,4 +1,4 @@
-import VocabularyTable from "@/components/words/VocabularyTable";
+import VocabularyTable from "@/components/vocabulary/VocabularyTable";
 import { SUPPORTED_LANGUAGES } from "@/constants";
 import { db } from "@/db";
 import { vocabTables, translationTables } from "@/db/schema";
@@ -145,6 +145,7 @@ const WordsPage = async ({ searchParams, params }: PageProps) => {
         difficulty: entry.primaryVocabTable!.difficulty,
         createdAt: entry.primaryVocabTable!.createdAt,
         comment: entry.primaryVocabTable!.comment,
+        primary: true,
         language: SUPPORTED_LANGUAGES[primaryLanguage],
       },
       {
@@ -160,19 +161,21 @@ const WordsPage = async ({ searchParams, params }: PageProps) => {
     ],
   }));
 
-  console.log(entries[0].words);
-
   return (
     <div className="w-full flex flex-col justify-center py-6 px-4 md:px-8 gap-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white p-4 rounded-lg shadow">
-          <h3 className="text-lg font-medium text-gray-900">Polish Words</h3>
+          <h3 className="text-lg font-medium text-gray-900">
+            {SUPPORTED_LANGUAGES[primaryLanguage]} Words
+          </h3>
           <p className="text-3xl font-bold text-purple-600">
             {primaryWordsCount[0]?.value || 0}
           </p>
         </div>
         <div className="bg-white p-4 rounded-lg shadow">
-          <h3 className="text-lg font-medium text-gray-900">Russian Words</h3>
+          <h3 className="text-lg font-medium text-gray-900">
+            {SUPPORTED_LANGUAGES[secondaryLanguage]} Words
+          </h3>
           <p className="text-3xl font-bold text-purple-600">
             {secondaryWordsCount[0]?.value || 0}
           </p>

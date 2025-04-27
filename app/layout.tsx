@@ -100,17 +100,6 @@ const RootLayout = async ({
       <body
         className={`${outfit.className} ${inter.className} font-sans antialiased`}
       >
-        {/* <div
-          className="w-full flex gap-10
-        "
-        >
-          <Link href={"/"}>HOME</Link>
-          <Link href={"/login"}>LOGIN</Link>
-          <Link href={"/register"}>REGISTER</Link>
-          <Link href={"/admin"}>ADMIN</Link>
-          <Link href={"/dashboard"}>DASHBOARD</Link>
-          <Link href={"/words"}>WORDS</Link>
-        </div> */}
         {children}
         <Toaster
           position="top-right"

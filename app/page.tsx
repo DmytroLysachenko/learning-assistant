@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     "Learn languages faster and more effectively with our AI-powered language assistant.",
 };
 
-export default function HomePage() {
+const HomePage = () => {
   return (
     <>
       <Header />
@@ -25,4 +25,6 @@ export default function HomePage() {
       </main>
     </>
   );
-}
+};
+
+export default HomePage;

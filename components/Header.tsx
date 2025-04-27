@@ -1,15 +1,32 @@
+import { auth } from "@/auth";
+import { getUserByEmail } from "@/lib/actions/user";
+import { Flame } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
-const Header = () => {
+const Header = async () => {
+  const session = await auth();
+  let isAuthenticated;
+
+  if (session && session.user && session.user.email) {
+    const user = await getUserByEmail(session.user.email);
+    isAuthenticated = !!user;
+  }
+
   return (
     <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur-sm px-16">
       <div className="flex h-16 justify-between py-4">
-        <Link href={"/"}>
-          <span className="text-gradient gradient-primary font-heading text-2xl font-bold">
-            LangAssist
-          </span>
-        </Link>
+        <div className="flex h-14 items-center border-b px-4">
+          <Link
+            href="/"
+            className="flex items-center gap-2 font-semibold"
+          >
+            <Flame className="h-6 w-6 text-primary" />
+            <span className="text-xl font-bold bg-gradient-to-r from-primary to-indigo-600 bg-clip-text text-transparent">
+              LinguaLearn
+            </span>
+          </Link>
+        </div>
 
         <nav className="hidden md:flex items-center gap-6">
           <Link
@@ -32,18 +49,31 @@ const Header = () => {
           </Link>
         </nav>
         <div className="flex items-center gap-4">
-          <Link
-            href="/login"
-            className="text-sm font-medium transition-colors hover:text-primary"
-          >
-            Sign In
-          </Link>
-          <Link
-            href="/register"
-            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Get Started
-          </Link>
+          {isAuthenticated ? (
+            // Show dashboard button for authenticated users
+            <Link
+              href="/dashboard"
+              className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              Dashboard
+            </Link>
+          ) : (
+            // Show sign in and register buttons for unauthenticated users
+            <>
+              <Link
+                href="/login"
+                className="text-sm font-medium transition-colors hover:text-primary"
+              >
+                Sign In
+              </Link>
+              <Link
+                href="/register"
+                className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+              >
+                Get Started
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </header>

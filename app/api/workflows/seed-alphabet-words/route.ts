@@ -1,5 +1,5 @@
 import { seedWordsByAlphabet } from "@/lib/actions/admin";
-import { getAiLock, setAiLock } from "@/lib/db/aiLock";
+import { getAiLock, setAiLock } from "@/lib/actions/aiLock";
 import { SeedWordsOptions } from "@/types";
 import { serve } from "@upstash/workflow/nextjs";
 
