@@ -11,12 +11,3 @@ export const pl_ru_translations = pgTable("pl_ru_translations", {
     .notNull()
     .references(() => ruVocabulary.id, { onDelete: "cascade" }),
 });
-
-export const vocabTables = {
-  pl: plVocabulary,
-  ru: ruVocabulary,
-};
-
-export const translationTables = {
-  pl_ru: pl_ru_translations,
-};

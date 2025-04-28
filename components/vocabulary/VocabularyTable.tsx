@@ -5,28 +5,27 @@ import type React from "react";
 import { useState, useCallback } from "react";
 import type { WordPair, SortField, SortDirection } from "@/types";
 
-import { TableControls } from "./TableControls";
-
-import { Pagination } from "./Pagination";
+import TableControls from "./TableControls";
+import Pagination from "./Pagination";
 import useUrlParams from "@/lib/hooks/useUrlParams";
-import { EmptyState } from "./EmpryState";
-import { WordPairCard } from "./WordPairCard";
+import EmptyState from "./EmpryState";
+import WordPairCard from "./WordPairCard";
 
 interface VocabularyTableProps {
   wordPairs: WordPair[];
   totalCount: number;
   currentPage: number;
   pageSize: number;
-  onAddToVocabulary?: (wordId: string, language: string) => void;
+  userId: string;
 }
 
-export default function VocabularyTable({
+const VocabularyTable = ({
   wordPairs,
   totalCount,
   currentPage,
   pageSize,
-  onAddToVocabulary,
-}: VocabularyTableProps) {
+  userId,
+}: VocabularyTableProps) => {
   const { updateSearchParams, getParam } = useUrlParams();
 
   const [filter, setFilter] = useState(getParam("filter", ""));
@@ -37,17 +36,6 @@ export default function VocabularyTable({
     getParam("dir", "asc") as SortDirection
   );
   const [expandedWord, setExpandedWord] = useState<string | null>(null);
-
-  // Event handlers
-  const handleAddToVocabulary = useCallback(
-    (wordId: string, language: string) => {
-      console.log(`Adding ${language} word with ID ${wordId} to vocabulary`);
-      if (onAddToVocabulary) {
-        onAddToVocabulary(wordId, language);
-      }
-    },
-    [onAddToVocabulary]
-  );
 
   const handleToggleSort = useCallback(
     (field: SortField) => {
@@ -126,9 +114,9 @@ export default function VocabularyTable({
             <WordPairCard
               key={pair.id}
               pair={pair}
+              userId={userId}
               expandedId={expandedWord}
               onToggleExpand={handleToggleExpand}
-              onAddToVocabulary={handleAddToVocabulary}
             />
           ))}
         </div>
@@ -146,4 +134,6 @@ export default function VocabularyTable({
       />
     </div>
   );
-}
+};
+
+export default VocabularyTable;

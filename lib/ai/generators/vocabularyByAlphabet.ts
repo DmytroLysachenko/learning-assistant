@@ -3,7 +3,7 @@ import { wordSchemas } from "@/lib/validations/ai";
 import { generateObject } from "ai";
 import { modelFlash as model } from "../aiClient";
 
-import { generateVocabularyByLetterPrompt } from "../prompts/promptBuilders";
+import { generateVocabularyByLetterPrompt } from "../prompts";
 import { LanguageCodeType, WordType } from "@/types";
 import { z } from "zod";
 

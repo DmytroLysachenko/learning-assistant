@@ -13,8 +13,7 @@ interface TableControlsProps {
   sortDirection: SortDirection;
   onSortChange: (field: SortField) => void;
 }
-
-export function TableControls({
+const TableControls = ({
   filter,
   onFilterChange,
   pageSize,
@@ -23,7 +22,7 @@ export function TableControls({
   sortField,
   sortDirection,
   onSortChange,
-}: TableControlsProps) {
+}: TableControlsProps) => {
   return (
     <>
       <div className="mb-4 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
@@ -78,7 +77,7 @@ export function TableControls({
       </div>
     </>
   );
-}
+};
 
 interface SortButtonProps {
   field: SortField;
@@ -109,3 +108,5 @@ function SortButton({
     </button>
   );
 }
+
+export default TableControls;

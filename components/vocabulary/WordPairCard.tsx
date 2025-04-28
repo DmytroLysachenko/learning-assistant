@@ -4,19 +4,18 @@ import AddToVocabularyButton from "./AddToVocabularyButton";
 
 interface WordPairCardProps {
   pair: WordPair;
+  userId: string;
   expandedId: string | null;
   onToggleExpand: (id: string) => void;
-  onAddToVocabulary: (wordId: string, language: string) => void;
 }
 
-export function WordPairCard({
+const WordPairCard = ({
   pair,
+  userId,
   expandedId,
   onToggleExpand,
-  onAddToVocabulary,
-}: WordPairCardProps) {
-  const primaryWord = pair.words.find((w) => w.primary);
-  const secondaryWord = pair.words.find((w) => !w.primary);
+}: WordPairCardProps) => {
+  const { primaryWord, secondaryWord } = pair;
   const isExpanded = expandedId === pair.id;
 
   if (!primaryWord || !secondaryWord) return null;
@@ -45,7 +44,7 @@ export function WordPairCard({
         <div className="mt-3">
           <AddToVocabularyButton
             wordId={primaryWord.id}
-            handleAddToVocabulary={onAddToVocabulary}
+            userId={userId}
             language={primaryWord.language}
             label={`Add to my vocabulary`}
           />
@@ -58,10 +57,10 @@ export function WordPairCard({
       </div>
 
       {/* Expanded details */}
-      {isExpanded && <WordDetails words={pair.words} />}
+      {isExpanded && <WordDetails words={[primaryWord, secondaryWord]} />}
     </div>
   );
-}
+};
 
 interface WordDetailsProps {
   words: Word[];
@@ -111,3 +110,5 @@ function WordDetails({ words }: WordDetailsProps) {
     </div>
   );
 }
+
+export default WordPairCard;

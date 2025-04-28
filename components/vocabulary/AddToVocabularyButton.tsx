@@ -1,19 +1,21 @@
 "use client";
 
+import { addWordToVocabulary } from "@/lib/actions/words";
+import { LanguageCodeType } from "@/types";
 import { useState } from "react";
 
 interface AddToVocabularyButtonProps {
   wordId: string;
-  language: string;
-  handleAddToVocabulary: (wordId: string, language: string) => void;
+  userId: string;
+  language: LanguageCodeType;
   label?: string;
 }
 
 const AddToVocabularyButton = ({
   wordId,
+  userId,
   language,
   label,
-  handleAddToVocabulary,
 }: AddToVocabularyButtonProps) => {
   const [isAdded, setIsAdded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -24,7 +26,7 @@ const AddToVocabularyButton = ({
   const handleClick = async () => {
     setIsLoading(true);
 
-    await handleAddToVocabulary(wordId, language);
+    await addWordToVocabulary({ wordId, userId, language });
 
     // Mock success
     setIsAdded(true);

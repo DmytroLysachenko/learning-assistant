@@ -3,7 +3,7 @@ import { modelFlash as model } from "../aiClient";
 import { LanguageCodeType } from "@/types";
 import { wordSchemas } from "@/lib/validations/ai";
 import { z } from "zod";
-import { generateTranslationPrompt } from "../prompts/promptBuilders";
+import { generateTranslationPrompt } from "../prompts";
 
 export const generateTranslationWords = async (
   fromLang: LanguageCodeType,

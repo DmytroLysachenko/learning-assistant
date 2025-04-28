@@ -317,3 +317,31 @@ export const SUPPORTED_LANGUAGES = {
   pl: "Polish",
   ru: "Russian",
 };
+
+const generateLanguagePairs = () => {
+  const languages = Object.entries(SUPPORTED_LANGUAGES);
+  const pairs = [];
+
+  for (let i = 0; i < languages.length; i++) {
+    for (let j = 0; j < languages.length; j++) {
+      if (i !== j) {
+        pairs.push({
+          code: `${languages[i][0]}-${languages[j][0]}`,
+          name: `${languages[i][1]}-${languages[j][1]}`,
+          source: {
+            code: languages[i][0],
+            name: languages[i][1],
+          },
+          target: {
+            code: languages[j][0],
+            name: languages[j][1],
+          },
+        });
+      }
+    }
+  }
+
+  return pairs;
+};
+
+export const languagePairs = generateLanguagePairs();

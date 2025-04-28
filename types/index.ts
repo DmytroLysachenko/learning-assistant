@@ -1,4 +1,4 @@
-import { vocabTables } from "@/db/schema";
+import { translationTables, vocabTables } from "@/constants/tables";
 import { aiTranslationSchema } from "@/lib/validations/ai";
 import { z } from "zod";
 
@@ -58,13 +58,14 @@ export interface Word {
   difficulty: string | null;
   createdAt: Date | null;
   comment: string | null;
-  language: string;
+  language: LanguageCodeType;
   primary?: boolean;
 }
 
 export interface WordPair {
   id: string;
-  words: Word[];
+  primaryWord: Word;
+  secondaryWord: Word;
 }
 
 export type SortField = "word" | "type" | "difficulty";
@@ -74,3 +75,18 @@ export interface WordTypeCount {
   type: string;
   count: number;
 }
+
+export interface LanguageData {
+  primaryLanguage: LanguageCodeType;
+  secondaryLanguage: LanguageCodeType;
+  primaryVocabTable: (typeof vocabTables)[LanguageCodeType];
+  secondaryVocabTable: (typeof vocabTables)[LanguageCodeType];
+  translationTable: (typeof translationTables)[keyof typeof translationTables];
+  primaryLanguageWordId: "wordId1" | "wordId2";
+  secondaryLanguageWordId: "wordId1" | "wordId2";
+}
+
+export type VocabTable = (typeof vocabTables)[LanguageCodeType];
+
+export type TranslationTable =
+  (typeof translationTables)[keyof typeof translationTables];

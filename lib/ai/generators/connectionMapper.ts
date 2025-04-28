@@ -2,7 +2,7 @@ import { aiTranslationSchema } from "@/lib/validations/ai";
 import { generateObject } from "ai";
 import { modelFlash as model } from "../aiClient";
 import { ShortWordEntry, TranslationType } from "@/types";
-import { generateTranslationConnectionsPrompt } from "../prompts/promptBuilders";
+import { generateTranslationConnectionsPrompt } from "../prompts";
 
 export const generateTranslationConnections = async (
   primaryLanguageWords: ShortWordEntry[],

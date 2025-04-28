@@ -5,7 +5,7 @@ import { wordsValidationSchemas } from "@/lib/validations/ai";
 import { z } from "zod";
 import { generateObject } from "ai";
 import { modelFlash as model } from "../aiClient";
-import { validateVocabularyWordsPrompt } from "../prompts/promptBuilders";
+import { validateVocabularyWordsPrompt } from "../prompts";
 
 export const validateVocabularyWords = async ({
   language,

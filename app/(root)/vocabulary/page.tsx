@@ -3,38 +3,9 @@ import { ArrowRight, BookOpen, Languages } from "lucide-react";
 import { db } from "@/db";
 import { plVocabulary, ruVocabulary, pl_ru_translations } from "@/db/schema";
 import { sql } from "drizzle-orm";
-import { SUPPORTED_LANGUAGES } from "@/constants";
+import { languagePairs } from "@/constants";
 
-// Generate all possible language pair combinations
-const generateLanguagePairs = () => {
-  const languages = Object.entries(SUPPORTED_LANGUAGES);
-  const pairs = [];
-
-  for (let i = 0; i < languages.length; i++) {
-    for (let j = 0; j < languages.length; j++) {
-      if (i !== j) {
-        pairs.push({
-          code: `${languages[i][0]}-${languages[j][0]}`,
-          name: `${languages[i][1]}-${languages[j][1]}`,
-          source: {
-            code: languages[i][0],
-            name: languages[i][1],
-          },
-          target: {
-            code: languages[j][0],
-            name: languages[j][1],
-          },
-        });
-      }
-    }
-  }
-
-  return pairs;
-};
-
-export default async function VocabularyHub() {
-  const languagePairs = generateLanguagePairs();
-
+const VocabularyHubPage = async () => {
   // Get counts for each language and translations
   const [polishCount, russianCount] = await Promise.all([
     db.select({ value: sql<number>`count(*)` }).from(plVocabulary),
@@ -120,4 +91,6 @@ export default async function VocabularyHub() {
       </div>
     </div>
   );
-}
+};
+
+export default VocabularyHubPage;

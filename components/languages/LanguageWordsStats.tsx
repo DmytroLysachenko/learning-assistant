@@ -29,7 +29,6 @@ const WordTypeStats = ({ typeCounts, language }: WordTypeStatsProps) => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {/* Visual representation using CSS-based bars */}
         <div className="space-y-3 mb-6">
           {sortedData.map((item) => {
             const percentage = ((item.count / totalCount) * 100).toFixed(1);

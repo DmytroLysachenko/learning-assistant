@@ -8,13 +8,13 @@ interface PaginationProps {
   onPageChange: (page: number) => void;
 }
 
-export function Pagination({
+const Pagination = ({
   currentPage,
   totalPages,
   totalCount,
   pageSize,
   onPageChange,
-}: PaginationProps) {
+}: PaginationProps) => {
   // Show limited page numbers with ellipsis for large page counts
   const getVisiblePageNumbers = () => {
     const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -95,4 +95,6 @@ export function Pagination({
       </div>
     </div>
   );
-}
+};
+
+export default Pagination;

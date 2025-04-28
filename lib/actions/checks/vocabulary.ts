@@ -1,8 +1,8 @@
 "use server";
 
 import { vocabTablesNames, WORD_TYPES } from "@/constants";
+import { translationTables, vocabTables } from "@/constants/tables";
 import { db } from "@/db";
-import { translationTables, vocabTables } from "@/db/schema";
 import { validateVocabularyWords } from "@/lib/ai/validators/wordsValidator";
 import { sleep } from "@/lib/utils";
 import { LanguageCodeType, WordType } from "@/types";

@@ -1,10 +1,11 @@
+import { count, eq } from "drizzle-orm";
+import React from "react";
+
 import WordTypeStats from "@/components/languages/LanguageWordsStats";
 import { WORD_TYPES } from "@/constants";
 import { db } from "@/db";
-import { vocabTables } from "@/db/schema";
+import { getVocabTable } from "@/lib/utils";
 import { LanguageCodeType } from "@/types";
-import { count, eq } from "drizzle-orm";
-import React from "react";
 
 const LanguagePage = async ({
   params,
@@ -13,7 +14,7 @@ const LanguagePage = async ({
 }) => {
   const { language } = await params;
 
-  const vocabTable = vocabTables[language];
+  const vocabTable = getVocabTable(language);
 
   const typeCounts = await Promise.all(
     Object.values(WORD_TYPES[language]).map(async (type) => {
@@ -23,7 +24,6 @@ const LanguagePage = async ({
         .where(eq(vocabTable.type, type))
         .limit(1)
         .then((res) => res[0]?.count || 0);
-
       return { type, count: countAmount };
     })
   );
