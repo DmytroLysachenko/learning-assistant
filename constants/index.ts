@@ -313,10 +313,14 @@ export const vocabTablesNames = {
   ru: "ru_vocabulary",
 };
 
-export const SUPPORTED_LANGUAGES = {
+export const SUPPORTED_LANGUAGES: Record<LanguageCodeType, string> = {
   pl: "Polish",
   ru: "Russian",
 };
+
+export const SUPPORTED_LANGUAGES_CODES = Object.keys(
+  SUPPORTED_LANGUAGES
+) as LanguageCodeType[];
 
 const generateLanguagePairs = () => {
   const languages = Object.entries(SUPPORTED_LANGUAGES);

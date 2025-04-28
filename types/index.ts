@@ -67,7 +67,7 @@ export interface Word {
 
 export interface WordPair {
   id: string;
-  isLearned?: boolean;
+  isLearning?: boolean;
   primaryWord: Word;
   secondaryWord: Word;
 }

@@ -15,27 +15,76 @@ const Pagination = ({
   pageSize,
   onPageChange,
 }: PaginationProps) => {
-  // Show limited page numbers with ellipsis for large page counts
-  const getVisiblePageNumbers = () => {
-    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+  const isFirstPage = currentPage === 1;
+  const isLastPage = currentPage === totalPages;
 
-    if (totalPages <= 7) return pageNumbers;
+  const getVisiblePages = (): (number | "ellipsis")[] => {
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+
+    const pages: (number | "ellipsis")[] = [];
+
+    const addRange = (start: number, end: number) => {
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+    };
 
     if (currentPage <= 4) {
-      return [...pageNumbers.slice(0, 5), -1, totalPages];
+      addRange(1, 5);
+      pages.push("ellipsis", totalPages);
     } else if (currentPage >= totalPages - 3) {
-      return [1, -1, ...pageNumbers.slice(totalPages - 5)];
+      pages.push(1, "ellipsis");
+      addRange(totalPages - 4, totalPages);
     } else {
-      return [
+      pages.push(
         1,
-        -1,
+        "ellipsis",
         currentPage - 1,
         currentPage,
         currentPage + 1,
-        -1,
-        totalPages,
-      ];
+        "ellipsis",
+        totalPages
+      );
     }
+
+    return pages;
+  };
+
+  const handlePageChange = (page: number) => {
+    if (page !== currentPage && page >= 1 && page <= totalPages) {
+      onPageChange(page);
+    }
+  };
+
+  const renderPageButton = (page: number | "ellipsis", index: number) => {
+    if (page === "ellipsis") {
+      return (
+        <span
+          key={`ellipsis-${index}`}
+          className="px-3 py-1"
+        >
+          ...
+        </span>
+      );
+    }
+
+    const isActive = currentPage === page;
+
+    return (
+      <button
+        key={page}
+        onClick={() => handlePageChange(page)}
+        className={`px-3 py-1 rounded-md ${
+          isActive
+            ? "bg-purple-600 text-white"
+            : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
+        }`}
+      >
+        {page}
+      </button>
+    );
   };
 
   return (
@@ -46,52 +95,35 @@ const Pagination = ({
       </div>
 
       <div className="flex items-center space-x-1 order-1 sm:order-2">
-        <button
-          onClick={() => onPageChange(Math.max(1, currentPage - 1))}
-          disabled={currentPage === 1}
-          className={`px-3 py-1 rounded-md ${
-            currentPage === 1
-              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-              : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
-          }`}
-        >
-          Previous
-        </button>
-
-        {getVisiblePageNumbers().map((pageNum, index) =>
-          pageNum === -1 ? (
-            <span
-              key={`ellipsis-${index}`}
-              className="px-3 py-1"
-            >
-              ...
-            </span>
-          ) : (
-            <button
-              key={pageNum}
-              onClick={() => onPageChange(pageNum)}
-              className={`px-3 py-1 rounded-md ${
-                currentPage === pageNum
-                  ? "bg-purple-600 text-white"
-                  : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
-              }`}
-            >
-              {pageNum}
-            </button>
-          )
+        {!isFirstPage && (
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={isFirstPage}
+            className={`px-3 py-1 rounded-md ${
+              isFirstPage
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
+            }`}
+          >
+            Previous
+          </button>
         )}
 
-        <button
-          onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
-          disabled={currentPage === totalPages}
-          className={`px-3 py-1 rounded-md ${
-            currentPage === totalPages
-              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-              : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
-          }`}
-        >
-          Next
-        </button>
+        {getVisiblePages().map((page, index) => renderPageButton(page, index))}
+
+        {!isLastPage && (
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={isLastPage}
+            className={`px-3 py-1 rounded-md ${
+              isLastPage
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
+            }`}
+          >
+            Next
+          </button>
+        )}
       </div>
     </div>
   );

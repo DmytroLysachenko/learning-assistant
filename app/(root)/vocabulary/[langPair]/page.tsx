@@ -56,8 +56,14 @@ const VocabularyPage = async ({
     await parseSearchParams(searchParams);
 
   const [primaryWordsCount, secondaryWordsCount] = await Promise.all([
-    db.select({ value: count() }).from(primaryVocabTable),
-    db.select({ value: count() }).from(secondaryVocabTable),
+    db
+      .select({ value: count() })
+      .from(primaryVocabTable)
+      .then((res) => res[0].value || 0),
+    db
+      .select({ value: count() })
+      .from(secondaryVocabTable)
+      .then((res) => res[0].value || 0),
   ]);
 
   const whereClause = buildWhereClause(primaryVocabTable, filter);
@@ -106,7 +112,7 @@ const VocabularyPage = async ({
 
   const entries = results.map((entry) => ({
     id: entry.translationTable.id,
-    isLearned: userWords.some(
+    isLearning: userWords.some(
       (word) => word.wordId === entry.primaryVocabTable!.id
     ),
     primaryWord: {
@@ -139,7 +145,7 @@ const VocabularyPage = async ({
             {SUPPORTED_LANGUAGES[primaryLanguage]} Words
           </h3>
           <p className="text-3xl font-bold text-purple-600">
-            {primaryWordsCount[0]?.value || 0}
+            {primaryWordsCount}
           </p>
         </div>
         <div className="bg-white p-4 rounded-lg shadow">
@@ -147,7 +153,7 @@ const VocabularyPage = async ({
             {SUPPORTED_LANGUAGES[secondaryLanguage]} Words
           </h3>
           <p className="text-3xl font-bold text-purple-600">
-            {secondaryWordsCount[0]?.value || 0}
+            {secondaryWordsCount}
           </p>
         </div>
         <div className="bg-white p-4 rounded-lg shadow">

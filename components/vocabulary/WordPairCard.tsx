@@ -1,12 +1,14 @@
 "use client";
 import type { Word, WordPair } from "@/types";
 import AddToVocabularyButton from "./AddToVocabularyButton";
+import { SUPPORTED_LANGUAGES } from "@/constants";
 
 interface WordPairCardProps {
   pair: WordPair;
   userId: string;
   expandedId: string | null;
   onToggleExpand: (id: string) => void;
+  isUserVocabulary?: boolean;
 }
 
 const WordPairCard = ({
@@ -14,6 +16,7 @@ const WordPairCard = ({
   userId,
   expandedId,
   onToggleExpand,
+  isUserVocabulary,
 }: WordPairCardProps) => {
   const { primaryWord, secondaryWord } = pair;
   const isExpanded = expandedId === pair.id;
@@ -40,16 +43,17 @@ const WordPairCard = ({
           </div>
         </div>
 
-        {/* Add to vocabulary button */}
-        <div className="mt-3">
-          <AddToVocabularyButton
-            wordId={primaryWord.id}
-            userId={userId}
-            isAdded={pair.isLearned}
-            language={primaryWord.language}
-            label={`Add to my vocabulary`}
-          />
-        </div>
+        {!isUserVocabulary && (
+          <div className="mt-3">
+            <AddToVocabularyButton
+              wordId={primaryWord.id}
+              userId={userId}
+              isAdded={pair.isLearning}
+              language={primaryWord.language}
+              label={`Add to my vocabulary`}
+            />
+          </div>
+        )}
 
         {/* Expand/collapse indicator */}
         <div className="text-center mt-2 text-gray-400">
@@ -71,37 +75,37 @@ function WordDetails({ words }: WordDetailsProps) {
   return (
     <div className="p-4 border-t bg-gray-50">
       <div className="grid grid-cols-1 gap-4">
-        {words.map((word) => (
+        {words.map(({ id, language, type, example, comment }) => (
           <div
-            key={word.id}
+            key={id}
             className="space-y-2"
           >
             <h4 className="font-medium text-gray-900 capitalize">
-              {word.language}
+              {SUPPORTED_LANGUAGES[language]}
             </h4>
             <div className="grid grid-cols-2 gap-2 text-sm">
               <div className="text-gray-500">Type:</div>
-              <div>{word.type}</div>
+              <div>{type}</div>
             </div>
 
-            {word.example && (
+            {example && (
               <div className="mt-2">
                 <span className="text-sm font-medium text-gray-500">
                   Example:
                 </span>
                 <p className="text-sm text-gray-700 italic mt-1 p-2 bg-white rounded border">
-                  {word.example}
+                  {example}
                 </p>
               </div>
             )}
 
-            {word.comment && (
+            {comment && (
               <div className="mt-2">
                 <span className="text-sm font-medium text-gray-500">
                   Comment:
                 </span>
                 <p className="text-sm text-gray-700 mt-1 p-2 bg-white rounded border">
-                  {word.comment}
+                  {comment}
                 </p>
               </div>
             )}

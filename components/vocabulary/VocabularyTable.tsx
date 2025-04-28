@@ -17,6 +17,7 @@ interface VocabularyTableProps {
   currentPage: number;
   pageSize: number;
   userId: string;
+  isUserVocabulary?: boolean;
 }
 
 const VocabularyTable = ({
@@ -25,6 +26,7 @@ const VocabularyTable = ({
   currentPage,
   pageSize,
   userId,
+  isUserVocabulary,
 }: VocabularyTableProps) => {
   const { updateSearchParams, getParam } = useUrlParams();
 
@@ -117,6 +119,7 @@ const VocabularyTable = ({
               userId={userId}
               expandedId={expandedWord}
               onToggleExpand={handleToggleExpand}
+              isUserVocabulary={isUserVocabulary}
             />
           ))}
         </div>
