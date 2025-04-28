@@ -1,16 +1,16 @@
 import Link from "next/link";
+import { count } from "drizzle-orm";
 import { ArrowRight, BookOpen, Languages } from "lucide-react";
+
 import { db } from "@/db";
-import { plVocabulary, ruVocabulary, pl_ru_translations } from "@/db/schema";
-import { sql } from "drizzle-orm";
+import { plVocabulary, ruVocabulary } from "@/db/schema";
 import { languagePairs } from "@/constants";
 
 const VocabularyHubPage = async () => {
   // Get counts for each language and translations
   const [polishCount, russianCount] = await Promise.all([
-    db.select({ value: sql<number>`count(*)` }).from(plVocabulary),
-    db.select({ value: sql<number>`count(*)` }).from(ruVocabulary),
-    db.select({ value: sql<number>`count(*)` }).from(pl_ru_translations),
+    db.select({ value: count() }).from(plVocabulary),
+    db.select({ value: count() }).from(ruVocabulary),
   ]);
 
   // Create a map of language codes to their word counts

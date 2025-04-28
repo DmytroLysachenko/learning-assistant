@@ -7,10 +7,12 @@ import VocabularyTable from "@/components/vocabulary/VocabularyTable";
 import { SUPPORTED_LANGUAGES } from "@/constants";
 import { db } from "@/db";
 import { getUserByEmail } from "@/lib/actions/user";
-import { buildWhereClause } from "@/lib/utils/buildWhereClause";
-import { getSortOrder } from "@/lib/utils/getSortField";
-import { parseSearchParams } from "@/lib/utils/parseSearchParams";
-import { getLanguageData } from "@/lib/utils";
+import {
+  getLanguageData,
+  parseSearchParams,
+  getSortOrder,
+  buildWhereClause,
+} from "@/lib/utils";
 
 interface VocabularyPageProps {
   searchParams: Promise<{
@@ -45,6 +47,7 @@ const VocabularyPage = async ({
     primaryVocabTable,
     secondaryVocabTable,
     translationTable,
+    userWordsTable,
     primaryLanguageWordId,
     secondaryLanguageWordId,
   } = getLanguageData(langPair);
@@ -71,9 +74,7 @@ const VocabularyPage = async ({
       eq(translationTable[secondaryLanguageWordId], secondaryVocabTable.id)
     );
 
-  const totalCountResult = whereClause
-    ? await countQueryBase.where(whereClause)
-    : await countQueryBase;
+  const totalCountResult = await countQueryBase;
 
   const totalCount = totalCountResult[0]?.value || 0;
 
@@ -98,10 +99,16 @@ const VocabularyPage = async ({
     .limit(pageSize)
     .offset(offset);
 
-  const results = await dataQuery;
+  const [userWords, results] = await Promise.all([
+    db.select().from(userWordsTable).where(eq(userWordsTable.userId, userId)),
+    dataQuery,
+  ]);
 
   const entries = results.map((entry) => ({
-    id: `${entry.translationTable.id}`,
+    id: entry.translationTable.id,
+    isLearned: userWords.some(
+      (word) => word.wordId === entry.primaryVocabTable!.id
+    ),
     primaryWord: {
       id: entry.primaryVocabTable!.id,
       word: entry.primaryVocabTable!.word,
@@ -110,7 +117,6 @@ const VocabularyPage = async ({
       difficulty: entry.primaryVocabTable!.difficulty,
       createdAt: entry.primaryVocabTable!.createdAt,
       comment: entry.primaryVocabTable!.comment,
-      primary: true,
       language: primaryLanguage,
     },
     secondaryWord: {

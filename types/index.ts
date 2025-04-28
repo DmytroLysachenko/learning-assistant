@@ -1,4 +1,8 @@
-import { translationTables, vocabTables } from "@/constants/tables";
+import {
+  translationTables,
+  userWordsTables,
+  vocabTables,
+} from "@/constants/tables";
 import { aiTranslationSchema } from "@/lib/validations/ai";
 import { z } from "zod";
 
@@ -59,11 +63,11 @@ export interface Word {
   createdAt: Date | null;
   comment: string | null;
   language: LanguageCodeType;
-  primary?: boolean;
 }
 
 export interface WordPair {
   id: string;
+  isLearned?: boolean;
   primaryWord: Word;
   secondaryWord: Word;
 }
@@ -81,6 +85,7 @@ export interface LanguageData {
   secondaryLanguage: LanguageCodeType;
   primaryVocabTable: (typeof vocabTables)[LanguageCodeType];
   secondaryVocabTable: (typeof vocabTables)[LanguageCodeType];
+  userWordsTable: (typeof userWordsTables)[LanguageCodeType];
   translationTable: (typeof translationTables)[keyof typeof translationTables];
   primaryLanguageWordId: "wordId1" | "wordId2";
   secondaryLanguageWordId: "wordId1" | "wordId2";

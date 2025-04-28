@@ -1,5 +1,9 @@
 import { SUPPORTED_LANGUAGES } from "@/constants";
-import { translationTables, vocabTables } from "@/constants/tables";
+import {
+  translationTables,
+  userWordsTables,
+  vocabTables,
+} from "@/constants/tables";
 import { LanguageCodeType, LanguageData } from "@/types";
 import { redirect } from "next/navigation";
 
@@ -35,8 +39,11 @@ export const getLanguageData = (langPair: string): LanguageData => {
 
   const primaryLanguageWordId =
     primaryLanguage === language1 ? "wordId1" : "wordId2";
+
   const secondaryLanguageWordId =
     secondaryLanguage === language1 ? "wordId1" : "wordId2";
+
+  const userWordsTable = userWordsTables[primaryLanguage];
 
   return {
     primaryLanguage,
@@ -44,6 +51,7 @@ export const getLanguageData = (langPair: string): LanguageData => {
     primaryVocabTable,
     secondaryVocabTable,
     translationTable,
+    userWordsTable,
     primaryLanguageWordId,
     secondaryLanguageWordId,
   };

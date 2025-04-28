@@ -8,6 +8,7 @@ interface AddToVocabularyButtonProps {
   wordId: string;
   userId: string;
   language: LanguageCodeType;
+  isAdded?: boolean;
   label?: string;
 }
 
@@ -15,29 +16,25 @@ const AddToVocabularyButton = ({
   wordId,
   userId,
   language,
+  isAdded: isAddedProp = false,
   label,
 }: AddToVocabularyButtonProps) => {
-  const [isAdded, setIsAdded] = useState(false);
+  const [isAdded, setIsAdded] = useState(isAddedProp);
   const [isLoading, setIsLoading] = useState(false);
-
   // Generate default label if not provided
   const buttonLabel = label || `Add ${language.slice(0, 2).toUpperCase()}`;
-
+  // console.log(isAdded);
   const handleClick = async () => {
     setIsLoading(true);
-
-    await addWordToVocabulary({ wordId, userId, language });
-
-    // Mock success
-    setIsAdded(true);
-    setIsLoading(false);
-
-    console.log(`Added ${language} word with ID ${wordId} to vocabulary`);
-
-    // Reset after 2 seconds
-    setTimeout(() => {
-      setIsAdded(false);
-    }, 2000);
+    try {
+      await addWordToVocabulary({ wordId, userId, language });
+      console.log("Word added to vocabulary");
+      setIsAdded(true);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

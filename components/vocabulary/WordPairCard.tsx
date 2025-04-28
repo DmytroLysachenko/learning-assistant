@@ -45,6 +45,7 @@ const WordPairCard = ({
           <AddToVocabularyButton
             wordId={primaryWord.id}
             userId={userId}
+            isAdded={pair.isLearned}
             language={primaryWord.language}
             label={`Add to my vocabulary`}
           />
