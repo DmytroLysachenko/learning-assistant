@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
-export default function DashboardSidebar() {
+const DashboardSidebar = ({ userId }: { userId: string }) => {
   const pathname = usePathname();
 
   const navItems = [
@@ -26,6 +26,11 @@ export default function DashboardSidebar() {
       title: "Dashboard",
       href: "/user/dashboard",
       icon: <LayoutDashboard className="h-5 w-5" />,
+    },
+    {
+      title: "My Vocabulary",
+      href: `/user/${userId}/vocabulary`,
+      icon: <BookOpen className="h-5 w-5" />,
     },
     {
       title: "Vocabularies",
@@ -141,4 +146,6 @@ export default function DashboardSidebar() {
       </div>
     </div>
   );
-}
+};
+
+export default DashboardSidebar;

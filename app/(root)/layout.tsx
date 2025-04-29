@@ -11,7 +11,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
     redirect("/login");
   }
 
-  const user = await getUserByEmail(session.user.email);
+  const { data: user } = await getUserByEmail(session.user.email);
 
   if (!user) {
     redirect("/login");
@@ -19,7 +19,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="flex">
-      <Sidebar />
+      <Sidebar userId={user.id} />
       <div className="min-h-screen w-screen max-h-screen overflow-auto">
         {children}
       </div>

@@ -4,15 +4,23 @@ import { db } from "@/db";
 import { eq, and, count } from "drizzle-orm";
 import { languagePairs, SUPPORTED_LANGUAGES_CODES } from "@/constants";
 import { userWordsTables } from "@/constants/tables";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     userId: string;
-  };
+  }>;
 }
 
-export default async function UserVocabularyHub({ params }: PageProps) {
-  const { userId } = params;
+const UserVocabularyHub = async ({ params }: PageProps) => {
+  const { userId } = await params;
+
+  const session = await auth();
+
+  if (session?.user.id !== userId) {
+    redirect("/");
+  }
 
   // Get counts for each language in user's vocabulary
   const languageCounts = await Promise.all(
@@ -88,14 +96,6 @@ export default async function UserVocabularyHub({ params }: PageProps) {
                           {languageCountMap[pair.source.code] || 0}
                         </div>
                       </div>
-                      <div className="bg-purple-50 p-3 rounded-md">
-                        <div className="text-xs text-gray-500">
-                          {pair.target.name} Words
-                        </div>
-                        <div className="text-lg font-semibold text-purple-700">
-                          {languageCountMap[pair.target.code] || 0}
-                        </div>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -106,4 +106,6 @@ export default async function UserVocabularyHub({ params }: PageProps) {
       </div>
     </div>
   );
-}
+};
+
+export default UserVocabularyHub;
