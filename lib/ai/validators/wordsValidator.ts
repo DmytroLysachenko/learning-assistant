@@ -4,7 +4,7 @@ import { GetWordType } from "@/db/types";
 import { wordsValidationSchemas } from "@/lib/validations/ai";
 import { z } from "zod";
 import { generateObject } from "ai";
-import { modelFlash as model } from "../aiClient";
+import { modelFlashLiteExp as model } from "../aiClient";
 import { validateVocabularyWordsPrompt } from "../prompts";
 
 export const validateVocabularyWords = async ({

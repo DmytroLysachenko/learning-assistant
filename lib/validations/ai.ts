@@ -37,12 +37,7 @@ export const russianTypeEnum = z.enum([
 
 // === Shared Word Shape Generator ===
 const baseWordSchema = z.object({
-  word: z
-    .string()
-    .min(1)
-    .describe(
-      "The word itself in its basic form (for example 'kot', but not 'koty', 'spać' but not 'śpią', 'pięć' but not 'piąty')"
-    ),
+  word: z.string().min(1).describe("The word itself in its basic form"),
   example: z
     .string()
     .min(1)
@@ -67,15 +62,15 @@ export const wordSchemas = {
 
 export const wordsValidationSchemas = {
   pl: wordSchemas.pl.extend({
-    id: z.string().describe("Original unchangable word id."),
+    id: z.string().describe("Original unchangeable word id."),
   }),
   ru: wordSchemas.ru.extend({
-    id: z.string().describe("Original unchangable word id."),
+    id: z.string().describe("Original unchangeable word id."),
   }),
 };
 
 // === Translation Schema ===
 export const aiTranslationSchema = z.object({
-  wordId1: z.string().describe("Id of the word in primary language"),
-  wordId2: z.string().describe("Id of the word in translation language"),
+  wordId1: z.string().describe("Id of the primary language word"),
+  wordId2: z.string().describe("Id of the translation language word"),
 });

@@ -1,4 +1,8 @@
-import { WORD_TYPES_PROMPTS, WORDS_CATEGORIES } from "@/constants";
+import {
+  SUPPORTED_LANGUAGES,
+  WORD_TYPES_PROMPTS,
+  WORDS_CATEGORIES,
+} from "@/constants";
 import { GetWordType } from "@/db/types";
 import { LanguageCodeType, ShortWordEntry, WordType } from "@/types";
 
@@ -105,8 +109,6 @@ Guidelines:
 - Words may connect one-to-many or many-to-one if appropriate.
 - Avoid duplicate or reversed duplicates.
 - Focus only on meaningful, educationally relevant matches.
-- Primary language word id suppose to be wordId1.
-- Translation language word id suppose to be wordId2.
 
 Primary Language Words:\n${JSON.stringify(primaryLanguageWords, null, 2)}
 
@@ -126,23 +128,25 @@ export const validateVocabularyWordsPrompt = ({
   wordType,
 }: {
   language: LanguageCodeType;
-  words: GetWordType[typeof language][];
+  words: GetWordType[LanguageCodeType][];
   wordType: WordType;
 }) => {
-  const system = `You are a professional ${language.toUpperCase()} linguist verifying vocabulary data for a language learning app.`;
+  const system = `You are a professional ${SUPPORTED_LANGUAGES[language]} linguist verifying vocabulary data for a language learning app.`;
 
   const wordTypeInstructions = WORD_TYPES_PROMPTS[language]?.[wordType] ?? "";
 
   const prompt = `
-You are validating a list of ${language.toUpperCase()} vocabulary entries.
+You are validating a list of ${
+    SUPPORTED_LANGUAGES[language]
+  } language vocabulary entries.
 
 🔍 For each entry:
 - Ensure the **word** is in its correct base form (dictionary form).
 - Ensure the **type** is accurate. If the word does not match the required type, correct it.
 - Ensure the **difficulty level** reflects real-world frequency and learner familiarity (A0 = basic, C2 = highly advanced).
 - Ensure the **example sentence** is correct, natural, and demonstrates how the word is used in context.
-- Ensure the **comment** (if present) is helpful and written in proper ${language.toUpperCase()}.
-- All content must be in ${language.toUpperCase()} only.
+- Ensure the **comment** (if present) is helpful.
+- All content must be in ${SUPPORTED_LANGUAGES[language]} language only.
 
 ${wordTypeInstructions}
 

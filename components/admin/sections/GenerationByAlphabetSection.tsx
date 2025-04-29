@@ -2,7 +2,7 @@
 
 import { toast } from "sonner";
 import type { LanguageCodeType, WordType } from "@/types";
-import { seedWordsByAlphabet } from "@/lib/actions/admin";
+import { seedWordsByAlphabet } from "@/lib/actions/admin/seedWordsByAlphabet";
 import AlphabetGenerationForm from "../forms/GenerationByAlphabetForm";
 
 interface GenerationByAlphabetSectionProps {

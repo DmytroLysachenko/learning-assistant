@@ -1,3 +1,5 @@
+"use server";
+
 import { WORD_TYPES_PROMPTS, WORDS_LANGUAGE_LEVELS } from "@/constants";
 import { vocabTables } from "@/constants/tables";
 import { db } from "@/db";

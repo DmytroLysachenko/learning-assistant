@@ -1,13 +1,13 @@
 "use server";
 
-import { vocabTablesNames, WORD_TYPES } from "@/constants";
+import { SUPPORTED_LANGUAGES, vocabTablesNames, WORD_TYPES } from "@/constants";
 import { translationTables, vocabTables } from "@/constants/tables";
 import { db } from "@/db";
 import { validateVocabularyWords } from "@/lib/ai/validators/wordsValidator";
 import { sleep } from "@/lib/utils";
 import { LanguageCodeType, WordType } from "@/types";
 import { eq, inArray } from "drizzle-orm";
-import { chunk } from "lodash";
+import { chunk, shuffle } from "lodash";
 
 export const removeDuplicatesFromTable = async (table: LanguageCodeType) => {
   const tableName = vocabTablesNames[table];
@@ -115,7 +115,7 @@ export const validateVocabulary = async ({
   dryRun?: boolean;
 }) => {
   console.log(
-    `Validating words ${wordType} in ${language} with batch size ${batchSize}`
+    `Validating words ${wordType} in ${SUPPORTED_LANGUAGES[language]} with batch size ${batchSize}`
   );
   const table = vocabTables[language];
 
@@ -130,7 +130,7 @@ export const validateVocabulary = async ({
     } "${wordType}" words in ${language.toUpperCase()}`
   );
 
-  const wordBatches = chunk(allWords, batchSize);
+  const wordBatches = chunk(shuffle(allWords), batchSize);
 
   for (const batch of wordBatches) {
     const { data: validatedWords } = await validateVocabularyWords({

@@ -24,7 +24,7 @@ export default function DashboardSidebar() {
   const navItems = [
     {
       title: "Dashboard",
-      href: "/dashboard",
+      href: "/user/dashboard",
       icon: <LayoutDashboard className="h-5 w-5" />,
     },
     {
