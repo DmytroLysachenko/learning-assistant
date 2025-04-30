@@ -10,5 +10,10 @@ export const getUserFromSession = async () => {
   }
 
   const { data: user } = await getUserByEmail(session.user.email);
+
+  if (!user) {
+    redirect("/login");
+  }
+
   return user;
 };

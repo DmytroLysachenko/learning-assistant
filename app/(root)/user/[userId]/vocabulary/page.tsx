@@ -4,9 +4,8 @@ import { db } from "@/db";
 import { eq, and, count } from "drizzle-orm";
 import { languagePairs, SUPPORTED_LANGUAGES_CODES } from "@/constants";
 import { userWordsTables } from "@/constants/tables";
-import { auth } from "@/auth";
+import { getUserFromSession } from "@/lib/utils/getUserFromSession";
 import { redirect } from "next/navigation";
-import { getUserById } from "@/lib/actions/user";
 
 interface PageProps {
   params: Promise<{
@@ -17,19 +16,12 @@ interface PageProps {
 const UserVocabularyHub = async ({ params }: PageProps) => {
   const { userId } = await params;
 
-  const session = await auth();
+  const user = await getUserFromSession();
 
-  if (session?.user.id !== userId) {
-    redirect("/");
+  if (user.id !== userId) {
+    redirect("/user/dashboard");
   }
 
-  const { data: user } = await getUserById(userId);
-
-  if (!user) {
-    redirect("/");
-  }
-
-  // Get counts for each language in user's vocabulary
   const languageCounts = await Promise.all(
     SUPPORTED_LANGUAGES_CODES.map(async (langCode) => {
       const userWordsTable = userWordsTables[langCode];

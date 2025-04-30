@@ -1,18 +1,16 @@
 import { count, eq } from "drizzle-orm";
-import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
-import { auth } from "@/auth";
 import VocabularyTable from "@/components/vocabulary/VocabularyTable";
 import { SUPPORTED_LANGUAGES } from "@/constants";
 import { db } from "@/db";
-import { getUserByEmail } from "@/lib/actions/user";
 import {
   getLanguageData,
   parseSearchParams,
   getSortOrder,
   buildWhereClause,
 } from "@/lib/utils";
+import { getUserFromSession } from "@/lib/utils/getUserFromSession";
 
 interface VocabularyPageProps {
   searchParams: Promise<{
@@ -31,15 +29,7 @@ const VocabularyPage = async ({
 }: VocabularyPageProps) => {
   const { langPair } = await params;
 
-  const session = await auth();
-
-  if (!session || !session.user || !session.user.email) {
-    redirect("/");
-  }
-
-  const {
-    data: { id: userId },
-  } = await getUserByEmail(session.user.email);
+  const { id: userId } = await getUserFromSession();
 
   const {
     primaryLanguage,

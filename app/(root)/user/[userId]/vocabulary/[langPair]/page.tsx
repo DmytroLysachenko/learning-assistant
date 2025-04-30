@@ -12,6 +12,8 @@ import {
   getSortOrder,
   parseSearchParams,
 } from "@/lib/utils";
+import { getUserFromSession } from "@/lib/utils/getUserFromSession";
+import { redirect } from "next/navigation";
 
 interface PageProps {
   params: Promise<{
@@ -29,6 +31,12 @@ interface PageProps {
 
 const UserVocabularyPage = async ({ params, searchParams }: PageProps) => {
   const { userId, langPair } = await params;
+
+  const user = await getUserFromSession();
+
+  if (user.id !== userId) {
+    redirect("/user/dashboard");
+  }
 
   const {
     primaryLanguage,

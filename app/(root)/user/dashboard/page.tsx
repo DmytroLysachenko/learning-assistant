@@ -1,16 +1,8 @@
-import { auth } from "@/auth";
 import UserDashboard from "@/components/dashboard/UserDashboard";
-import { getUserByEmail } from "@/lib/actions/user";
-import { redirect } from "next/navigation";
+import { getUserFromSession } from "@/lib/utils/getUserFromSession";
 
 const DashboardPage = async () => {
-  const session = await auth();
-
-  if (!session || !session.user || !session.user.email) {
-    redirect("/login");
-  }
-
-  const { data: user } = await getUserByEmail(session.user.email);
+  const user = await getUserFromSession();
 
   const learningLanguages = [
     {
