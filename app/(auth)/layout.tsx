@@ -9,7 +9,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
   if (session && session.user && session.user.email) {
     const user = await getUserByEmail(session.user.email);
     if (user) {
-      redirect("/dashboard");
+      redirect("/user/dashboard");
     }
   }
 

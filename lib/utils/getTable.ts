@@ -1,4 +1,8 @@
-import { translationTables, vocabTables } from "@/constants/tables";
+import {
+  translationTables,
+  userWordsTables,
+  vocabTables,
+} from "@/constants/tables";
 import { LanguageCodeType } from "@/types";
 
 export const getTranslationTable = (
@@ -29,6 +33,12 @@ export const getRelevantTranslationTables = (language: LanguageCodeType) => {
 
 export const getVocabTable = (language: LanguageCodeType) => {
   const table = vocabTables[language];
+  if (!table) throw new Error(`No vocabulary table for: ${language}`);
+  return table;
+};
+
+export const getUserWordsTable = (language: LanguageCodeType) => {
+  const table = userWordsTables[language];
   if (!table) throw new Error(`No vocabulary table for: ${language}`);
   return table;
 };

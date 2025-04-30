@@ -102,3 +102,11 @@ export type VocabTable = (typeof vocabTables)[LanguageCodeType];
 
 export type TranslationTable =
   (typeof translationTables)[keyof typeof translationTables];
+
+export interface PracticeVocabularyWord {
+  id: string;
+  word: string;
+  translation: string;
+  type: string;
+  status: "learning" | "reviewing" | "mastered";
+}

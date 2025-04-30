@@ -16,7 +16,7 @@ const Pagination = ({
   onPageChange,
 }: PaginationProps) => {
   const isFirstPage = currentPage === 1;
-  const isLastPage = currentPage === totalPages;
+  const isLastPage = currentPage === totalPages || totalPages === 0;
 
   const getVisiblePages = (): (number | "ellipsis")[] => {
     if (totalPages <= 7) {
@@ -89,10 +89,12 @@ const Pagination = ({
 
   return (
     <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div className="text-sm text-gray-500 order-2 sm:order-1">
-        Showing {(currentPage - 1) * pageSize + 1} to{" "}
-        {Math.min(currentPage * pageSize, totalCount)} of {totalCount} entries
-      </div>
+      {totalCount > 0 && (
+        <div className="text-sm text-gray-500 order-2 sm:order-1">
+          Showing {(currentPage - 1) * pageSize + 1} to{" "}
+          {Math.min(currentPage * pageSize, totalCount)} of {totalCount} entries
+        </div>
+      )}
 
       <div className="flex items-center space-x-1 order-1 sm:order-2">
         {!isFirstPage && (

@@ -57,6 +57,13 @@
       "when": 1745484805991,
       "tag": "0007_open_killer_shrike",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1746014808614,
+      "tag": "0008_lucky_synch",
+      "breakpoints": true
     }
   ]
 }

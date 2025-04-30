@@ -18,10 +18,11 @@ import {
 } from "@/components/ui/form";
 import { toast } from "sonner";
 import { loginSchema, registerSchema } from "@/lib/validations/auth";
-import FormInput from "./FormInput";
 
 import { createUser } from "@/lib/actions/user";
 import { signIn } from "next-auth/react";
+import FormInput from "./FormInput";
+import { Separator } from "../ui/separator";
 
 type AuthFormProps = {
   type: "login" | "register";
@@ -74,7 +75,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
         router.push("/login");
       } else {
         const loginValues = values as z.infer<typeof loginSchema>;
-        console.log(loginValues);
+
         const result = await signIn("credentials", {
           email: loginValues.email,
           password: loginValues.password,
@@ -88,7 +89,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
         toast.success("Logged in successfully", {
           description: "Welcome back to your language assistant.",
         });
-        router.push("/dashboard");
+        router.push("/user/dashboard");
       }
     } catch (error) {
       console.error(error);
@@ -206,6 +207,9 @@ const AuthForm = ({ type }: AuthFormProps) => {
           </Button>
         </form>
       </Form>
+      <Separator />
+      <Button>Google</Button>
+      <Separator />
 
       <div className="text-center text-sm">
         {type === "login" ? (

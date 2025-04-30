@@ -80,9 +80,11 @@ const VocabularyPage = async ({
       eq(translationTable[secondaryLanguageWordId], secondaryVocabTable.id)
     );
 
-  const totalCountResult = await countQueryBase;
+  const totalCount = await countQueryBase.then((res) => res[0].value);
 
-  const totalCount = totalCountResult[0]?.value || 0;
+  const totalFilteredCount = await countQueryBase
+    .where(whereClause)
+    .then((res) => res[0].value);
 
   // Build final filtered + sorted + paginated query
   const dataQuery = db
@@ -110,32 +112,34 @@ const VocabularyPage = async ({
     dataQuery,
   ]);
 
-  const entries = results.map((entry) => ({
-    id: entry.translationTable.id,
-    isLearning: userWords.some(
-      (word) => word.wordId === entry.primaryVocabTable!.id
-    ),
-    primaryWord: {
-      id: entry.primaryVocabTable!.id,
-      word: entry.primaryVocabTable!.word,
-      example: entry.primaryVocabTable!.example,
-      type: entry.primaryVocabTable!.type,
-      difficulty: entry.primaryVocabTable!.difficulty,
-      createdAt: entry.primaryVocabTable!.createdAt,
-      comment: entry.primaryVocabTable!.comment,
-      language: primaryLanguage,
-    },
-    secondaryWord: {
-      id: entry.secondaryVocabTable!.id,
-      word: entry.secondaryVocabTable!.word,
-      example: entry.secondaryVocabTable!.example,
-      type: entry.secondaryVocabTable!.type,
-      difficulty: entry.secondaryVocabTable!.difficulty,
-      createdAt: entry.secondaryVocabTable!.createdAt,
-      comment: entry.secondaryVocabTable!.comment,
-      language: secondaryLanguage,
-    },
-  }));
+  const entries = results.map(
+    ({ primaryVocabTable, secondaryVocabTable, translationTable }) => ({
+      id: translationTable.id,
+      isLearning: userWords.some(
+        (word) => word.wordId === primaryVocabTable!.id
+      ),
+      primaryWord: {
+        id: primaryVocabTable!.id,
+        word: primaryVocabTable!.word,
+        example: primaryVocabTable!.example,
+        type: primaryVocabTable!.type,
+        difficulty: primaryVocabTable!.difficulty,
+        createdAt: primaryVocabTable!.createdAt,
+        comment: primaryVocabTable!.comment,
+        language: primaryLanguage,
+      },
+      secondaryWord: {
+        id: secondaryVocabTable!.id,
+        word: secondaryVocabTable!.word,
+        example: secondaryVocabTable!.example,
+        type: secondaryVocabTable!.type,
+        difficulty: secondaryVocabTable!.difficulty,
+        createdAt: secondaryVocabTable!.createdAt,
+        comment: secondaryVocabTable!.comment,
+        language: secondaryLanguage,
+      },
+    })
+  );
 
   return (
     <div className="w-full flex flex-col justify-center py-6 px-4 md:px-8 gap-6">
@@ -167,7 +171,7 @@ const VocabularyPage = async ({
         <Suspense fallback={<div>Loading vocabulary...</div>}>
           <VocabularyTable
             wordPairs={entries}
-            totalCount={totalCount}
+            totalCount={totalFilteredCount}
             currentPage={currentPage}
             pageSize={pageSize}
             userId={userId}
