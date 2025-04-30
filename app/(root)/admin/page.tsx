@@ -3,14 +3,14 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
+import { OperationStatus } from "@/types";
+
 import StatusCard from "@/components/admin/StatusCard";
-
 import GenerationByTopic from "@/components/admin/sections/GenerationByTopicSection";
-
 import MaintenancePanel from "@/components/admin/sections/MaintenanceSection";
 import ValidationPanel from "@/components/admin/sections/ValidationSection";
-import { OperationStatus } from "@/types";
 import GenerationByAlphabet from "@/components/admin/sections/GenerationByAlphabetSection";
+import TranslateWordsSection from "@/components/admin/sections/TranslateWordsSection";
 
 const AdminDashboard = () => {
   // Centralized operation status state
@@ -46,8 +46,8 @@ const AdminDashboard = () => {
           defaultValue="generation"
           className="w-full"
         >
-          <TabsList className="grid grid-cols-2 w-full max-w-md mb-4">
-            <TabsTrigger value="generation">Word Generation</TabsTrigger>
+          <TabsList className="grid grid-cols-2 gap-5 w-full max-w-md mb-4">
+            <TabsTrigger value="generation">Content Generation</TabsTrigger>
             <TabsTrigger value="maintenance">
               Maintenance & Validation
             </TabsTrigger>
@@ -56,17 +56,18 @@ const AdminDashboard = () => {
           {/* Generation Tab */}
           <TabsContent value="generation">
             <Tabs
-              defaultValue="by-topic"
+              defaultValue="words-by-alphabet"
               className="w-full"
             >
               <TabsList className="mb-4">
-                <TabsTrigger value="by-topic">Generate by Topic</TabsTrigger>
-                <TabsTrigger value="by-alphabet">
-                  Generate by Alphabet
+                <TabsTrigger value="words-by-alphabet">
+                  Words by Alphabet
                 </TabsTrigger>
+                <TabsTrigger value="words-by-topic">Words by Topic</TabsTrigger>
+                <TabsTrigger value="translate-words">Translations</TabsTrigger>
               </TabsList>
 
-              <TabsContent value="by-topic">
+              <TabsContent value="words-by-topic">
                 <GenerationByTopic
                   isGenerating={operationStatus.isGeneratingByTopic}
                   setIsGenerating={(value) =>
@@ -75,8 +76,17 @@ const AdminDashboard = () => {
                 />
               </TabsContent>
 
-              <TabsContent value="by-alphabet">
+              <TabsContent value="words-by-alphabet">
                 <GenerationByAlphabet
+                  isGenerating={operationStatus.isGeneratingByAlphabet}
+                  setIsGenerating={(value) =>
+                    updateStatus("isGeneratingByAlphabet", value)
+                  }
+                />
+              </TabsContent>
+
+              <TabsContent value="translate-words">
+                <TranslateWordsSection
                   isGenerating={operationStatus.isGeneratingByAlphabet}
                   setIsGenerating={(value) =>
                     updateStatus("isGeneratingByAlphabet", value)

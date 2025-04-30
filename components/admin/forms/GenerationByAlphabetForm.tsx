@@ -36,29 +36,21 @@ const enumValues = LANGUAGE_OPTIONS.map((option) => option.value) as [
   ...string[]
 ];
 
-const formSchema = z
-  .object({
-    language: z.enum(enumValues, {
-      required_error: "Please select a language",
-    }),
-    translationLanguage: z.enum(enumValues, {
-      required_error: "Please select a translation language",
-    }),
-    total: z.coerce
-      .number({
-        required_error: "Please enter the total number of words",
-        invalid_type_error: "Total must be a number",
-      })
-      .min(30, { message: "Total must be at least 30" })
-      .max(500, { message: "Total cannot exceed 500" }),
-    wordType: z.string(),
-    batchSize: z.coerce.number().min(5).max(30),
-    delay: z.coerce.number().min(3000).max(8000),
-  })
-  .refine((data) => data.language !== data.translationLanguage, {
-    message: "Language and translation language must be different",
-    path: ["translationLanguage"],
-  });
+const formSchema = z.object({
+  language: z.enum(enumValues, {
+    required_error: "Please select a language",
+  }),
+  total: z.coerce
+    .number({
+      required_error: "Please enter the total number of words",
+      invalid_type_error: "Total must be a number",
+    })
+    .min(30, { message: "Total must be at least 30" })
+    .max(500, { message: "Total cannot exceed 500" }),
+  wordType: z.string(),
+  batchSize: z.coerce.number().min(5).max(30),
+  delay: z.coerce.number().min(3000).max(8000),
+});
 
 interface GenerationByAlphabetFormProps {
   isGenerating: boolean;
@@ -68,14 +60,12 @@ interface GenerationByAlphabetFormProps {
     wordType,
     delay,
     language,
-    translationLanguage,
   }: {
     total: number;
     batchSize: number;
-    wordType: WordType | "none";
+    wordType: WordType;
     delay: number;
     language: LanguageCodeType;
-    translationLanguage: LanguageCodeType;
   }) => Promise<void>;
 }
 
@@ -88,9 +78,8 @@ const GenerationByAlphabetForm = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       language: "pl",
-      translationLanguage: "ru",
       total: 100,
-      wordType: "none",
+      wordType: "noun",
       batchSize: 10,
       delay: 5000,
     },
@@ -101,8 +90,7 @@ const GenerationByAlphabetForm = ({
     await onGenerate({
       total: values.total,
       language: values.language as LanguageCodeType,
-      translationLanguage: values.translationLanguage as LanguageCodeType,
-      wordType: values.wordType as WordType | "none",
+      wordType: values.wordType as WordType,
       batchSize: values.batchSize,
       delay: values.delay,
     });
@@ -139,26 +127,6 @@ const GenerationByAlphabetForm = ({
                         isDisabled={isGenerating}
                         handleValueChange={field.onChange}
                         placeholder="Select language"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="translationLanguage"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Translation Language</FormLabel>
-                    <FormControl>
-                      <CustomSelect
-                        options={LANGUAGE_OPTIONS}
-                        currentValue={field.value}
-                        isDisabled={isGenerating}
-                        handleValueChange={field.onChange}
-                        placeholder="Select translation language"
                       />
                     </FormControl>
                     <FormMessage />
@@ -286,14 +254,7 @@ const GenerationByAlphabetForm = ({
                     (option) => option.value === form.watch("language")
                   )?.label
                 }{" "}
-                language with{" "}
-                {
-                  LANGUAGE_OPTIONS.find(
-                    (option) =>
-                      option.value === form.watch("translationLanguage")
-                  )?.label
-                }{" "}
-                translations in batches of {form.watch("batchSize")} with a{" "}
+                language in batches of {form.watch("batchSize")} with a{" "}
                 {form.watch("delay")}ms delay between batches.
               </AlertDescription>
             </Alert>

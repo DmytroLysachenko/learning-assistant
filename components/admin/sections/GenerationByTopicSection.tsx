@@ -20,15 +20,13 @@ const GenerationByTopicSection = ({
     delay,
     wordType,
     language,
-    translationLanguage,
   }: {
-    level: LanguageLevelsType | "random";
+    level: LanguageLevelsType;
     total: number;
     batchSize: number;
     delay: number;
-    wordType: WordType | "none";
+    wordType: WordType;
     language: LanguageCodeType;
-    translationLanguage: LanguageCodeType;
   }) => {
     try {
       setIsGenerating(true);
@@ -36,11 +34,10 @@ const GenerationByTopicSection = ({
       await seedWordsByTopic({
         total,
         batchSize,
-        wordType: wordType === "none" ? undefined : wordType,
+        wordType: wordType,
         delayMs: delay,
-        level: level === "random" ? undefined : level,
+        level: level,
         language,
-        translationLanguage,
       });
 
       toast.success("Words generated successfully", {

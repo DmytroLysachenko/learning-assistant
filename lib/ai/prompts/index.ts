@@ -44,7 +44,7 @@ export const generateVocabularyByLetterPrompt = ({
   language: LanguageCodeType;
   letter: string; // always two letters, like 'st', 'br', etc.
   quantity: number;
-  wordType?: WordType;
+  wordType: WordType;
   existingWords: string[];
 }) => {
   const system = `You are a linguistic AI generating useful vocabulary for language learners.`;
@@ -64,7 +64,7 @@ Guidelines:
 - Provide short, useful example sentences for each word, written only in ${language.toUpperCase()}.
 - Avoid duplicate words.
 - Only use the ${language.toUpperCase()} language.
-${wordType ? WORD_TYPES_PROMPTS[language][wordType] : ""}
+${WORD_TYPES_PROMPTS[language][wordType]}
 ${exclusions}
 `;
 

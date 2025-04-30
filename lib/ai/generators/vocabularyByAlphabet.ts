@@ -17,7 +17,7 @@ export const generateVocabularyByLetter = async ({
   language: LanguageCodeType;
   letter: string;
   quantity: number;
-  wordType?: WordType;
+  wordType: WordType;
   existingWords?: string[];
 }) => {
   try {

@@ -45,13 +45,20 @@ export interface SeedWordsOptions {
   total: number;
   batchSize?: number;
   delayMs?: number;
-  randomizeType?: boolean;
-  randomizeCategory?: boolean;
   level?: LanguageLevelsType;
   wordType?: WordType;
   log?: boolean;
   language: LanguageCodeType;
-  translationLanguage: LanguageCodeType;
+  // translationLanguage: LanguageCodeType;
+}
+
+export interface TranslateWordsOptions {
+  batchSize?: number;
+  delayMs?: number;
+  log?: boolean;
+  wordType: WordType;
+  sourceLanguage: LanguageCodeType;
+  targetLanguage: LanguageCodeType;
 }
 
 export interface Word {

@@ -1,33 +1,24 @@
 "use server";
 
-import { WORD_TYPES_PROMPTS, WORDS_LANGUAGE_LEVELS } from "@/constants";
-import { vocabTables } from "@/constants/tables";
+import { WORDS_LANGUAGE_LEVELS } from "@/constants";
 import { db } from "@/db";
-import {
-  generateTranslationConnections,
-  generateTranslationWords,
-  generateVocabularyByTopic,
-} from "@/lib/ai/generators";
-import { sleep } from "@/lib/utils";
-import { SeedWordsOptions, WordType } from "@/types";
-import { removeDuplicatesFromTable } from "../checks";
+import { generateVocabularyByTopic } from "@/lib/ai/generators";
+import { getVocabTable, sleep } from "@/lib/utils";
+import { SeedWordsOptions } from "@/types";
 
 export const seedWordsByTopic = async ({
   total,
   batchSize = 10,
   delayMs = 5000,
-  randomizeType = false,
   level,
-  wordType,
+  wordType = "noun",
   language = "pl",
-  translationLanguage = "ru",
   log = true,
 }: SeedWordsOptions) => {
   const batches = Math.ceil(total / batchSize);
   let totalGenerated = 0;
 
-  const mainVocabularyTable = vocabTables[language];
-  const translationVocabularyTable = vocabTables[translationLanguage];
+  const mainVocabularyTable = getVocabTable(language);
 
   if (log) {
     console.log(`🚀 Starting to seed ${total} words by topic...`);
@@ -40,12 +31,6 @@ export const seedWordsByTopic = async ({
         Math.floor(Math.random() * WORDS_LANGUAGE_LEVELS.length)
       ];
 
-    const currentType = randomizeType
-      ? (Object.keys(WORD_TYPES_PROMPTS[language])[
-          Math.floor(Math.random() * Object.keys(WORD_TYPES_PROMPTS).length)
-        ] as WordType)
-      : wordType;
-
     try {
       const {
         success: newWordsSuccess,
@@ -55,59 +40,14 @@ export const seedWordsByTopic = async ({
         language,
         quantity: batchSize,
         level: currentLevel,
-        wordType: currentType,
+        wordType,
       });
 
       if (!newWordsSuccess || !newWords || !newWords.length) {
         return { success: false, error: newWordsError };
       }
 
-      const insertedNewWords = await db
-        .insert(mainVocabularyTable)
-        .values(newWords)
-        .returning();
-
-      const mappedNewWords = insertedNewWords.map((w) => ({
-        id: w.id,
-        word: w.word,
-      }));
-
-      const {
-        success: translatedWordsSuccess,
-        data: translatedWords,
-        error: translatedWordsError,
-      } = await generateTranslationWords(
-        language,
-        translationLanguage,
-        mappedNewWords
-      );
-
-      if (!translatedWordsSuccess || !translatedWords) {
-        return { success: false, error: translatedWordsError };
-      }
-
-      const insertedTranslatedWords = await db
-        .insert(translationVocabularyTable)
-        .values(translatedWords)
-        .returning();
-
-      const mappedTranslatedWords = insertedTranslatedWords.map((w) => ({
-        id: w.id,
-        word: w.word,
-      }));
-
-      const {
-        success: translationsSuccess,
-        data: translationLinks,
-        error: translationsError,
-      } = await generateTranslationConnections(
-        mappedNewWords,
-        mappedTranslatedWords
-      );
-
-      if (!translationsSuccess || !translationLinks) {
-        return { success: false, error: translationsError };
-      }
+      await db.insert(mainVocabularyTable).values(newWords).returning();
 
       totalGenerated += batchSize;
 
@@ -120,23 +60,8 @@ export const seedWordsByTopic = async ({
       console.error(`❌ Error in batch ${i + 1}:`, error);
     }
 
-    if (i < batches - 1 && delayMs > 0) {
-      if (log) console.log(`⏱ Waiting ${delayMs / 1000}s before next batch...`);
-      await sleep(delayMs);
-    }
-  }
-
-  if (log) {
-    console.log("🧹 Running post-generation cleanups...");
-  }
-
-  await Promise.all([
-    removeDuplicatesFromTable(language),
-    removeDuplicatesFromTable(translationLanguage),
-  ]);
-
-  if (log) {
-    console.log("🔍 Running quality check...");
+    if (log) console.log(`⏱ Waiting ${delayMs / 1000}s before next batch...`);
+    await sleep(delayMs);
   }
 
   // const issues = await checkGeneratedDataQuality();

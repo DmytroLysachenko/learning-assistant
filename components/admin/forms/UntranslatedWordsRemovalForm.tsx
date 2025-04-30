@@ -122,9 +122,7 @@ const UntranslatedWordsForm = ({
               warningTitle="Warning"
               warningDescription={`This will remove all ${
                 SUPPORTED_LANGUAGES[form.watch("language") as LanguageCodeType]
-              } words that don't have translations in ${
-                SUPPORTED_LANGUAGES[form.watch("language") as LanguageCodeType]
-              }.`}
+              } words that don't have any translations.`}
               onConfirm={handleRemoveUntranslated}
               trigger={
                 <Button

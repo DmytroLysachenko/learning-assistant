@@ -3,15 +3,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import {
+  AlertCircleIcon,
+  ItalicIcon as AlphabetIcon,
+  Loader2,
+} from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -20,81 +19,72 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { AlertCircleIcon, Loader2, Upload } from "lucide-react";
 import CustomSelect from "@/components/CustomSelect";
-import type { LanguageCodeType, LanguageLevelsType, WordType } from "@/types";
-import {
-  LANGUAGE_OPTIONS,
-  LEVEL_OPTIONS,
-  WORDS_TYPES_OPTIONS,
-} from "@/constants/ui";
+
+import type { LanguageCodeType, WordType } from "@/types";
+import { LANGUAGE_OPTIONS, WORDS_TYPES_OPTIONS } from "@/constants/ui";
 
 const enumValues = LANGUAGE_OPTIONS.map((option) => option.value) as [
   string,
   ...string[]
 ];
 
-// Define the form schema with Zod
-const formSchema = z.object({
-  level: z.string(),
-  language: z.enum(enumValues, {
-    required_error: "Please select a language",
-  }),
-  total: z.coerce
-    .number({
-      required_error: "Please enter the total number of words",
-      invalid_type_error: "Total must be a number",
-    })
-    .min(30, { message: "Total must be at least 30" })
-    .max(500, { message: "Total cannot exceed 500" }),
-  wordType: z.string(),
-  batchSize: z.coerce.number().min(5).max(30),
-  delay: z.coerce.number().min(3000).max(8000),
-});
+const formSchema = z
+  .object({
+    sourceLanguage: z.enum(enumValues, {
+      required_error: "Please select a language",
+    }),
+    targetLanguage: z.enum(enumValues, {
+      required_error: "Please select a translation language",
+    }),
+    wordType: z.string(),
+    batchSize: z.coerce.number().min(5).max(30),
+    delay: z.coerce.number().min(3000).max(8000),
+  })
 
-interface GenerationByTopicFormProps {
+  .refine((data) => data.sourceLanguage !== data.targetLanguage, {
+    message: "Language and translation language must be different",
+    path: ["targetLanguage"],
+  });
+
+interface TranslateWordsFormProps {
   isGenerating: boolean;
   onGenerate: ({
-    level,
-    total,
     batchSize,
-    delay,
     wordType,
-    language,
+    delay,
+    sourceLanguage,
+    targetLanguage,
   }: {
-    level: LanguageLevelsType;
-    total: number;
     batchSize: number;
-    delay: number;
     wordType: WordType;
-    language: LanguageCodeType;
+    delay: number;
+    sourceLanguage: LanguageCodeType;
+    targetLanguage: LanguageCodeType;
   }) => Promise<void>;
 }
 
-const GenerationByTopicForm = ({
+const TranslateWordsForm = ({
   isGenerating,
   onGenerate,
-}: GenerationByTopicFormProps) => {
+}: TranslateWordsFormProps) => {
   // Initialize the form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      level: "B1",
-      total: 100,
-      language: "pl",
+      sourceLanguage: "pl",
+      targetLanguage: "ru",
       wordType: "noun",
-      batchSize: 10,
       delay: 5000,
+      batchSize: 10,
     },
   });
 
   // Submit handler
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     await onGenerate({
-      level: values.level as LanguageLevelsType,
-      total: values.total,
-      language: values.language as LanguageCodeType,
+      sourceLanguage: values.sourceLanguage as LanguageCodeType,
+      targetLanguage: values.targetLanguage as LanguageCodeType,
       wordType: values.wordType as WordType,
       batchSize: values.batchSize,
       delay: values.delay,
@@ -105,12 +95,9 @@ const GenerationByTopicForm = ({
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Upload className="h-5 w-5" />
-          Generate Words by Topic
+          <AlphabetIcon className="h-5 w-5" />
+          Generate Translations to Vocabulary words
         </CardTitle>
-        <CardDescription>
-          Add new vocabulary words to the database based on topics
-        </CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -121,48 +108,7 @@ const GenerationByTopicForm = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="level"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Language Level</FormLabel>
-                    <FormControl>
-                      <CustomSelect
-                        options={LEVEL_OPTIONS}
-                        currentValue={field.value}
-                        isDisabled={isGenerating}
-                        handleValueChange={field.onChange}
-                        placeholder="Select level"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="total"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Number of Words</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        disabled={isGenerating}
-                        placeholder="Enter number of words"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="language"
+                name="sourceLanguage"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Language</FormLabel>
@@ -179,27 +125,49 @@ const GenerationByTopicForm = ({
                   </FormItem>
                 )}
               />
+
+              <FormField
+                control={form.control}
+                name="targetLanguage"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Translation Language</FormLabel>
+                    <FormControl>
+                      <CustomSelect
+                        options={LANGUAGE_OPTIONS}
+                        currentValue={field.value}
+                        isDisabled={isGenerating}
+                        handleValueChange={field.onChange}
+                        placeholder="Select translation language"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
 
-            <FormField
-              control={form.control}
-              name="wordType"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Word Type</FormLabel>
-                  <FormControl>
-                    <CustomSelect
-                      options={WORDS_TYPES_OPTIONS}
-                      currentValue={field.value}
-                      isDisabled={isGenerating}
-                      handleValueChange={field.onChange}
-                      placeholder="Select word type"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="wordType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Word Type</FormLabel>
+                    <FormControl>
+                      <CustomSelect
+                        options={WORDS_TYPES_OPTIONS}
+                        currentValue={field.value}
+                        isDisabled={isGenerating}
+                        handleValueChange={field.onChange}
+                        placeholder="Select word type"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <FormField
               control={form.control}
@@ -268,22 +236,16 @@ const GenerationByTopicForm = ({
                 </FormItem>
               )}
             />
+
             <Alert>
               <AlertCircleIcon className="h-4 w-4" />
               <AlertTitle>Information</AlertTitle>
               <AlertDescription>
-                {form.watch("total")} words will be generated in random topics
-                for{" "}
-                {
-                  LANGUAGE_OPTIONS.find(
-                    (option) => option.value === form.watch("language")
-                  )?.label
-                }{" "}
-                language in batches of {form.watch("batchSize")} with a{" "}
-                {form.watch("delay")}ms delay between batches.
+                {form.watch("sourceLanguage").toUpperCase()} words will be
+                translated to {form.watch("targetLanguage").toUpperCase()}
               </AlertDescription>
             </Alert>
-
+            <FormMessage />
             <Button
               type="submit"
               disabled={isGenerating}
@@ -295,7 +257,7 @@ const GenerationByTopicForm = ({
                   Generating...
                 </>
               ) : (
-                "Generate Words by Topic"
+                "Generate Words Alphabetically"
               )}
             </Button>
           </form>
@@ -305,4 +267,4 @@ const GenerationByTopicForm = ({
   );
 };
 
-export default GenerationByTopicForm;
+export default TranslateWordsForm;

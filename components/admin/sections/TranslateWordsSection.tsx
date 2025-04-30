@@ -2,52 +2,52 @@
 
 import { toast } from "sonner";
 import type { LanguageCodeType, WordType } from "@/types";
-import { seedWordsByAlphabet } from "@/lib/actions/admin/seedWordsByAlphabet";
-import AlphabetGenerationForm from "../forms/GenerationByAlphabetForm";
+import { translateWordsToLanguage } from "@/lib/actions/admin/translateWordsToLanguage";
+import TranslateWordsForm from "../forms/TranslateWordsForm";
 
 interface GenerationByAlphabetSectionProps {
   isGenerating: boolean;
   setIsGenerating: (value: boolean) => void;
 }
 
-const GenerationByAlphabetSection = ({
+const TranslateWordsSection = ({
   isGenerating,
   setIsGenerating,
 }: GenerationByAlphabetSectionProps) => {
-  const handleGenerateWords = async ({
-    total,
+  const handleTranslateWords = async ({
     batchSize,
     wordType,
     delay,
-    language,
+    sourceLanguage,
+    targetLanguage,
   }: {
-    total: number;
     batchSize: number;
     wordType: WordType;
     delay: number;
-    language: LanguageCodeType;
+    sourceLanguage: LanguageCodeType;
+    targetLanguage: LanguageCodeType;
   }) => {
     try {
       setIsGenerating(true);
 
-      const { success } = await seedWordsByAlphabet({
-        total,
+      const { success } = await translateWordsToLanguage({
+        sourceLanguage,
+        targetLanguage,
         batchSize,
         wordType: wordType,
         delayMs: delay,
-        language,
       });
 
       if (!success) {
-        toast.error("Failed to generate words alphabetically");
+        toast.error("Failed to generate translation words");
         return;
       }
 
       toast.success("Words generated alphabetically", {
-        description: `Successfully generated words for language: ${language.toUpperCase()}`,
+        description: `Successfully generated translated words in ${targetLanguage.toUpperCase()} language`,
       });
     } catch (error) {
-      toast.error("Failed to generate words", {
+      toast.error("Failed to generate translation words", {
         description:
           error instanceof Error ? error.message : "An unknown error occurred",
       });
@@ -58,12 +58,12 @@ const GenerationByAlphabetSection = ({
 
   return (
     <div className="w-full">
-      <AlphabetGenerationForm
+      <TranslateWordsForm
         isGenerating={isGenerating}
-        onGenerate={handleGenerateWords}
+        onGenerate={handleTranslateWords}
       />
     </div>
   );
 };
 
-export default GenerationByAlphabetSection;
+export default TranslateWordsSection;
