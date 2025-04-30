@@ -101,6 +101,10 @@ const AuthForm = ({ type }: AuthFormProps) => {
     }
   };
 
+  const onGoogleAuth = async () => {
+    await signIn("google");
+  };
+
   return (
     <div className="mx-auto max-w-md space-y-6 p-6">
       <div className="space-y-2 text-center">
@@ -208,7 +212,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
         </form>
       </Form>
       <Separator />
-      <Button>Google</Button>
+      <Button onClick={onGoogleAuth}>Google</Button>
       <Separator />
 
       <div className="text-center text-sm">
