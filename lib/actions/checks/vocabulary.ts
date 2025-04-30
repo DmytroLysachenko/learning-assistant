@@ -1,17 +1,19 @@
 "use server";
 
 import { SUPPORTED_LANGUAGES, vocabTablesNames, WORD_TYPES } from "@/constants";
-import { translationTables, vocabTables } from "@/constants/tables";
 import { db } from "@/db";
 import { validateVocabularyWords } from "@/lib/ai/validators/wordsValidator";
-import { sleep } from "@/lib/utils";
+import {
+  getRelevantTranslationTables,
+  getVocabTable,
+  sleep,
+} from "@/lib/utils";
 import { LanguageCodeType, WordType } from "@/types";
 import { eq, inArray } from "drizzle-orm";
 import { chunk, shuffle } from "lodash";
 
 export const removeDuplicatesFromTable = async (table: LanguageCodeType) => {
   const tableName = vocabTablesNames[table];
-
   try {
     await db.execute(`
       DELETE FROM ${tableName}
@@ -26,61 +28,40 @@ export const removeDuplicatesFromTable = async (table: LanguageCodeType) => {
     `);
 
     console.log(`✅ Duplicates removed from ${tableName}`);
-  } catch (err) {
-    console.error(`❌ Failed to remove duplicates from ${tableName}`, err);
-    throw err;
+
+    return { success: true };
+  } catch (error) {
+    console.error(`❌ Failed to remove duplicates from ${tableName}`, error);
+    return { success: false, error };
   }
 };
 
 export const removeUntranslatedWordsFromTable = async (
   language: LanguageCodeType
 ) => {
-  const vocabTable = vocabTables[language];
-
-  if (!vocabTable) {
-    throw new Error(`Vocab table for language "${language}" not found.`);
-  }
-
-  // Filter all translation tables that include this language
-  const relevantTranslationTables = Object.entries(translationTables).filter(
-    ([key]) => key.includes(language)
-  );
-
-  if (relevantTranslationTables.length === 0) {
-    console.warn(`⚠️ No translation tables found for language "${language}".`);
-    return;
-  }
-
   try {
-    // Get all word IDs from this vocab table
+    const vocabTable = getVocabTable(language);
+
+    const relevantTranslationTables = getRelevantTranslationTables(language);
+
     const allWordIds = await db
-      .select()
+      .select({ id: vocabTable.id })
       .from(vocabTable)
       .then((rows) => rows.map((row) => row.id));
 
-    const linkedWordIdsSet = new Set<string>();
+    const linkedWordIds = new Set<string>();
 
-    for (const [key, translationTable] of relevantTranslationTables) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const [lang1, lang2] = key.split("_");
-
+    for (const [key, table] of relevantTranslationTables) {
+      const [lang1] = key.split("_");
       const isLangFirst = language === lang1;
+      const wordIdColumn = isLangFirst ? table.wordId1 : table.wordId2;
 
-      const wordIdColumn = isLangFirst
-        ? translationTable.wordId1
-        : translationTable.wordId2;
-
-      // Collect all word IDs from the relevant column
-      const wordLinks = await db
-        .select({ id: wordIdColumn })
-        .from(translationTable);
-
-      wordLinks.forEach(({ id }) => linkedWordIdsSet.add(id));
+      const links = await db.select({ id: wordIdColumn }).from(table);
+      links.forEach(({ id }) => linkedWordIds.add(id));
     }
 
-    // Figure out which words are unlinked in all translation tables
     const untranslatedWordIds = allWordIds.filter(
-      (id) => !linkedWordIdsSet.has(id)
+      (id) => !linkedWordIds.has(id)
     );
 
     if (untranslatedWordIds.length > 0) {
@@ -89,14 +70,16 @@ export const removeUntranslatedWordsFromTable = async (
         .where(inArray(vocabTable.id, untranslatedWordIds));
 
       console.log(
-        `🧹 Removed ${untranslatedWordIds.length} untranslated words from ${language} vocabulary`
+        `🧹 Removed ${untranslatedWordIds.length} untranslated words from "${language}" vocabulary.`
       );
     } else {
-      console.log(`✅ No untranslated words found for ${language}`);
+      console.log(
+        `✅ No untranslated words to remove in "${language}" vocabulary.`
+      );
     }
   } catch (error) {
     console.error(
-      `❌ Error cleaning untranslated words for "${language}":`,
+      `❌ Error removing untranslated words for "${language}":`,
       error
     );
     throw error;
@@ -107,85 +90,84 @@ export const validateVocabulary = async ({
   language,
   wordType,
   batchSize = 10,
-  dryRun = false,
 }: {
   language: LanguageCodeType;
   wordType: WordType;
   batchSize: number;
-  dryRun?: boolean;
 }) => {
-  console.log(
-    `Validating words ${wordType} in ${SUPPORTED_LANGUAGES[language]} with batch size ${batchSize}`
-  );
-  const table = vocabTables[language];
+  try {
+    console.log(
+      `🔍 Starting validation for "${wordType}" words in ${
+        SUPPORTED_LANGUAGES[language]
+      } (${language.toUpperCase()}) with batch size ${batchSize}`
+    );
 
-  const allWords = await db
-    .select()
-    .from(table)
-    .where(eq(table.type, WORD_TYPES[language][wordType]));
+    const table = getVocabTable(language);
 
-  console.log(
-    `🔍 Validating ${
-      allWords.length
-    } "${wordType}" words in ${language.toUpperCase()}`
-  );
+    const allWords = await db
+      .select()
+      .from(table)
+      .where(eq(table.type, WORD_TYPES[language][wordType]));
 
-  const wordBatches = chunk(shuffle(allWords), batchSize);
-
-  for (const batch of wordBatches) {
-    const { data: validatedWords } = await validateVocabularyWords({
-      language,
-      words: batch,
-      wordType,
-    });
-
-    if (!validatedWords) {
-      console.warn("⚠️ Validation failed or returned no results for batch.");
-      continue;
+    if (allWords.length === 0) {
+      console.log(`⚠️ No words found for type "${wordType}" in "${language}".`);
+      return { success: true };
     }
 
-    for (const validated of validatedWords) {
-      const original = batch.find((w) => w.id === validated.id);
+    const wordBatches = chunk(shuffle(allWords), batchSize);
 
-      if (!original) continue;
+    for (const batch of wordBatches) {
+      try {
+        const {
+          success,
+          data: validatedWords,
+          error,
+        } = await validateVocabularyWords({
+          language,
+          words: batch,
+          wordType,
+        });
 
-      const normalizedOriginal = {
-        ...original,
-        comment: original.comment || "", // normalize null to empty string
-      };
-      const normalizedValidated = {
-        ...validated,
-        comment: validated.comment || "",
-      };
-
-      // Compare only mutable fields
-      const hasChanges =
-        normalizedOriginal.word !== normalizedValidated.word ||
-        normalizedOriginal.example !== normalizedValidated.example ||
-        normalizedOriginal.type !== normalizedValidated.type ||
-        normalizedOriginal.difficulty !== normalizedValidated.difficulty ||
-        normalizedOriginal.comment !== normalizedValidated.comment;
-
-      if (hasChanges) {
-        console.log(
-          `🔧 Word "${original.word}" (id: ${original.id}) will be updated.`
-        );
-
-        if (!dryRun) {
-          await db
-            .update(table)
-            .set({
-              ...validated,
-              updatedAt: new Date(),
-              comment: validated.comment || null, // restore null if needed
-            })
-            .where(eq(table.id, validated.id));
+        if (!validatedWords || !success) {
+          throw new Error(String(error) ?? "Validation returned no results.");
         }
+
+        for (const validated of validatedWords) {
+          const original = batch.find((w) => w.id === validated.id);
+          if (!original) continue;
+
+          const hasChanges =
+            original.word !== validated.word ||
+            original.example !== validated.example ||
+            original.type !== validated.type ||
+            original.difficulty !== validated.difficulty ||
+            (original.comment || "") !== (validated.comment || "");
+
+          if (hasChanges) {
+            console.log(`🔧 Updating "${original.word}" (ID: ${original.id})`);
+
+            await db
+              .update(table)
+              .set({
+                ...validated,
+                updatedAt: new Date(),
+                comment: validated.comment || null,
+              })
+              .where(eq(table.id, validated.id));
+          }
+        }
+
+        await sleep(5000);
+      } catch (error) {
+        console.error("❌ Error validating a batch:", error);
+        continue;
       }
     }
 
-    await sleep(5000);
+    console.log("✅ Vocabulary validation complete.");
+    return { success: true };
+  } catch (error) {
+    console.error(`❌ Failed to validate vocabulary for "${language}":`, error);
+    return { success: false, error };
   }
-
-  console.log(dryRun ? "🔎 Dry run complete." : "✅ Validation complete.");
 };

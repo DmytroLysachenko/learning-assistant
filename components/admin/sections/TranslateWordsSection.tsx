@@ -30,27 +30,34 @@ const TranslateWordsSection = ({
     try {
       setIsGenerating(true);
 
-      const { success } = await translateWordsToLanguage({
+      const { success, error, data } = await translateWordsToLanguage({
         sourceLanguage,
         targetLanguage,
         batchSize,
-        wordType: wordType,
+        wordType,
         delayMs: delay,
       });
 
-      if (!success) {
-        toast.error("Failed to generate translation words");
-        return;
+      if (success) {
+        toast.success("Words translated successfully", {
+          description: `Translated ${
+            data ?? "some"
+          } words into ${targetLanguage.toUpperCase()}.`,
+        });
+      } else {
+        toast.error("Failed to translate words", {
+          description:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        });
       }
-
-      toast.success("Words generated alphabetically", {
-        description: `Successfully generated translated words in ${targetLanguage.toUpperCase()} language`,
-      });
     } catch (error) {
-      toast.error("Failed to generate translation words", {
+      toast.error("Unexpected error during translation", {
         description:
           error instanceof Error ? error.message : "An unknown error occurred",
       });
+      console.error(error);
     } finally {
       setIsGenerating(false);
     }

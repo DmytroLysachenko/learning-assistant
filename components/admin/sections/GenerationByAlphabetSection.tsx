@@ -30,7 +30,11 @@ const GenerationByAlphabetSection = ({
     try {
       setIsGenerating(true);
 
-      const { success } = await seedWordsByAlphabet({
+      const {
+        success,
+        error,
+        data: totalGenerated,
+      } = await seedWordsByAlphabet({
         total,
         batchSize,
         wordType: wordType,
@@ -38,19 +42,21 @@ const GenerationByAlphabetSection = ({
         language,
       });
 
-      if (!success) {
-        toast.error("Failed to generate words alphabetically");
-        return;
+      if (success) {
+        toast.success("Words generated alphabetically", {
+          description: `Successfully generated ${totalGenerated} words for language: ${language.toUpperCase()}`,
+        });
+      } else {
+        toast.error("Failed to generate words", {
+          description:
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred",
+        });
       }
-
-      toast.success("Words generated alphabetically", {
-        description: `Successfully generated words for language: ${language.toUpperCase()}`,
-      });
     } catch (error) {
-      toast.error("Failed to generate words", {
-        description:
-          error instanceof Error ? error.message : "An unknown error occurred",
-      });
+      toast.error("Unexpected error during generation");
+      console.error(error);
     } finally {
       setIsGenerating(false);
     }

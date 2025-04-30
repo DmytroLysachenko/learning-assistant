@@ -9,9 +9,22 @@ export const getTranslationTable = (
     .sort()
     .join("_") as keyof typeof translationTables;
   const table = translationTables[pairKey];
+
   if (!table)
     throw new Error(`No translation table for pair: ${language1}-${language2}`);
+
   return table;
+};
+
+export const getRelevantTranslationTables = (language: LanguageCodeType) => {
+  const relevantTranslationTables = Object.entries(translationTables).filter(
+    ([key]) => key.includes(language)
+  );
+
+  if (relevantTranslationTables.length === 0)
+    throw new Error(`No translation tables found for language "${language}".`);
+
+  return relevantTranslationTables;
 };
 
 export const getVocabTable = (language: LanguageCodeType) => {

@@ -17,51 +17,58 @@ export const seedWordsByTopic = async ({
 }: SeedWordsOptions) => {
   const batches = Math.ceil(total / batchSize);
   let totalGenerated = 0;
+  try {
+    const mainVocabularyTable = getVocabTable(language);
 
-  const mainVocabularyTable = getVocabTable(language);
-
-  if (log) {
-    console.log(`🚀 Starting to seed ${total} words by topic...`);
-  }
-
-  for (let i = 0; i < batches; i++) {
-    const currentLevel =
-      level ||
-      WORDS_LANGUAGE_LEVELS[
-        Math.floor(Math.random() * WORDS_LANGUAGE_LEVELS.length)
-      ];
-
-    try {
-      const {
-        success: newWordsSuccess,
-        data: newWords,
-        error: newWordsError,
-      } = await generateVocabularyByTopic({
-        language,
-        quantity: batchSize,
-        level: currentLevel,
-        wordType,
-      });
-
-      if (!newWordsSuccess || !newWords || !newWords.length) {
-        return { success: false, error: newWordsError };
-      }
-
-      await db.insert(mainVocabularyTable).values(newWords).returning();
-
-      totalGenerated += batchSize;
-
-      if (log) {
-        console.log(
-          `✅ Batch ${i + 1} complete | Total so far: ${totalGenerated} words`
-        );
-      }
-    } catch (error) {
-      console.error(`❌ Error in batch ${i + 1}:`, error);
+    if (log) {
+      console.log(`🚀 Starting to seed ${total} words by topic...`);
     }
 
-    if (log) console.log(`⏱ Waiting ${delayMs / 1000}s before next batch...`);
-    await sleep(delayMs);
+    for (let i = 0; i < batches; i++) {
+      const currentLevel =
+        level ||
+        WORDS_LANGUAGE_LEVELS[
+          Math.floor(Math.random() * WORDS_LANGUAGE_LEVELS.length)
+        ];
+
+      try {
+        const {
+          success: newWordsSuccess,
+          data: newWords,
+          error: newWordsError,
+        } = await generateVocabularyByTopic({
+          language,
+          quantity: batchSize,
+          level: currentLevel,
+          wordType,
+        });
+
+        if (!newWordsSuccess || !newWords || !newWords.length) {
+          throw new Error(String(newWordsError) ?? "No words generated");
+        }
+
+        await db.insert(mainVocabularyTable).values(newWords).returning();
+
+        totalGenerated += batchSize;
+
+        if (log) {
+          console.log(
+            `✅ Batch ${i + 1} complete | Total so far: ${totalGenerated} words`
+          );
+        }
+      } catch (error) {
+        console.error(`❌ Error in batch ${i + 1}:`, error);
+        continue;
+      }
+
+      if (log) console.log(`⏱ Waiting ${delayMs / 1000}s before next batch...`);
+      await sleep(delayMs);
+    }
+
+    return { success: true, data: totalGenerated };
+  } catch (error) {
+    console.log(error);
+    return { success: false, error };
   }
 
   // const issues = await checkGeneratedDataQuality();
