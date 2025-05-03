@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+
 import { Progress } from "@/components/ui/progress";
 
 interface LanguageCardProps {

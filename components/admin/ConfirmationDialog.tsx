@@ -1,6 +1,7 @@
 "use client";
 
 import type React from "react";
+import { AlertCircleIcon, Loader2 } from "lucide-react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -14,7 +15,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { AlertCircleIcon, Loader2 } from "lucide-react";
 
 interface ConfirmationDialogProps {
   title: string;

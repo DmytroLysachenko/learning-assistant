@@ -1,12 +1,13 @@
 import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { eq } from "drizzle-orm";
+
 import PracticeInterface from "@/components/practice/PracticeInterface";
 import { LanguageCodeType, PracticeVocabularyWord } from "@/types";
 import { SUPPORTED_LANGUAGES } from "@/constants";
 import { getUserFromSession } from "@/lib/utils/getUserFromSession";
 import { getLanguageData } from "@/lib/utils";
-import { eq } from "drizzle-orm";
 import { db } from "@/db";
 
 interface PracticePageProps {

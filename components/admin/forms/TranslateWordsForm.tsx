@@ -8,6 +8,7 @@ import {
   ItalicIcon as AlphabetIcon,
   Loader2,
 } from "lucide-react";
+
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,14 +21,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import CustomSelect from "@/components/CustomSelect";
-
 import type { LanguageCodeType, WordType } from "@/types";
 import { LANGUAGE_OPTIONS, WORDS_TYPES_OPTIONS } from "@/constants/ui";
-
-const enumValues = LANGUAGE_OPTIONS.map((option) => option.value) as [
-  string,
-  ...string[]
-];
+import { enumValues } from "@/constants";
 
 const formSchema = z
   .object({
@@ -68,7 +64,6 @@ const TranslateWordsForm = ({
   isGenerating,
   onGenerate,
 }: TranslateWordsFormProps) => {
-  // Initialize the form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -80,7 +75,6 @@ const TranslateWordsForm = ({
     },
   });
 
-  // Submit handler
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     await onGenerate({
       sourceLanguage: values.sourceLanguage as LanguageCodeType,

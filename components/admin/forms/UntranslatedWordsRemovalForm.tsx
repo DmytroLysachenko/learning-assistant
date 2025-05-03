@@ -3,6 +3,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { AlertTriangle, Loader2 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -20,19 +22,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { AlertTriangle, Loader2 } from "lucide-react";
 import CustomSelect from "@/components/CustomSelect";
 import ConfirmationDialog from "../ConfirmationDialog";
 import { LANGUAGE_OPTIONS } from "@/constants/ui";
 import type { LanguageCodeType } from "@/types";
-import { SUPPORTED_LANGUAGES } from "@/constants";
+import { enumValues, SUPPORTED_LANGUAGES } from "@/constants";
 
-const enumValues = LANGUAGE_OPTIONS.map((option) => option.value) as [
-  string,
-  ...string[]
-];
-
-// Define the form schema with Zod
 const formSchema = z.object({
   language: z.enum(enumValues, {
     required_error: "Please select a language",
@@ -54,7 +49,6 @@ const UntranslatedWordsForm = ({
   isOperationRunning,
   onRemoveUntranslated,
 }: UntranslatedWordsFormProps) => {
-  // Initialize the form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -62,7 +56,6 @@ const UntranslatedWordsForm = ({
     },
   });
 
-  // Handler for removing untranslated words
   const handleRemoveUntranslated = async () => {
     const values = form.getValues();
     await onRemoveUntranslated({

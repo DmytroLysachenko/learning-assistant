@@ -1,6 +1,7 @@
 "use client";
 
 import { toast } from "sonner";
+
 import type { LanguageCodeType, WordType } from "@/types";
 import { translateWordsToLanguage } from "@/lib/actions/admin/translateWordsToLanguage";
 import TranslateWordsForm from "../forms/TranslateWordsForm";

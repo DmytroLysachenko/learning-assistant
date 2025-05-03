@@ -1,5 +1,6 @@
 import { LanguageWordType } from "@/db/types";
 import { LanguageCodeType, LanguageLevelsType, WordType } from "@/types";
+import { LANGUAGE_OPTIONS } from "./ui";
 
 export const WORDS_CATEGORIES = [
   "Greetings",
@@ -349,3 +350,8 @@ const generateLanguagePairs = () => {
 };
 
 export const languagePairs = generateLanguagePairs();
+
+export const enumValues = LANGUAGE_OPTIONS.map((option) => option.value) as [
+  string,
+  ...string[]
+];

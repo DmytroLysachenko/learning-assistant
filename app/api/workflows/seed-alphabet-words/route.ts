@@ -1,7 +1,8 @@
+import { serve } from "@upstash/workflow/nextjs";
+
 import { seedWordsByAlphabet } from "@/lib/actions/admin/seedWordsByAlphabet";
 import { getAiLock, setAiLock } from "@/lib/actions/aiLock";
 import { SeedWordsOptions } from "@/types";
-import { serve } from "@upstash/workflow/nextjs";
 
 export const { POST } = serve<SeedWordsOptions>(async (context) => {
   const options = context.requestPayload;

@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion, useInView, useAnimation } from "framer-motion";
 import { ArrowRight, Languages, Sparkles, Brain } from "lucide-react";
+
 import AnimatedGradient from "@/components/ui/animated-gradient";
 
 const HeroSection = () => {

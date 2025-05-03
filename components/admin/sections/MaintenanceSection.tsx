@@ -1,12 +1,12 @@
 "use client";
 
 import { toast } from "sonner";
+
 import {
   removeDuplicatesFromTable,
   removeUntranslatedWordsFromTable,
 } from "@/lib/actions/checks/vocabulary";
 import type { LanguageCodeType } from "@/types";
-
 import { SUPPORTED_LANGUAGES } from "@/constants";
 import UntranslatedWordsForm from "../forms/UntranslatedWordsRemovalForm";
 import MaintenanceForm from "../forms/MaintenanceForm";

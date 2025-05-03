@@ -1,11 +1,13 @@
 import { Suspense } from "react";
-import { db } from "@/db";
 import { eq, count, inArray, and } from "drizzle-orm";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import { redirect } from "next/navigation";
+
 import VocabularyTable from "@/components/vocabulary/VocabularyTable";
 import { SUPPORTED_LANGUAGES } from "@/constants";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { db } from "@/db";
 import {
   buildWhereClause,
   getLanguageData,
@@ -13,7 +15,6 @@ import {
   parseSearchParams,
 } from "@/lib/utils";
 import { getUserFromSession } from "@/lib/utils/getUserFromSession";
-import { redirect } from "next/navigation";
 
 interface PageProps {
   params: Promise<{

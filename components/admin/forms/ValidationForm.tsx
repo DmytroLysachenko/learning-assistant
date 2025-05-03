@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { CheckCircle, Loader2 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -30,7 +31,6 @@ const enumValues = LANGUAGE_OPTIONS.map((option) => option.value) as [
   ...string[]
 ];
 
-// Define the form schema with Zod
 const formSchema = z.object({
   language: z.enum(enumValues, {
     required_error: "Please select a language",
@@ -57,7 +57,6 @@ interface ValidationFormProps {
 }
 
 const ValidationForm = ({ isValidating, onValidate }: ValidationFormProps) => {
-  // Initialize the form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -67,7 +66,6 @@ const ValidationForm = ({ isValidating, onValidate }: ValidationFormProps) => {
     },
   });
 
-  // Submit handler
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values);
     await onValidate({

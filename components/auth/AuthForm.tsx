@@ -6,8 +6,11 @@ import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
+import { toast } from "sonner";
+import { signIn } from "next-auth/react";
 
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import {
   Form,
   FormControl,
@@ -16,13 +19,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { toast } from "sonner";
 import { loginSchema, registerSchema } from "@/lib/validations/auth";
-
 import { createUser } from "@/lib/actions/user";
-import { signIn } from "next-auth/react";
 import FormInput from "./FormInput";
-import { Separator } from "../ui/separator";
 
 type AuthFormProps = {
   type: "login" | "register";

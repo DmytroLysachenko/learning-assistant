@@ -1,6 +1,7 @@
+import { NextResponse } from "next/server";
+
 import { seedWordsByAlphabet } from "@/lib/actions/admin/seedWordsByAlphabet";
 import { getAiLock, setAiLock } from "@/lib/actions/aiLock";
-import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   const auth = req.headers.get("authorization");

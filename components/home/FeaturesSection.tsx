@@ -10,6 +10,7 @@ import {
   BookOpen,
   BarChart4,
 } from "lucide-react";
+
 import FeatureCard from "@/components/ui/feature-card";
 
 const FeaturesSection = () => {

@@ -1,9 +1,9 @@
 "use client";
 
 import type React from "react";
-
 import { useState, forwardRef } from "react";
 import { Eye, EyeOff } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,6 @@ const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
       setShowPassword((prev) => !prev);
     };
 
-    // If variant is password, we handle the type internally
     const inputType =
       variant === "password"
         ? showPassword

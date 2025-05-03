@@ -1,5 +1,6 @@
 "use client";
 import { toast } from "sonner";
+
 import type { LanguageCodeType, LanguageLevelsType, WordType } from "@/types";
 import { seedWordsByTopic } from "@/lib/actions/admin/seedWordsByTopic";
 import TopicGenerationForm from "../forms/GenerationByTopicForm";

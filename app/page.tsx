@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+
 import HeroSection from "@/components/home/HeroSection";
 import FeaturesSection from "@/components/home/FeaturesSection";
 import HowItWorks from "@/components/home/HowItWorksSection";

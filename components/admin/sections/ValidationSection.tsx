@@ -1,9 +1,9 @@
 "use client";
 
 import { toast } from "sonner";
+
 import { validateVocabulary } from "@/lib/actions/checks/vocabulary";
 import ValidationForm from "../forms/ValidationForm";
-
 import type { LanguageCodeType, WordType } from "@/types";
 import { SUPPORTED_LANGUAGES } from "@/constants";
 
@@ -19,17 +19,15 @@ const ValidationPanel = ({
     language,
     wordType,
     batchSize,
-    dryRun,
   }: {
     language: LanguageCodeType;
     wordType: WordType;
     batchSize: number;
-    dryRun?: boolean;
   }) => {
     try {
       setIsValidating(true);
 
-      await validateVocabulary({ language, wordType, batchSize, dryRun });
+      await validateVocabulary({ language, wordType, batchSize });
 
       toast.success("Validation completed", {
         description: `Successfully validated ${wordType} words for ${SUPPORTED_LANGUAGES[language]} language`,

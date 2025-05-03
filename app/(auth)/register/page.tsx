@@ -1,6 +1,7 @@
-import AuthForm from "@/components/auth/AuthForm";
 import type { Metadata } from "next";
 import Image from "next/image";
+
+import AuthForm from "@/components/auth/AuthForm";
 
 export const metadata: Metadata = {
   title: "Register | Language Assistant",

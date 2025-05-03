@@ -1,7 +1,8 @@
-import { auth } from "@/auth";
-import { getUserByEmail } from "@/lib/actions/user";
 import { redirect } from "next/navigation";
 import React from "react";
+
+import { auth } from "@/auth";
+import { getUserByEmail } from "@/lib/actions/user";
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth();

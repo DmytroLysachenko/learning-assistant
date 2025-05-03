@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { ArrowRight, BookOpen, User } from "lucide-react";
-import { db } from "@/db";
 import { eq, and, count } from "drizzle-orm";
+import { redirect } from "next/navigation";
+
+import { db } from "@/db";
 import { languagePairs, SUPPORTED_LANGUAGES_CODES } from "@/constants";
 import { userWordsTables } from "@/constants/tables";
 import { getUserFromSession } from "@/lib/utils/getUserFromSession";
-import { redirect } from "next/navigation";
 
 interface PageProps {
   params: Promise<{

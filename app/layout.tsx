@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import "./globals.css";
 import localFont from "next/font/local";
+
 import { Toaster } from "@/components/ui/sonner";
+import "./globals.css";
 
 const outfit = localFont({
   src: [
