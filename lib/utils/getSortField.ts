@@ -1,5 +1,6 @@
-import { VocabTable } from "@/types";
 import { asc, desc } from "drizzle-orm";
+
+import { VocabTable } from "@/types";
 
 export function getSortOrder(
   sortField: string,

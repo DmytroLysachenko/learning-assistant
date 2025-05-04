@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+
 import { SUPPORTED_LANGUAGES } from "@/constants";
 import {
   translationTables,
@@ -5,7 +7,6 @@ import {
   vocabTables,
 } from "@/constants/tables";
 import { LanguageCodeType, LanguageData } from "@/types";
-import { redirect } from "next/navigation";
 
 export const getLanguageData = (langPair: string): LanguageData => {
   const [primaryLanguage, secondaryLanguage] = langPair.split(

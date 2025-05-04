@@ -7,14 +7,16 @@ type ParsedSearchParams = Promise<{
   offset: number;
 }>;
 
+type SearchParams = Promise<{
+  page?: string;
+  size?: string;
+  filter?: string;
+  sort?: string;
+  dir?: string;
+}>;
+
 export const parseSearchParams = async (
-  searchParams: Promise<{
-    page?: string;
-    size?: string;
-    filter?: string;
-    sort?: string;
-    dir?: string;
-  }>
+  searchParams: SearchParams
 ): ParsedSearchParams => {
   const { page, size, filter: filterParam, sort, dir } = await searchParams;
 

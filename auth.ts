@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
+
 import { createUser, getUserByEmail, updateUser } from "@/lib/actions/user";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -84,5 +85,4 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     signIn: "/login",
     error: "/login?error=OAuthError",
   },
-  secret: process.env.NEXTAUTH_SECRET!,
 });

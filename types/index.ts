@@ -1,10 +1,11 @@
+import { z } from "zod";
+
 import {
   translationTables,
   userWordsTables,
   vocabTables,
 } from "@/constants/tables";
 import { aiTranslationSchema } from "@/lib/validations/ai";
-import { z } from "zod";
 
 export type LanguageLevelsType = "A0" | "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
 
@@ -49,7 +50,6 @@ export interface SeedWordsOptions {
   wordType?: WordType;
   log?: boolean;
   language: LanguageCodeType;
-  // translationLanguage: LanguageCodeType;
 }
 
 export interface TranslateWordsOptions {
