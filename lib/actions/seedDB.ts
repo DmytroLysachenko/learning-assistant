@@ -6,7 +6,7 @@ import { chunk, shuffle } from "lodash";
 import { wordSchemas } from "../validations/ai";
 import { z } from "zod";
 import { generateObject } from "ai";
-import { modelFlashExp as model } from "../ai/aiClient";
+import { modelFlashLiteExp as model } from "../ai/aiClient";
 import { db } from "@/db";
 import { plVocabulary } from "@/db/schema";
 import { sleep } from "../utils";
@@ -27,10 +27,15 @@ export const seedDb = async () => {
       .from(plVocabulary)
       .then((res) => res.map((w) => w.word.toLocaleLowerCase()));
 
+    console.log("existent words:", existentWords.length);
+
     const wordsToSeed = words.filter((w) => !existentWords.includes(w));
+
+    // console.log("similar words:", words.length - wordsToSeed.length);
 
     const wordsBatches = chunk(shuffle(wordsToSeed), 50);
     let total = 0;
+
     for (const batch of wordsBatches) {
       try {
         const { prompt, system } = formatWordsPrompt({
