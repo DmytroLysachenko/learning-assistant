@@ -158,3 +158,30 @@ ${JSON.stringify(words, null, 2)}
 
   return { system, prompt };
 };
+
+export const formatWordsPrompt = ({
+  words,
+  language,
+}: {
+  words: string[];
+  language: string;
+}) => {
+  const system = `You are a linguistic AI transforming vocabulary into structured learning data for a language learning app.`;
+
+  const prompt = `
+Given the following list of vocabulary words in ${language.toUpperCase()} language, generate a structured object for each word.
+
+Guidelines:
+- Use only the ${language.toUpperCase()} language in the values (no English).
+- Definitions, examples and comment must be natural and native-sounding.
+- Ensure examples clearly demonstrate the meaning of the word.
+- Skip words that are not in the ${language.toUpperCase()} language.
+- Skip words that should not be included in the vocabulary for any reason.
+- Skip abbreviations, slang, or proper names.
+
+Words to process:
+${words.map((w) => `- ${w}`).join("\n")}
+`;
+
+  return { system, prompt };
+};

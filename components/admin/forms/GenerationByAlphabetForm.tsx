@@ -29,7 +29,8 @@ import {
 import { Input } from "@/components/ui/input";
 import CustomSelect from "@/components/CustomSelect";
 import type { LanguageCodeType, WordType } from "@/types";
-import { LANGUAGE_OPTIONS, WORDS_TYPES_OPTIONS } from "@/constants/ui";
+import { LANGUAGE_OPTIONS } from "@/constants/ui";
+import { WORDS_TYPES_OPTIONS } from "@/constants";
 
 const enumValues = LANGUAGE_OPTIONS.map((option) => option.value) as [
   string,

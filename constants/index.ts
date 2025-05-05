@@ -1,6 +1,7 @@
 import { LanguageWordType } from "@/db/types";
 import { LanguageCodeType, LanguageLevelsType, WordType } from "@/types";
 import { LANGUAGE_OPTIONS } from "./ui";
+import { capitalize } from "lodash";
 
 export const WORDS_CATEGORIES = [
   "Greetings",
@@ -189,6 +190,13 @@ export const WORD_TYPES: Record<
     particle: "частица",
   },
 };
+
+export const WORDS_TYPES_OPTIONS = [
+  ...Object.keys(WORD_TYPES["pl"]).map((type) => ({
+    value: type,
+    label: capitalize(type),
+  })),
+];
 
 export const WORD_TYPES_PROMPTS: Record<
   LanguageCodeType,

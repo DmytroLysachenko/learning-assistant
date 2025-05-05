@@ -1,6 +1,4 @@
 import { LanguageOption } from "@/types";
-import { WORD_TYPES } from ".";
-import { capitalize } from "lodash";
 
 export const LEVEL_OPTIONS = [
   { value: "A0", label: "A0" },
@@ -15,11 +13,4 @@ export const LEVEL_OPTIONS = [
 export const LANGUAGE_OPTIONS: LanguageOption[] = [
   { value: "pl", label: "Polish" },
   { value: "ru", label: "Russian" },
-];
-
-export const WORDS_TYPES_OPTIONS = [
-  ...Object.keys(WORD_TYPES["pl"]).map((type) => ({
-    value: type,
-    label: capitalize(type),
-  })),
 ];

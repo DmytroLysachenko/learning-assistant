@@ -11,6 +11,8 @@ import MaintenancePanel from "@/components/admin/sections/MaintenanceSection";
 import ValidationPanel from "@/components/admin/sections/ValidationSection";
 import GenerationByAlphabet from "@/components/admin/sections/GenerationByAlphabetSection";
 import TranslateWordsSection from "@/components/admin/sections/TranslateWordsSection";
+import { Button } from "@/components/ui/button";
+import { seedDb } from "@/lib/actions/seedDB";
 
 const AdminDashboard = () => {
   // Centralized operation status state
@@ -37,6 +39,14 @@ const AdminDashboard = () => {
           </p>
           <Separator className="my-2" />
         </div>
+        <Button
+          onClick={async () => {
+            await seedDb();
+          }}
+        >
+          {" "}
+          CLICK FOR GENERTAEITOAWT
+        </Button>
 
         {/* Status Card */}
         <StatusCard operationStatus={operationStatus} />

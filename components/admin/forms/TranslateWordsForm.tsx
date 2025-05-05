@@ -22,8 +22,8 @@ import {
 } from "@/components/ui/form";
 import CustomSelect from "@/components/CustomSelect";
 import type { LanguageCodeType, WordType } from "@/types";
-import { LANGUAGE_OPTIONS, WORDS_TYPES_OPTIONS } from "@/constants/ui";
-import { enumValues } from "@/constants";
+import { LANGUAGE_OPTIONS } from "@/constants/ui";
+import { enumValues, WORDS_TYPES_OPTIONS } from "@/constants";
 
 const formSchema = z
   .object({
