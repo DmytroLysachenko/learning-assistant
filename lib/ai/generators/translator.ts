@@ -29,6 +29,11 @@ export const generateTranslationWords = async (
       prompt,
     });
 
+    console.log(
+      words,
+      result.object.map((w) => w.word)
+    );
+
     return { success: true, data: result.object };
   } catch (error) {
     console.log(error);

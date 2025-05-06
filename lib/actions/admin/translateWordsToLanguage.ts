@@ -6,20 +6,19 @@ import {
   generateTranslationConnections,
 } from "@/lib/ai/generators";
 import { TranslateWordsOptions } from "@/types";
-import { and, eq, notExists } from "drizzle-orm";
-import { WORD_TYPES } from "@/constants";
-import { chunk } from "lodash";
+import { and, eq, inArray, notExists } from "drizzle-orm";
+import { chunk, shuffle } from "lodash";
 import { getTranslationTable, getVocabTable, sleep } from "@/lib/utils";
 
 export const translateWordsToLanguage = async ({
   batchSize = 10,
   delayMs = 5000,
-  wordType,
   sourceLanguage = "pl",
   targetLanguage = "ru",
   log = true,
 }: TranslateWordsOptions) => {
   let totalTranslated = 0;
+
   try {
     const mainTable = getVocabTable(sourceLanguage);
     const translationTable = getVocabTable(targetLanguage);
@@ -42,7 +41,6 @@ export const translateWordsToLanguage = async ({
       .from(mainTable)
       .where(
         and(
-          eq(mainTable.type, WORD_TYPES[sourceLanguage][wordType]),
           notExists(
             db
               .select()
@@ -62,14 +60,20 @@ export const translateWordsToLanguage = async ({
     if (!allWords.length) {
       if (log) {
         console.log(
-          `✅ There is no words ramaining to translate from "${sourceLanguage}" to "${targetLanguage}"`
+          `✅ There is no words remaining to translate from "${sourceLanguage}" to "${targetLanguage}"`
         );
       }
 
       return { success: true };
     }
 
-    const wordBatches = chunk(allWords, batchSize);
+    const wordBatches = chunk(shuffle(allWords), batchSize);
+
+    if (log) {
+      console.log(
+        `Started translation from "${sourceLanguage}" to "${targetLanguage}" of ${allWords.length} words`
+      );
+    }
 
     for (const batch of wordBatches) {
       try {
@@ -92,17 +96,35 @@ export const translateWordsToLanguage = async ({
           throw new Error(String(translatedWordsError) ?? "No words generated");
         }
 
+        const existingTranslated = await db
+          .select()
+          .from(translationTable)
+          .where(
+            inArray(
+              translationTable.word,
+              translatedWords.map((w) => w.word)
+            )
+          );
+
+        const existingMap = new Map(existingTranslated.map((w) => [w.word, w]));
+
+        const newWords = translatedWords.filter(
+          (w) => !existingMap.has(w.word)
+        );
+
         const insertedTranslatedWords = await db
           .insert(translationTable)
-          .values(translatedWords)
+          .values(newWords)
           .returning();
 
-        const mappedTranslatedWords = insertedTranslatedWords.map(
-          ({ id, word }) => ({
-            id,
-            word,
-          })
-        );
+        const mappedTranslatedWords = translatedWords.map((w) => {
+          const existing = existingMap.get(w.word);
+          const inserted = insertedTranslatedWords.find(
+            (i) => i.word === w.word
+          );
+          const id = existing?.id ?? inserted!.id!;
+          return { id, word: w.word };
+        });
 
         const {
           success: translationConnectionsSuccess,
@@ -125,6 +147,10 @@ export const translateWordsToLanguage = async ({
           .values(translationConnections);
 
         totalTranslated += mappedWords.length;
+
+        if (log) {
+          console.log(`At the moment translated: ${totalTranslated}`);
+        }
 
         await sleep(delayMs);
       } catch (error) {

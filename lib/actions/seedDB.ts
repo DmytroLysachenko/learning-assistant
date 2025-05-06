@@ -72,3 +72,5 @@ export const seedDb = async () => {
     console.log(error);
   }
 };
+
+export const translateWords = async () => {};

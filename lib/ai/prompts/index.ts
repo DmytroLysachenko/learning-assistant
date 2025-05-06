@@ -85,6 +85,7 @@ For each word:
 - Translate the word into ${toLang.toUpperCase()} language.
 - Example of word usage case can be changed to another sentence (more applicable to ${toLang.toUpperCase()} language), but it must be written in ${toLang.toUpperCase()} language.
 - All comments and examples must be written in **${toLang.toUpperCase()} language**.
+- Pay attention to emphasis in the words where meaning depends on it.
 
 Words to translate:
 ${words.map((w) => w.word).join(", ")}
@@ -108,7 +109,7 @@ Guidelines:
 - Each connection should be based on semantic translation.
 - Words may connect one-to-many or many-to-one if appropriate.
 - Avoid duplicate or reversed duplicates.
-- Focus only on meaningful, educationally relevant matches.
+- On output you should have at least one connection for each word.
 
 Primary Language Words:\n${JSON.stringify(primaryLanguageWords, null, 2)}
 

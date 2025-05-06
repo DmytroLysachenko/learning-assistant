@@ -56,7 +56,6 @@ export interface TranslateWordsOptions {
   batchSize?: number;
   delayMs?: number;
   log?: boolean;
-  wordType: WordType;
   sourceLanguage: LanguageCodeType;
   targetLanguage: LanguageCodeType;
 }

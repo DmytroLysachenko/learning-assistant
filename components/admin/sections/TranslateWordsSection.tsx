@@ -2,7 +2,7 @@
 
 import { toast } from "sonner";
 
-import type { LanguageCodeType, WordType } from "@/types";
+import type { LanguageCodeType } from "@/types";
 import { translateWordsToLanguage } from "@/lib/actions/admin/translateWordsToLanguage";
 import TranslateWordsForm from "../forms/TranslateWordsForm";
 
@@ -17,13 +17,11 @@ const TranslateWordsSection = ({
 }: GenerationByAlphabetSectionProps) => {
   const handleTranslateWords = async ({
     batchSize,
-    wordType,
     delay,
     sourceLanguage,
     targetLanguage,
   }: {
     batchSize: number;
-    wordType: WordType;
     delay: number;
     sourceLanguage: LanguageCodeType;
     targetLanguage: LanguageCodeType;
@@ -35,7 +33,6 @@ const TranslateWordsSection = ({
         sourceLanguage,
         targetLanguage,
         batchSize,
-        wordType,
         delayMs: delay,
       });
 

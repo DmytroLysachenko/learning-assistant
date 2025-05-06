@@ -21,9 +21,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import CustomSelect from "@/components/CustomSelect";
-import type { LanguageCodeType, WordType } from "@/types";
+import type { LanguageCodeType } from "@/types";
 import { LANGUAGE_OPTIONS } from "@/constants/ui";
-import { enumValues, WORDS_TYPES_OPTIONS } from "@/constants";
+import { enumValues } from "@/constants";
 
 const formSchema = z
   .object({
@@ -33,7 +33,6 @@ const formSchema = z
     targetLanguage: z.enum(enumValues, {
       required_error: "Please select a translation language",
     }),
-    wordType: z.string(),
     batchSize: z.coerce.number().min(5).max(30),
     delay: z.coerce.number().min(3000).max(8000),
   })
@@ -47,13 +46,11 @@ interface TranslateWordsFormProps {
   isGenerating: boolean;
   onGenerate: ({
     batchSize,
-    wordType,
     delay,
     sourceLanguage,
     targetLanguage,
   }: {
     batchSize: number;
-    wordType: WordType;
     delay: number;
     sourceLanguage: LanguageCodeType;
     targetLanguage: LanguageCodeType;
@@ -69,7 +66,6 @@ const TranslateWordsForm = ({
     defaultValues: {
       sourceLanguage: "pl",
       targetLanguage: "ru",
-      wordType: "noun",
       delay: 5000,
       batchSize: 10,
     },
@@ -79,7 +75,6 @@ const TranslateWordsForm = ({
     await onGenerate({
       sourceLanguage: values.sourceLanguage as LanguageCodeType,
       targetLanguage: values.targetLanguage as LanguageCodeType,
-      wordType: values.wordType as WordType,
       batchSize: values.batchSize,
       delay: values.delay,
     });
@@ -133,28 +128,6 @@ const TranslateWordsForm = ({
                         isDisabled={isGenerating}
                         handleValueChange={field.onChange}
                         placeholder="Select translation language"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="wordType"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Word Type</FormLabel>
-                    <FormControl>
-                      <CustomSelect
-                        options={WORDS_TYPES_OPTIONS}
-                        currentValue={field.value}
-                        isDisabled={isGenerating}
-                        handleValueChange={field.onChange}
-                        placeholder="Select word type"
                       />
                     </FormControl>
                     <FormMessage />
@@ -251,7 +224,7 @@ const TranslateWordsForm = ({
                   Generating...
                 </>
               ) : (
-                "Generate Words Alphabetically"
+                "Generate Translations"
               )}
             </Button>
           </form>
