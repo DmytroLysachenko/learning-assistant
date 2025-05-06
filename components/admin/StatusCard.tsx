@@ -50,6 +50,7 @@ const StatusCard = ({ operationStatus }: StatusCardProps) => {
   const {
     isGeneratingByTopic,
     isGeneratingByAlphabet,
+    isGeneratingTranslations,
     isRemovingDuplicates,
     isRemovingUntranslated,
     isValidating,
@@ -78,6 +79,11 @@ const StatusCard = ({ operationStatus }: StatusCardProps) => {
                 active={isGeneratingByAlphabet}
                 icon={<FileText className="h-3 w-3" />}
                 label="By Alphabet"
+              />
+              <StatusBadge
+                active={isGeneratingTranslations}
+                icon={<FileText className="h-3 w-3" />}
+                label="Translations"
               />
             </div>
           </div>

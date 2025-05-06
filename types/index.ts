@@ -37,6 +37,7 @@ export interface LanguageOption {
 export interface OperationStatus {
   isGeneratingByTopic: boolean;
   isGeneratingByAlphabet: boolean;
+  isGeneratingTranslations: boolean;
   isRemovingDuplicates: boolean;
   isRemovingUntranslated: boolean;
   isValidating: boolean;

@@ -18,5 +18,5 @@ export const modelFlashThinking = google("gemini-2.0-flash-thinking-exp-01-21");
 // RPD 500
 export const modelFlashPreview = google("gemini-2.5-flash-preview-04-17");
 
-//RPD 25
+// RPD 25
 export const modelFlashProExp = google("gemini-2.5-pro-exp-03-25");

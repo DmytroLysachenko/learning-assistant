@@ -39,7 +39,7 @@ const formSchema = z.object({
   wordType: z.string().refine((val) => val !== "none", {
     message: "Please select a word type",
   }),
-  batchSize: z.coerce.number().min(5).max(30),
+  batchSize: z.coerce.number().min(5).max(100),
 });
 
 interface ValidationFormProps {
@@ -63,7 +63,7 @@ const ValidationForm = ({ isValidating, onValidate }: ValidationFormProps) => {
     defaultValues: {
       language: "pl",
       wordType: "none",
-      batchSize: 10,
+      batchSize: 30,
     },
   });
 
@@ -151,14 +151,14 @@ const ValidationForm = ({ isValidating, onValidate }: ValidationFormProps) => {
                           <input
                             type="range"
                             min={5}
-                            max={30}
+                            max={100}
                             step={5}
                             disabled={isValidating}
                             value={field.value}
                             onChange={field.onChange}
                             className="flex-1"
                           />
-                          <span className="text-xs">30</span>
+                          <span className="text-xs">100</span>
                         </div>
                       </FormControl>
                       <FormMessage />
