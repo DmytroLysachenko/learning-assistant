@@ -43,7 +43,6 @@ const PracticeInterface = ({
   const currentWord = vocabulary[currentIndex];
 
   useEffect(() => {
-    // Focus the input field when the component mounts or when moving to the next word
     if (inputRef.current) {
       inputRef.current.focus();
     }

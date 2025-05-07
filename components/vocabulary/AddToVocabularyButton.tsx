@@ -1,6 +1,6 @@
 "use client";
 
-import { addWordToVocabulary } from "@/lib/actions/words";
+import { addWordToUserVocabulary } from "@/lib/actions/words";
 import { LanguageCodeType } from "@/types";
 import { useState } from "react";
 
@@ -27,7 +27,7 @@ const AddToVocabularyButton = ({
   const handleClick = async () => {
     setIsLoading(true);
     try {
-      await addWordToVocabulary({ wordId, userId, language });
+      await addWordToUserVocabulary({ wordId, userId, language });
       console.log("Word added to vocabulary");
       setIsAdded(true);
     } catch (error) {

@@ -56,6 +56,7 @@ const PracticePage = async ({ params }: PracticePageProps) => {
       eq(translationTable[secondaryLanguageWordId], secondaryVocabTable.id)
     )
     .where(eq(userWordsTable.userId, user.id))) as PracticeVocabularyWord[];
+
   return (
     <div className="w-full flex flex-col justify-center py-6 px-4 md:px-8 gap-6">
       <div className="bg-white p-6 rounded-lg shadow">

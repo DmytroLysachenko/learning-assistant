@@ -30,3 +30,8 @@ export type LanguageWordType = {
   ru: Record<WordType, RuWordType>;
   pl: Record<WordType, PlWordType>;
 };
+
+export type UpdateUserWordType = Pick<
+  InferInsertModel<typeof schema.userPolishWords | typeof schema.userRuWords>,
+  "status" | "lastReviewedAt" | "correctAnswersCount" | "wordId" | "userId"
+>;

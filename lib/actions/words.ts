@@ -3,10 +3,11 @@
 import { and, eq } from "drizzle-orm";
 
 import { db } from "@/db";
-import { userWordsTables } from "@/constants/tables";
 import { LanguageCodeType } from "@/types";
+import { getUserWordsTable } from "../utils";
+import { UpdateUserWordType } from "@/db/types";
 
-export const addWordToVocabulary = async ({
+export const addWordToUserVocabulary = async ({
   wordId,
   language,
   userId,
@@ -15,8 +16,8 @@ export const addWordToVocabulary = async ({
   userId: string;
   language: LanguageCodeType;
 }) => {
-  const userWordsTable = userWordsTables[language];
   try {
+    const userWordsTable = getUserWordsTable(language);
     const existingWord = await db
       .select()
       .from(userWordsTable)
@@ -40,6 +41,66 @@ export const addWordToVocabulary = async ({
 
     return { success: true, data: addedWord };
   } catch (error) {
+    return { success: false, error };
+  }
+};
+
+export const removeWordFromUserVocabulary = async ({
+  wordId,
+  language,
+  userId,
+}: {
+  wordId: string;
+  userId: string;
+  language: LanguageCodeType;
+}) => {
+  try {
+    const userWordsTable = getUserWordsTable(language);
+
+    await db
+      .delete(userWordsTable)
+      .where(
+        and(
+          eq(userWordsTable.wordId, wordId),
+          eq(userWordsTable.userId, userId)
+        )
+      );
+
+    return { success: true };
+  } catch (error) {
+    return { success: false, error };
+  }
+};
+
+export const updateWordInUserVocabulary = async ({
+  userId,
+  wordId,
+  language,
+  status,
+  correctAnswersCount,
+  lastReviewedAt,
+}: UpdateUserWordType & { language: LanguageCodeType }) => {
+  try {
+    const userWordsTable = getUserWordsTable(language);
+
+    const updatedWordRecord = await db
+      .update(userWordsTable)
+      .set({ status, correctAnswersCount, lastReviewedAt })
+      .where(
+        and(
+          eq(userWordsTable.wordId, wordId),
+          eq(userWordsTable.userId, userId)
+        )
+      )
+      .returning({
+        status: userWordsTable.status,
+        correctAnswersCount: userWordsTable.correctAnswersCount,
+        lastReviewedAt: userWordsTable.lastReviewedAt,
+      })
+      .then((res) => res[0]);
+    return { success: true, data: updatedWordRecord };
+  } catch (error) {
+    console.log(error);
     return { success: false, error };
   }
 };

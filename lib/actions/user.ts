@@ -28,12 +28,25 @@ export const createUser = async (user: {
       ? await bcrypt.hash(user.password, 12)
       : null;
 
-    const result = await db.insert(users).values({
-      ...user,
-      passwordHash,
-    });
+    const createdUser = await db
+      .insert(users)
+      .values({
+        ...user,
+        passwordHash,
+      })
+      .returning({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        image: users.image,
+        createdAt: users.createdAt,
+        updatedAt: users.updatedAt,
+        interfaceLanguage: users.interfaceLanguage,
+        learningLanguages: users.learningLanguages,
+      })
+      .then((res) => res[0]);
 
-    return { success: true, data: result };
+    return { success: true, data: createdUser };
   } catch (error) {
     console.log(error);
     return { success: false, error };
@@ -41,39 +54,116 @@ export const createUser = async (user: {
 };
 
 export const getUserByEmail = async (email: string) => {
-  const [user] = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, email))
-    .limit(1);
+  try {
+    const user = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        image: users.image,
+        createdAt: users.createdAt,
+        updatedAt: users.updatedAt,
+        interfaceLanguage: users.interfaceLanguage,
+        learningLanguages: users.learningLanguages,
+      })
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1)
+      .then((res) => res[0]);
 
-  return { success: true, data: user };
+    return { success: true, data: user };
+  } catch (error) {
+    console.log(error);
+    return { success: false, error };
+  }
 };
 
 export const getUserById = async (id: string) => {
-  const [user] = await db.select().from(users).where(eq(users.id, id)).limit(1);
+  try {
+    const user = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        image: users.image,
+        createdAt: users.createdAt,
+        updatedAt: users.updatedAt,
+        interfaceLanguage: users.interfaceLanguage,
+        learningLanguages: users.learningLanguages,
+      })
+      .from(users)
+      .where(eq(users.id, id))
+      .limit(1)
+      .then((res) => res[0]);
 
-  return { success: true, data: user };
+    return { success: true, data: user };
+  } catch (error) {
+    console.log(error);
+    return { success: false, error };
+  }
 };
 
 export const updateUser = async (
   id: string,
-  data: Partial<{ name: string; image: string; provider: string }>
+  data: Partial<{
+    name: string;
+    image: string;
+    provider: string;
+  }>
 ) => {
-  const result = await db.update(users).set(data).where(eq(users.id, id));
-  return result;
+  try {
+    const user = await db
+      .update(users)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(users.id, id))
+      .returning({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        image: users.image,
+        createdAt: users.createdAt,
+        updatedAt: users.updatedAt,
+        interfaceLanguage: users.interfaceLanguage,
+        learningLanguages: users.learningLanguages,
+      })
+      .then((res) => res[0]);
+    return { success: true, data: user };
+  } catch (error) {
+    console.log(error);
+    return { success: false, error };
+  }
 };
 
 export const setPasswordForUser = async (id: string, password: string) => {
-  const passwordHash = await bcrypt.hash(password, 12);
-  const result = await db
-    .update(users)
-    .set({ passwordHash })
-    .where(eq(users.id, id));
-  return result;
+  try {
+    const passwordHash = await bcrypt.hash(password, 12);
+    await db
+      .update(users)
+      .set({ passwordHash })
+      .where(eq(users.id, id))
+      .returning({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        image: users.image,
+        createdAt: users.createdAt,
+        updatedAt: users.updatedAt,
+        interfaceLanguage: users.interfaceLanguage,
+        learningLanguages: users.learningLanguages,
+      });
+    return { success: true };
+  } catch (error) {
+    console.log(error);
+    return { success: false, error };
+  }
 };
 
 export const deleteUser = async (id: string) => {
-  const result = await db.delete(users).where(eq(users.id, id));
-  return result;
+  try {
+    const result = await db.delete(users).where(eq(users.id, id));
+    return result;
+  } catch (error) {
+    console.log(error);
+    return { success: false, error };
+  }
 };
