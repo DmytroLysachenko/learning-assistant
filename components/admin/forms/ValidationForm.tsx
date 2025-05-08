@@ -62,7 +62,7 @@ const ValidationForm = ({ isValidating, onValidate }: ValidationFormProps) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       language: "pl",
-      wordType: "none",
+      wordType: "noun",
       batchSize: 30,
     },
   });

@@ -1,9 +1,16 @@
 import { VocabTable } from "@/types";
-import { or, ilike } from "drizzle-orm";
+import { ilike, and, eq } from "drizzle-orm";
 
-export function buildWhereClause(
-  primaryVocabTable: VocabTable,
-  filter: string
-) {
-  return filter ? or(ilike(primaryVocabTable.word, `%${filter}%`)) : undefined;
-}
+export const buildWhereClause = (
+  vocabTable: VocabTable,
+  filter: string,
+  wordType: string
+) => {
+  const filterClause = filter
+    ? ilike(vocabTable.word, `%${filter}%`)
+    : undefined;
+
+  const typeClause = wordType ? eq(vocabTable.type, wordType) : undefined;
+
+  return and(filterClause, typeClause);
+};

@@ -9,44 +9,34 @@ import { getUserFromSession } from "@/lib/utils/getUserFromSession";
 import { SUPPORTED_LANGUAGES } from "@/constants";
 import { getUserWordsTable } from "@/lib/utils";
 import { db } from "@/db";
+import { redirect } from "next/navigation";
 
 const PracticePage = async () => {
   const user = await getUserFromSession();
 
-  let userLanguages: {
-    code: string;
-    name: string;
-    progress: number;
-    wordsLearned: number;
-    totalWords: number;
-  }[] = [];
-
-  if (user && user?.learningLanguages) {
-    userLanguages = await Promise.all(
-      user.learningLanguages.map(async (languageCode) => {
-        const userWordsTable = getUserWordsTable(languageCode);
-
-        const words = await db
-          .select()
-          .from(userWordsTable)
-          .where(eq(userWordsTable.userId, user.id));
-
-        const masteredWords = words.filter(
-          (word) => word.status === "mastered"
-        );
-        const learningWords = words.filter(
-          (word) => word.status === "learning"
-        );
-        return {
-          code: languageCode,
-          name: SUPPORTED_LANGUAGES[languageCode],
-          progress: learningWords.length,
-          wordsLearned: masteredWords.length,
-          totalWords: words.length,
-        };
-      })
-    );
+  if (!user.learningLanguages || !user.learningLanguages?.length) {
+    redirect("/user/dashboard");
   }
+
+  const userLanguages = await Promise.all(
+    user.learningLanguages.map(async (languageCode) => {
+      const userWordsTable = getUserWordsTable(languageCode);
+
+      const words = await db
+        .select()
+        .from(userWordsTable)
+        .where(eq(userWordsTable.userId, user.id));
+
+      const masteredWords = words.filter((word) => word.status === "mastered");
+
+      return {
+        code: languageCode,
+        name: SUPPORTED_LANGUAGES[languageCode],
+        wordsLearned: masteredWords.length,
+        totalWords: words.length,
+      };
+    })
+  );
 
   return (
     <div className="w-full flex flex-col justify-center py-6 px-4 md:px-8 gap-6">
@@ -98,7 +88,7 @@ const PracticePage = async () => {
 
 export default PracticePage;
 
-function LanguageListSkeleton() {
+const LanguageListSkeleton = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {[1, 2, 3].map((i) => (
@@ -114,4 +104,4 @@ function LanguageListSkeleton() {
       ))}
     </div>
   );
-}
+};

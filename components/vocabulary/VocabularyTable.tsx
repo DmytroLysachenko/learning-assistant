@@ -3,7 +3,12 @@
 import type React from "react";
 
 import { useState, useCallback } from "react";
-import type { WordPair, SortField, SortDirection } from "@/types";
+import type {
+  WordPair,
+  SortField,
+  SortDirection,
+  LanguageCodeType,
+} from "@/types";
 
 import TableControls from "./TableControls";
 import Pagination from "./Pagination";
@@ -12,6 +17,7 @@ import EmptyState from "./EmpryState";
 import WordPairCard from "./WordPairCard";
 
 interface VocabularyTableProps {
+  primaryLanguage: LanguageCodeType;
   wordPairs: WordPair[];
   totalCount: number;
   currentPage: number;
@@ -21,6 +27,7 @@ interface VocabularyTableProps {
 }
 
 const VocabularyTable = ({
+  primaryLanguage,
   wordPairs,
   totalCount,
   currentPage,
@@ -31,6 +38,7 @@ const VocabularyTable = ({
   const { updateSearchParams, getParam } = useUrlParams();
 
   const [filter, setFilter] = useState(getParam("filter", ""));
+  const [wordType, setWordType] = useState(getParam("wordType", ""));
   const [sortField, setSortField] = useState<SortField>(
     getParam("sort", "word") as SortField
   );
@@ -63,11 +71,25 @@ const VocabularyTable = ({
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setFilter(e.target.value);
 
-      // Debounce filter updates to URL
       const timeoutId = setTimeout(() => {
         updateSearchParams({
           filter: e.target.value,
-          page: "1", // Reset to first page on filter change
+          page: "1",
+        });
+      }, 300);
+
+      return () => clearTimeout(timeoutId);
+    },
+    [updateSearchParams]
+  );
+  const handleWordTypeChange = useCallback(
+    (wordType: string) => {
+      setWordType(wordType);
+
+      const timeoutId = setTimeout(() => {
+        updateSearchParams({
+          wordType,
+          page: "1",
         });
       }, 300);
 
@@ -87,20 +109,22 @@ const VocabularyTable = ({
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       updateSearchParams({
         size: e.target.value,
-        page: "1", // Reset to first page when changing page size
+        page: "1",
       });
     },
     [updateSearchParams]
   );
 
-  // Calculate pagination values
   const totalPages = Math.ceil(totalCount / pageSize);
 
   return (
     <div className="w-full">
       <TableControls
+        primaryLanguage={primaryLanguage}
         filter={filter}
         onFilterChange={handleFilterChange}
+        wordType={wordType}
+        onWordTypeChange={handleWordTypeChange}
         pageSize={pageSize}
         onPageSizeChange={handlePageSizeChange}
         totalCount={totalCount}

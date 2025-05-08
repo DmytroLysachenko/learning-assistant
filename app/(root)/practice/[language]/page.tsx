@@ -12,14 +12,16 @@ import { db } from "@/db";
 
 interface PracticePageProps {
   params: Promise<{
-    lang: LanguageCodeType;
+    language: LanguageCodeType;
   }>;
 }
 
 const PracticePage = async ({ params }: PracticePageProps) => {
-  const { lang } = await params;
+  const { language } = await params;
+
   const user = await getUserFromSession();
-  const languageName = SUPPORTED_LANGUAGES[lang];
+
+  const languageName = SUPPORTED_LANGUAGES[language];
 
   if (!languageName) {
     redirect("/practice");
@@ -32,7 +34,7 @@ const PracticePage = async ({ params }: PracticePageProps) => {
     userWordsTable,
     primaryLanguageWordId,
     secondaryLanguageWordId,
-  } = getLanguageData(`${lang}-${user.interfaceLanguage}`);
+  } = getLanguageData(`${language}-${user.interfaceLanguage}`);
 
   const vocabulary = (await db
     .select({

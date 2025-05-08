@@ -56,18 +56,19 @@ const PracticeInterface = ({
 
     if (isAnswerCorrect) {
       setStats((prev) => ({ ...prev, correct: prev.correct + 1 }));
+      
     } else {
       setStats((prev) => ({ ...prev, incorrect: prev.incorrect + 1 }));
     }
   };
 
-  const skipWord = () => {
+  const handleSkipWord = () => {
     setShowAnswer(true);
     setIsCorrect(null);
     setStats((prev) => ({ ...prev, skipped: prev.skipped + 1 }));
   };
 
-  const nextWord = () => {
+  const handleNextWord = () => {
     if (currentIndex < vocabulary.length - 1) {
       setCurrentIndex(currentIndex + 1);
       setUserInput("");
@@ -82,7 +83,7 @@ const PracticeInterface = ({
     if (e.key === "Enter" && !showAnswer) {
       checkAnswer();
     } else if (e.key === "Enter" && showAnswer) {
-      nextWord();
+      handleNextWord();
     }
   };
 
@@ -199,7 +200,7 @@ const PracticeInterface = ({
                   <Button
                     variant="outline"
                     className="flex-1"
-                    onClick={skipWord}
+                    onClick={handleSkipWord}
                   >
                     <Lightbulb className="mr-2 h-4 w-4" />
                     Show Answer
@@ -215,7 +216,7 @@ const PracticeInterface = ({
               ) : (
                 <Button
                   className="w-full bg-purple-600 hover:bg-purple-700"
-                  onClick={nextWord}
+                  onClick={handleNextWord}
                 >
                   {currentIndex < vocabulary.length - 1 ? (
                     <>

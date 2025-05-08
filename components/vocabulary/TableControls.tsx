@@ -1,11 +1,25 @@
 "use client";
 
 import type React from "react";
-import type { SortDirection, SortField } from "@/types";
+import type { LanguageCodeType, SortDirection, SortField } from "@/types";
+import { WORD_TYPES } from "@/constants";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { Input } from "../ui/input";
+import { capitalize } from "lodash";
 
 interface TableControlsProps {
+  primaryLanguage: LanguageCodeType;
   filter: string;
   onFilterChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  wordType: string;
+  onWordTypeChange: (wordType: string) => void;
   pageSize: number;
   onPageSizeChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   totalCount: number;
@@ -14,8 +28,11 @@ interface TableControlsProps {
   onSortChange: (field: SortField) => void;
 }
 const TableControls = ({
+  primaryLanguage,
   filter,
   onFilterChange,
+  wordType,
+  onWordTypeChange,
   pageSize,
   onPageSizeChange,
   totalCount,
@@ -27,14 +44,40 @@ const TableControls = ({
     <>
       <div className="mb-4 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div className="relative w-full sm:w-64">
-          <input
-            type="text"
-            placeholder="Filter words..."
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          <Input
             value={filter}
+            type="text"
             onChange={onFilterChange}
+            placeholder="Filter words..."
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg "
           />
         </div>
+
+        <div className="flex items-center gap-2">
+          <Select
+            onValueChange={onWordTypeChange}
+            value={wordType}
+          >
+            <SelectTrigger className="w-full px-4 py-2 border min-w-[130px] border-gray-300 rounded-lg">
+              <SelectValue placeholder="Word type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {Object.entries(WORD_TYPES[primaryLanguage]).map(
+                  ([type, localType]) => (
+                    <SelectItem
+                      key={type}
+                      value={type}
+                    >
+                      {capitalize(localType)}
+                    </SelectItem>
+                  )
+                )}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-500">Show</span>
           <select
@@ -47,13 +90,13 @@ const TableControls = ({
             <option value="50">50</option>
             <option value="100">100</option>
           </select>
+
           <span className="text-sm text-gray-500">
             entries | {totalCount} total
           </span>
         </div>
       </div>
 
-      {/* Sort controls */}
       <div className="mb-4 flex flex-wrap gap-2">
         <span className="text-sm text-gray-500">Sort by:</span>
         <SortButton
@@ -61,12 +104,6 @@ const TableControls = ({
           currentField={sortField}
           direction={sortDirection}
           onClick={() => onSortChange("word")}
-        />
-        <SortButton
-          field="type"
-          currentField={sortField}
-          direction={sortDirection}
-          onClick={() => onSortChange("type")}
         />
         <SortButton
           field="difficulty"

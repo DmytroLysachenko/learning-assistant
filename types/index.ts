@@ -79,7 +79,7 @@ export interface WordPair {
   secondaryWord: Word;
 }
 
-export type SortField = "word" | "type" | "difficulty";
+export type SortField = "word" | "difficulty";
 export type SortDirection = "asc" | "desc";
 
 export interface WordTypeCount {

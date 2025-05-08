@@ -2,7 +2,7 @@ import { count, eq } from "drizzle-orm";
 import { Suspense } from "react";
 
 import VocabularyTable from "@/components/vocabulary/VocabularyTable";
-import { SUPPORTED_LANGUAGES } from "@/constants";
+import { SUPPORTED_LANGUAGES, WORD_TYPES } from "@/constants";
 import { db } from "@/db";
 import {
   getLanguageData,
@@ -42,8 +42,17 @@ const VocabularyPage = async ({
     secondaryLanguageWordId,
   } = getLanguageData(langPair);
 
-  const { currentPage, pageSize, filter, sortField, sortDirection, offset } =
-    await parseSearchParams(searchParams);
+  const {
+    currentPage,
+    pageSize,
+    filter,
+    sortField,
+    wordType,
+    sortDirection,
+    offset,
+  } = await parseSearchParams(searchParams);
+
+  const localWordType = WORD_TYPES[primaryLanguage][wordType];
 
   const [primaryWordsCount, secondaryWordsCount] = await Promise.all([
     db
@@ -56,7 +65,11 @@ const VocabularyPage = async ({
       .then((res) => res[0].value || 0),
   ]);
 
-  const whereClause = buildWhereClause(primaryVocabTable, filter);
+  const whereClause = buildWhereClause(
+    primaryVocabTable,
+    filter,
+    localWordType
+  );
 
   const countQueryBase = db
     .select({ value: count() })
@@ -160,6 +173,7 @@ const VocabularyPage = async ({
         <h2 className="text-xl font-bold text-gray-900 mb-4">Vocabulary</h2>
         <Suspense fallback={<div>Loading vocabulary...</div>}>
           <VocabularyTable
+            primaryLanguage={primaryLanguage}
             wordPairs={entries}
             totalCount={totalFilteredCount}
             currentPage={currentPage}

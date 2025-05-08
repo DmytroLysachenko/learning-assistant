@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
@@ -9,14 +7,13 @@ interface LanguageCardProps {
   language: {
     code: string;
     name: string;
-    progress: number;
     wordsLearned: number;
     totalWords: number;
   };
 }
 
 const LanguageCard = ({ language }: LanguageCardProps) => {
-  const { code, name, progress, wordsLearned, totalWords } = language;
+  const { code, name, wordsLearned, totalWords } = language;
 
   return (
     <Link
@@ -35,11 +32,11 @@ const LanguageCard = ({ language }: LanguageCardProps) => {
               <div className="flex justify-between mb-1">
                 <span className="text-sm text-gray-500">Progress</span>
                 <span className="text-sm font-medium text-purple-600">
-                  {progress}%
+                  {(wordsLearned / totalWords) * 100}%
                 </span>
               </div>
               <Progress
-                value={progress}
+                value={(wordsLearned / totalWords) * 100}
                 className="h-2"
               />
             </div>
