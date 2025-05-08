@@ -49,6 +49,10 @@ const baseWordSchema = z.object({
     .optional()
     .describe("Optional comment with word meaning in corresponding language"),
   difficulty: difficultyEnum,
+  category: z
+    .string()
+    .optional()
+    .describe("If applicable - word category in corresponding language"),
 });
 
 export const wordSchemas = {

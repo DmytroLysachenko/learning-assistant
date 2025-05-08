@@ -131,6 +131,7 @@ export const validateVocabulary = async ({
         if (!validatedWords || !success) {
           throw new Error(String(error) ?? "Validation returned no results.");
         }
+        const promises: Promise<unknown>[] = [];
 
         for (const validated of validatedWords) {
           const original = batch.find((w) => w.id === validated.id);
@@ -145,17 +146,20 @@ export const validateVocabulary = async ({
 
           if (hasChanges) {
             console.log(`🔧 Updating "${original.word}" (ID: ${original.id})`);
-
-            await db
-              .update(table)
-              .set({
-                ...validated,
-                updatedAt: new Date(),
-                comment: validated.comment || null,
-              })
-              .where(eq(table.id, validated.id));
+            promises.push(
+              db
+                .update(table)
+                .set({
+                  ...validated,
+                  updatedAt: new Date(),
+                  comment: validated.comment || null,
+                })
+                .where(eq(table.id, validated.id))
+            );
           }
         }
+
+        await Promise.all(promises);
 
         await sleep(5000);
       } catch (error) {

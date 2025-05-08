@@ -4,13 +4,14 @@ import { Separator } from "@/components/ui/separator";
 import { SUPPORTED_LANGUAGES, SUPPORTED_LANGUAGES_FLAGS } from "@/constants";
 import { db } from "@/db";
 import { users } from "@/db/schema";
+import { achievements } from "@/db/schema/achievements";
 import { getUserWordsTable } from "@/lib/utils";
 import { getUserFromSession } from "@/lib/utils/getUserFromSession";
 import { eq } from "drizzle-orm";
 
 const DashboardPage = async () => {
   const user = await getUserFromSession();
-
+  let totalLearnedWords = 0;
   if (!user.learningLanguages) {
     user.learningLanguages = [];
   }
@@ -28,7 +29,7 @@ const DashboardPage = async () => {
         .where(eq(userWordsTable.userId, user.id));
 
       const masteredWords = words.filter((word) => word.status === "mastered");
-
+      totalLearnedWords += masteredWords.length;
       return {
         code: languageCode,
         name: SUPPORTED_LANGUAGES[languageCode],
@@ -40,42 +41,21 @@ const DashboardPage = async () => {
     })
   );
 
-  const achievements = [
+  const allAchievements = await db.select().from(achievements);
+  const vocabAchievement = allAchievements
+    .filter((a) => a.type === "vocabulary")
+    .sort((a, b) => a.criteria - b.criteria)
+    .find((ach) => ach.criteria > totalLearnedWords);
+
+  const myAchievements = [
     {
-      id: 1,
-      name: "Word Master",
-      description: "Learn 500 words in any language",
+      id: vocabAchievement?.id as string,
+      name: vocabAchievement?.title as string,
+      description: vocabAchievement?.description as string,
       icon: "📚",
-      progress: 487,
-      target: 500,
-      level: 3,
-    },
-    {
-      id: 2,
-      name: "Streak Champion",
-      description: "Maintain a 14-day learning streak",
-      icon: "🔥",
-      progress: 7,
-      target: 14,
-      level: 2,
-    },
-    {
-      id: 3,
-      name: "Grammar Guru",
-      description: "Complete 50 grammar exercises",
-      icon: "🏆",
-      progress: 32,
-      target: 50,
-      level: 4,
-    },
-    {
-      id: 4,
-      name: "Vocabulary Virtuoso",
-      description: "Score 90% or higher on 20 vocabulary quizzes",
-      icon: "🎯",
-      progress: 12,
-      target: 20,
-      level: 2,
+      progress: totalLearnedWords,
+      target: vocabAchievement?.criteria as number,
+      level: vocabAchievement?.level as number,
     },
   ];
 
@@ -103,7 +83,7 @@ const DashboardPage = async () => {
       <Separator className="my-4 md:my-6" />
       <UserDashboard
         languages={learningLanguages}
-        achievements={achievements}
+        achievements={myAchievements}
         statistics={statistics}
       />
     </>

@@ -42,7 +42,7 @@ interface UserDashboardProps {
     lastPracticed: string;
   }>;
   achievements: Array<{
-    id: number;
+    id: string;
     name: string;
     description: string;
     icon: string;

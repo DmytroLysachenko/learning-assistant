@@ -12,7 +12,8 @@ import { users } from "./users";
 export const achievementTypeEnum = pgEnum("achievement_type", [
   "vocabulary", // e.g., 100 words learned
   "streak", // e.g., 7-day streak
-  "review", // e.g., 100 reviews
+  "practice", // e.g., 10 test completed
+  "high_score",
 ]);
 
 // Achievements
@@ -22,6 +23,7 @@ export const achievements = pgTable("achievements", {
   description: text("description"),
   type: achievementTypeEnum("type").notNull(),
   criteria: integer("criteria").notNull(),
+  level: integer("level").notNull().default(0),
   createdAt: timestamp("created_at").defaultNow(),
 });
 

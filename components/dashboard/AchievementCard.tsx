@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 
 interface AchievementCardProps {
   achievement: {
-    id: number;
+    id: string;
     name: string;
     description: string;
     icon: string;

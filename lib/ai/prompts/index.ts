@@ -141,17 +141,18 @@ You are validating a list of ${
     SUPPORTED_LANGUAGES[language]
   } language vocabulary entries.
 
-🔍 For each entry:
+For each entry:
 - Ensure the **word** is in its correct base form (dictionary form).
 - Ensure the **type** is accurate. If the word does not match the required type, correct it.
 - Ensure the **difficulty level** reflects real-world frequency and learner familiarity (A0 = basic, C2 = highly advanced).
 - Ensure the **example sentence** is correct, natural, and demonstrates how the word is used in context.
-- Ensure the **comment** (if present) is helpful.
+- Ensure the **comment** is helpful and explaining the word without using it.
 - All content must be in ${SUPPORTED_LANGUAGES[language]} language only.
+- Changes should not affect primary word meaning.
 
 ${wordTypeInstructions}
 
-✏️ Correct all errors. Only return valid, corrected entries in the same format.
+Correct all errors. Only return valid, corrected entries in the same format.
 
 Data to validate:
 ${JSON.stringify(words, null, 2)}
