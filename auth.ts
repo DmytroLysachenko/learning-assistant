@@ -3,7 +3,7 @@ import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 
-import { createUser, getUserByEmail, updateUser } from "@/lib/actions/user";
+import { createUser, getUserByEmail } from "@/lib/actions/user";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -34,7 +34,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           name: user.name,
           email: user.email,
           image: user.image,
-          provider: user.provider ?? "credentials",
         };
       },
     }),
@@ -45,24 +44,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     updateAge: 24 * 60 * 60, // how often the session is refreshed (in seconds)
   },
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.provider = user.provider ?? account?.provider ?? "credentials";
       }
       return token;
     },
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string;
-        session.user.provider = token.provider as string;
       }
       return session;
     },
     async signIn({ user, account }) {
       if (!account || !user || !user.email) return false;
-
-      const { provider } = account;
 
       const { data: existing } = await getUserByEmail(user.email);
 
@@ -71,11 +66,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           email: user.email,
           name: user.name || null,
           image: user.image || null,
-          provider,
           password: null,
         });
-      } else if (!existing.provider) {
-        await updateUser(existing.id, { provider });
       }
 
       return true;

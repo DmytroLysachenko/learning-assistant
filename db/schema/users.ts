@@ -1,5 +1,13 @@
+import {
+  integer,
+  jsonb,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core";
+
 import { LanguageCodeType } from "@/types";
-import { jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 // Users table
 export const users = pgTable("users", {
@@ -8,7 +16,6 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   image: text("image"),
   passwordHash: text("password_hash"),
-  provider: text("provider").default("credentials"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
   learningLanguages: jsonb("learning_languages")
@@ -17,4 +24,5 @@ export const users = pgTable("users", {
   interfaceLanguage: text("interface_language")
     .default("ru")
     .$type<LanguageCodeType>(),
+  experience: integer("experience").default(0).notNull(),
 });

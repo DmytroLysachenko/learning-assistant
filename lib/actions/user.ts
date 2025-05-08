@@ -10,7 +10,6 @@ export const createUser = async (user: {
   email: string;
   name: string | null;
   image: string | null;
-  provider: string;
   password: string | null;
 }) => {
   try {
@@ -56,16 +55,7 @@ export const createUser = async (user: {
 export const getUserByEmail = async (email: string) => {
   try {
     const user = await db
-      .select({
-        id: users.id,
-        name: users.name,
-        email: users.email,
-        image: users.image,
-        createdAt: users.createdAt,
-        updatedAt: users.updatedAt,
-        interfaceLanguage: users.interfaceLanguage,
-        learningLanguages: users.learningLanguages,
-      })
+      .select()
       .from(users)
       .where(eq(users.email, email))
       .limit(1)
@@ -108,7 +98,6 @@ export const updateUser = async (
   data: Partial<{
     name: string;
     image: string;
-    provider: string;
   }>
 ) => {
   try {
