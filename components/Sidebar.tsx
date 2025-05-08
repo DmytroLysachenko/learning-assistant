@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Award,
-  BarChart3,
-  BookOpen,
+  BookMarked,
+  Brain,
   Flame,
-  GraduationCap,
+  Languages,
   LayoutDashboard,
+  LibraryBig,
   Settings,
+  Settings2,
   User,
   Users,
 } from "lucide-react";
@@ -18,54 +19,48 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
-const DashboardSidebar = ({ userId }: { userId: string }) => {
+const Sidebar = ({ userId }: { userId: string }) => {
   const pathname = usePathname();
 
   const navItems = [
     {
       title: "Dashboard",
       href: "/user/dashboard",
-      icon: <LayoutDashboard className="h-5 w-5" />,
+      icon: <LayoutDashboard className="h-5 w-5" />, // Standard and clear
+    },
+    {
+      title: "Vocabularies", // General vocabulary sets or a public library
+      href: "/vocabulary",
+      icon: <LibraryBig className="h-5 w-5" />, // Suggests a larger collection/resource
     },
     {
       title: "My Vocabulary",
-      href: `/user/${userId}/vocabulary`,
-      icon: <BookOpen className="h-5 w-5" />,
+      href: `/user/${userId}/vocabulary`, // Ensure userId is available here
+      icon: <BookMarked className="h-5 w-5" />, // More personal than a generic book
     },
+
     {
-      title: "Vocabularies",
-      href: "/vocabulary",
-      icon: <BookOpen className="h-5 w-5" />,
-    },
-    {
-      title: "Languages",
+      title: "Languages", // Exploring or managing languages
       href: "/languages",
-      icon: <BookOpen className="h-5 w-5" />,
+      icon: <Languages className="h-5 w-5" />, // Specific and appropriate
     },
-    {
-      title: "Admin",
-      href: "/admin",
-      icon: <BookOpen className="h-5 w-5" />,
-    },
+
     {
       title: "Practice",
       href: "/practice",
-      icon: <GraduationCap className="h-5 w-5" />,
-    },
-    {
-      title: "Achievements",
-      href: "/achievements",
-      icon: <Award className="h-5 w-5" />,
-    },
-    {
-      title: "Statistics",
-      href: "/statistics",
-      icon: <BarChart3 className="h-5 w-5" />,
+      icon: <Brain className="h-5 w-5" />, // Focuses on the learning/cognitive aspect of practice
+      // GraduationCap is also good, Zap for quick practice
     },
     {
       title: "Community",
       href: "/community",
-      icon: <Users className="h-5 w-5" />,
+      icon: <Users className="h-5 w-5" />, // Standard and clear for user groups
+    },
+    {
+      title: "Admin",
+      href: "/admin",
+      icon: <Settings2 className="h-5 w-5" />, // General settings/management often suit "Admin"
+      // ShieldCheck or UserCog are also strong alternatives
     },
   ];
 
@@ -104,7 +99,7 @@ const DashboardSidebar = ({ userId }: { userId: string }) => {
 
         <Separator className="my-4" />
 
-        <div className="px-4 py-2">
+        {/* <div className="px-4 py-2">
           <h3 className="mb-2 text-xs font-medium text-muted-foreground">
             Your Streak
           </h3>
@@ -120,7 +115,7 @@ const DashboardSidebar = ({ userId }: { userId: string }) => {
               <p className="text-xs text-muted-foreground">Keep it going!</p>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
       <div className="mt-auto border-t p-4">
         <Button
@@ -148,4 +143,4 @@ const DashboardSidebar = ({ userId }: { userId: string }) => {
   );
 };
 
-export default DashboardSidebar;
+export default Sidebar;

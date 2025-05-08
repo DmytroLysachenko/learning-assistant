@@ -24,7 +24,7 @@ const WordPairCard = ({
   if (!primaryWord || !secondaryWord) return null;
 
   return (
-    <div className="border rounded-lg overflow-hidden bg-white hover:shadow-md transition-shadow">
+    <div className="border rounded-lg  bg-white hover:shadow-md transition-shadow relative">
       <div
         className="p-4 cursor-pointer"
         onClick={() => onToggleExpand(pair.id)}
@@ -44,19 +44,21 @@ const WordPairCard = ({
         </div>
 
         {!isUserVocabulary && (
-          <div className="mt-3">
-            <AddToVocabularyButton
-              wordId={primaryWord.id}
-              userId={userId}
-              isAdded={pair.isLearning}
-              language={primaryWord.language}
-              label={`Add to my vocabulary`}
-            />
-          </div>
+          <>
+            <div className="mt-3">
+              <AddToVocabularyButton
+                wordId={primaryWord.id}
+                userId={userId}
+                isAdded={pair.isLearning}
+                language={primaryWord.language}
+                label={`Add to my vocabulary`}
+              />
+            </div>
+          </>
         )}
 
         {/* Expand/collapse indicator */}
-        <div className="text-center mt-2 text-gray-400">
+        <div className="text-center mt-4 text-gray-400">
           {isExpanded ? "▲ Less details" : "▼ More details"}
         </div>
       </div>
@@ -71,9 +73,9 @@ interface WordDetailsProps {
   words: Word[];
 }
 
-function WordDetails({ words }: WordDetailsProps) {
+const WordDetails = ({ words }: WordDetailsProps) => {
   return (
-    <div className="p-4 border-t bg-gray-50">
+    <div className="p-4 border rounded-xl bg-gray-50 absolute -left-[2%] top-[104%] w-[104%] z-10 shadow-xl">
       <div className="grid grid-cols-1 gap-4">
         {words.map(({ id, language, type, example, comment }) => (
           <div
@@ -83,7 +85,7 @@ function WordDetails({ words }: WordDetailsProps) {
             <h4 className="font-medium text-gray-900 capitalize">
               {SUPPORTED_LANGUAGES[language]}
             </h4>
-            <div className="grid grid-cols-2 gap-2 text-sm">
+            <div className="flex justify-between">
               <div className="text-gray-500">Type:</div>
               <div>{type}</div>
             </div>
@@ -114,6 +116,6 @@ function WordDetails({ words }: WordDetailsProps) {
       </div>
     </div>
   );
-}
+};
 
 export default WordPairCard;

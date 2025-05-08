@@ -4,7 +4,6 @@ import { BookOpen, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
 
 interface LanguageCardProps {
   language: {
@@ -12,27 +11,12 @@ interface LanguageCardProps {
     name: string;
     flag: string;
     progress: number;
-    level: string;
     wordsLearned: number;
     lastPracticed: string;
   };
 }
 
 export default function LanguageCard({ language }: LanguageCardProps) {
-  // Function to determine level color
-  const getLevelColor = (level: string) => {
-    switch (level[0]) {
-      case "A":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100";
-      case "B":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100";
-      case "C":
-        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100";
-      default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100";
-    }
-  };
-
   return (
     <Card className="overflow-hidden">
       <div className="bg-gradient-to-br from-primary/10 to-primary/5 p-4 flex items-center justify-between">
@@ -40,9 +24,6 @@ export default function LanguageCard({ language }: LanguageCardProps) {
           <div className="text-4xl">{language.flag}</div>
           <div>
             <h3 className="font-bold">{language.name}</h3>
-            <Badge className={`mt-1 ${getLevelColor(language.level)}`}>
-              Level {language.level}
-            </Badge>
           </div>
         </div>
       </div>

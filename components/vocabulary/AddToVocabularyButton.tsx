@@ -1,6 +1,9 @@
 "use client";
 
-import { addWordToUserVocabulary } from "@/lib/actions/words";
+import {
+  addWordToUserVocabulary,
+  removeWordFromUserVocabulary,
+} from "@/lib/actions/words";
 import { LanguageCodeType } from "@/types";
 import { useState } from "react";
 
@@ -27,9 +30,15 @@ const AddToVocabularyButton = ({
   const handleClick = async () => {
     setIsLoading(true);
     try {
-      await addWordToUserVocabulary({ wordId, userId, language });
-      console.log("Word added to vocabulary");
-      setIsAdded(true);
+      if (isAdded) {
+        await removeWordFromUserVocabulary({ wordId, userId, language });
+        console.log("Word removed from vocabulary");
+      } else {
+        await addWordToUserVocabulary({ wordId, userId, language });
+        console.log("Word added to vocabulary");
+      }
+
+      setIsAdded(!isAdded);
     } catch (error) {
       console.log(error);
     } finally {
@@ -40,7 +49,7 @@ const AddToVocabularyButton = ({
   return (
     <button
       onClick={handleClick}
-      disabled={isLoading || isAdded}
+      disabled={isLoading}
       className={`
         px-3 py-1 rounded-md transition-colors text-sm font-medium
         ${
@@ -52,7 +61,13 @@ const AddToVocabularyButton = ({
         }
       `}
     >
-      {isAdded ? "Added ✓" : isLoading ? "Adding..." : buttonLabel}
+      {isAdded
+        ? "Added ✓"
+        : isLoading
+        ? isAdded
+          ? "Removing..."
+          : "Adding..."
+        : buttonLabel}
     </button>
   );
 };

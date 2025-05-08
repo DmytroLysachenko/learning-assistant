@@ -327,6 +327,11 @@ export const SUPPORTED_LANGUAGES: Record<LanguageCodeType, string> = {
   ru: "Russian",
 };
 
+export const SUPPORTED_LANGUAGES_FLAGS: Record<LanguageCodeType, string> = {
+  pl: "🇵🇱",
+  ru: "🇷🇺",
+};
+
 export const SUPPORTED_LANGUAGES_CODES = Object.keys(
   SUPPORTED_LANGUAGES
 ) as LanguageCodeType[];

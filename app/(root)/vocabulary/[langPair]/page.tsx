@@ -17,6 +17,7 @@ interface VocabularyPageProps {
     page?: string;
     size?: string;
     filter?: string;
+    wordType?: string;
     sort?: string;
     dir?: string;
   }>;

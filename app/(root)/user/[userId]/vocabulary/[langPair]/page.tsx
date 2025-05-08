@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { redirect } from "next/navigation";
 
 import VocabularyTable from "@/components/vocabulary/VocabularyTable";
-import { SUPPORTED_LANGUAGES } from "@/constants";
+import { SUPPORTED_LANGUAGES, WORD_TYPES } from "@/constants";
 import { Button } from "@/components/ui/button";
 import { db } from "@/db";
 import {
@@ -25,6 +25,7 @@ interface PageProps {
     page?: string;
     size?: string;
     filter?: string;
+    wordType?: string;
     sort?: string;
     dir?: string;
   }>;
@@ -50,8 +51,17 @@ const UserVocabularyPage = async ({ params, searchParams }: PageProps) => {
     secondaryLanguageWordId,
   } = getLanguageData(langPair);
 
-  const { currentPage, pageSize, filter, sortField, sortDirection, offset } =
-    await parseSearchParams(searchParams);
+  const {
+    currentPage,
+    pageSize,
+    filter,
+    sortField,
+    wordType,
+    sortDirection,
+    offset,
+  } = await parseSearchParams(searchParams);
+
+  const localWordType = WORD_TYPES[primaryLanguage][wordType];
 
   // Count of user's words in each language
   const primaryWordsCount = await db
@@ -61,7 +71,11 @@ const UserVocabularyPage = async ({ params, searchParams }: PageProps) => {
     .then((res) => res[0].value);
 
   // Filtering condition - filter on the primary language
-  const whereClause = buildWhereClause(primaryVocabTable, filter);
+  const whereClause = buildWhereClause(
+    primaryVocabTable,
+    filter,
+    localWordType
+  );
 
   const usersPrimaryVocabWordsIds = await db
     .select({ wordId: userWordsTable.wordId })
@@ -196,6 +210,7 @@ const UserVocabularyPage = async ({ params, searchParams }: PageProps) => {
         </h2>
         <Suspense fallback={<div>Loading vocabulary...</div>}>
           <VocabularyTable
+            primaryLanguage={primaryLanguage}
             wordPairs={entries}
             totalCount={totalCount}
             currentPage={currentPage}

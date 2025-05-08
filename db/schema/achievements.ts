@@ -1,5 +1,5 @@
 import {
-  jsonb,
+  integer,
   pgEnum,
   pgTable,
   text,
@@ -21,7 +21,7 @@ export const achievements = pgTable("achievements", {
   title: text("title").notNull(),
   description: text("description"),
   type: achievementTypeEnum("type").notNull(),
-  criteria: jsonb("criteria").notNull(), // e.g., { wordsLearned: 100 }
+  criteria: integer("criteria").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
