@@ -9,7 +9,7 @@ import {
   sleep,
 } from "@/lib/utils";
 import { LanguageCodeType, WordType } from "@/types";
-import { eq, inArray } from "drizzle-orm";
+import { and, eq, gte, inArray } from "drizzle-orm";
 import { chunk, shuffle } from "lodash";
 
 export const removeDuplicatesFromTable = async (table: LanguageCodeType) => {
@@ -90,10 +90,12 @@ export const validateVocabulary = async ({
   language,
   wordType,
   batchSize = 10,
+  oldDays = 1,
 }: {
   language: LanguageCodeType;
   wordType: WordType;
   batchSize: number;
+  oldDays?: number;
 }) => {
   try {
     console.log(
@@ -107,7 +109,15 @@ export const validateVocabulary = async ({
     const allWords = await db
       .select()
       .from(table)
-      .where(eq(table.type, WORD_TYPES[language][wordType]));
+      .where(
+        and(
+          eq(table.type, WORD_TYPES[language][wordType]),
+          gte(
+            table.createdAt,
+            new Date(Date.now() - 1000 * 60 * 60 * 24 * oldDays)
+          )
+        )
+      );
 
     if (allWords.length === 0) {
       console.log(`⚠️ No words found for type "${wordType}" in "${language}".`);

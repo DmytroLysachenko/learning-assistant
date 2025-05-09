@@ -27,10 +27,11 @@ const ValidationPanel = ({
     try {
       setIsValidating(true);
 
-      await validateVocabulary({ language, wordType: "noun", batchSize });
-      await validateVocabulary({ language, wordType: "verb", batchSize });
-      await validateVocabulary({ language, wordType: "adjective", batchSize });
-      await validateVocabulary({ language, wordType: "adverb", batchSize });
+      await validateVocabulary({
+        language,
+        wordType,
+        batchSize,
+      });
 
       toast.success("Validation completed", {
         description: `Successfully validated ${wordType} words for ${SUPPORTED_LANGUAGES[language]} language`,

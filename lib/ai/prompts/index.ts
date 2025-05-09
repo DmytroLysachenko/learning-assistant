@@ -44,7 +44,7 @@ export const generateVocabularyByLetterPrompt = ({
   language: LanguageCodeType;
   letter: string; // always two letters, like 'st', 'br', etc.
   quantity: number;
-  wordType: WordType;
+  wordType?: WordType;
   existingWords: string[];
 }) => {
   const system = `You are a linguistic AI generating useful vocabulary for language learners.`;
@@ -54,17 +54,23 @@ export const generateVocabularyByLetterPrompt = ({
     : "";
 
   const prompt = `
-Generate ${quantity} unique vocabulary words in the ${language.toUpperCase()} language that include the combination of letters "${letter.toUpperCase()}" (the two letters together, in that order).
+Generate ${quantity} unique vocabulary words in the ${
+    SUPPORTED_LANGUAGES[language]
+  } language that include the combination of letters "${letter.toUpperCase()}" (the two letters together, in that order).
 Guidelines:
 - All words must include the letter combination: "${letter}" (the two letters together, in order).
 - If that is not possible, generate words that include either "${
     letter[0]
   }" or "${letter[1]}" separately.
-- If neither is possible, just generate unique words in ${language.toUpperCase()}.
-- Provide short, useful example sentences for each word, written only in ${language.toUpperCase()}.
+- If neither is possible, just generate unique words in ${
+    SUPPORTED_LANGUAGES[language]
+  }.
+- Provide short, useful example sentences for each word, written only in ${
+    SUPPORTED_LANGUAGES[language]
+  }.
 - Avoid duplicate words.
-- Only use the ${language.toUpperCase()} language.
-${WORD_TYPES_PROMPTS[language][wordType]}
+- Only use the ${SUPPORTED_LANGUAGES[language]} language.
+${wordType ? WORD_TYPES_PROMPTS[language][wordType] : ""}
 ${exclusions}
 `;
 
@@ -79,12 +85,19 @@ export const generateTranslationPrompt = (
   const system = `You are an AI translator assisting with language learning vocabulary.`;
 
   const prompt = `
-Translate the following words from **${fromLang.toUpperCase()}** into **${toLang.toUpperCase()}**.
+Translate the following words from **${
+    SUPPORTED_LANGUAGES[fromLang]
+  }** into **${SUPPORTED_LANGUAGES[toLang]}**.
 
 For each word:
-- Translate the word into ${toLang.toUpperCase()} language.
-- Example of word usage case can be changed to another sentence (more applicable to ${toLang.toUpperCase()} language), but it must be written in ${toLang.toUpperCase()} language.
-- All comments and examples must be written in **${toLang.toUpperCase()} language**.
+- Translate the word into ${SUPPORTED_LANGUAGES[toLang]} language.
+- Example of word usage case can be changed to another sentence (more applicable to ${
+    SUPPORTED_LANGUAGES[toLang]
+  } language).
+- All comments and examples must be written in **${
+    SUPPORTED_LANGUAGES[toLang]
+  } language**.
+- Comment should be word explanation without using word itself, if applicable.
 - Pay attention to emphasis in the words where meaning depends on it.
 
 Words to translate:
@@ -109,7 +122,7 @@ Guidelines:
 - Each connection should be based on semantic translation.
 - Words may connect one-to-many or many-to-one if appropriate.
 - Avoid duplicate or reversed duplicates.
-- On output you should have at least one connection for each word.
+- On output every word should have at leas one connection.
 
 Primary Language Words:\n${JSON.stringify(primaryLanguageWords, null, 2)}
 
@@ -166,18 +179,22 @@ export const formatWordsPrompt = ({
   language,
 }: {
   words: string[];
-  language: string;
+  language: LanguageCodeType;
 }) => {
   const system = `You are a linguistic AI transforming vocabulary into structured learning data for a language learning app.`;
 
   const prompt = `
-Given the following list of vocabulary words in ${language.toUpperCase()} language, generate a structured object for each word.
+Given the following list of vocabulary words in ${
+    SUPPORTED_LANGUAGES[language]
+  } language, generate a structured object for each word.
 
 Guidelines:
-- Use only the ${language.toUpperCase()} language in the values (no English).
+- Use only the ${
+    SUPPORTED_LANGUAGES[language]
+  } language in the values (no English).
 - Definitions, examples and comment must be natural and native-sounding.
 - Ensure examples clearly demonstrate the meaning of the word.
-- Skip words that are not in the ${language.toUpperCase()} language.
+- Skip words that are not in the ${SUPPORTED_LANGUAGES[language]} language.
 - Skip words that should not be included in the vocabulary for any reason.
 - Skip abbreviations, slang, or proper names.
 
