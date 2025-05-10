@@ -70,6 +70,7 @@ Guidelines:
   }.
 - Avoid duplicate words.
 - Only use the ${SUPPORTED_LANGUAGES[language]} language.
+- Comment should be word explanation without using word itself, if applicable.
 ${wordType ? WORD_TYPES_PROMPTS[language][wordType] : ""}
 ${exclusions}
 `;
@@ -99,6 +100,7 @@ For each word:
   } language**.
 - Comment should be word explanation without using word itself, if applicable.
 - Pay attention to emphasis in the words where meaning depends on it.
+- Comment should be word explanation without using word itself, if applicable.
 
 Words to translate:
 ${words.map((w) => w.word).join(", ")}
@@ -197,6 +199,7 @@ Guidelines:
 - Skip words that are not in the ${SUPPORTED_LANGUAGES[language]} language.
 - Skip words that should not be included in the vocabulary for any reason.
 - Skip abbreviations, slang, or proper names.
+- Comment should be word explanation without using word itself, if applicable.
 
 Words to process:
 ${words.map((w) => `- ${w}`).join("\n")}
