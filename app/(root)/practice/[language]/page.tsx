@@ -14,16 +14,23 @@ interface PracticePageProps {
   params: Promise<{
     language: LanguageCodeType;
   }>;
+  searchParams: Promise<{ category?: "learning" | "reviewing" | "mastered" }>;
 }
+const categoryOptions = ["learning", "reviewing", "mastered"];
 
-const PracticePage = async ({ params }: PracticePageProps) => {
+const PracticePage = async ({ params, searchParams }: PracticePageProps) => {
   const { language } = await params;
+  const { category } = await searchParams;
 
   const user = await getUserFromSession();
 
   const languageName = SUPPORTED_LANGUAGES[language];
 
-  if (!languageName) {
+  if (
+    !SUPPORTED_LANGUAGES[language] ||
+    !category ||
+    !categoryOptions.includes(category)
+  ) {
     redirect("/practice");
   }
 
@@ -38,7 +45,7 @@ const PracticePage = async ({ params }: PracticePageProps) => {
 
   const vocabulary = (await db
     .select({
-      id: userWordsTable.id,
+      recordId: userWordsTable.id,
       word: secondaryVocabTable.word,
       translation: primaryVocabTable.word,
       type: secondaryVocabTable.type,
@@ -82,7 +89,7 @@ const PracticePage = async ({ params }: PracticePageProps) => {
 
         <PracticeInterface
           vocabulary={vocabulary}
-          language={languageName}
+          language={language}
         />
       </div>
     </div>

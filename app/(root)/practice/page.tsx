@@ -4,7 +4,7 @@ import Link from "next/link";
 import { eq } from "drizzle-orm";
 
 import { Button } from "@/components/ui/button";
-import LanguageCard from "@/components/practice/LanguageCard";
+import LanguageCards from "@/components/practice/LanguageCards";
 import { getUserFromSession } from "@/lib/utils/getUserFromSession";
 import { SUPPORTED_LANGUAGES } from "@/constants";
 import { getUserWordsTable } from "@/lib/utils";
@@ -27,13 +27,15 @@ const PracticePage = async () => {
         .from(userWordsTable)
         .where(eq(userWordsTable.userId, user.id));
 
-      const masteredWords = words.filter((word) => word.status === "mastered");
-
       return {
         code: languageCode,
         name: SUPPORTED_LANGUAGES[languageCode],
-        wordsLearned: masteredWords.length,
-        totalWords: words.length,
+        wordsMastered: words.filter((word) => word.status === "mastered")
+          .length,
+        wordsReviewing: words.filter((word) => word.status === "reviewing")
+          .length,
+        wordsLearning: words.filter((word) => word.status === "learning")
+          .length,
       };
     })
   );
@@ -56,7 +58,7 @@ const PracticePage = async () => {
         <Suspense fallback={<LanguageListSkeleton />}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {userLanguages.map((language) => (
-              <LanguageCard
+              <LanguageCards
                 key={language.code}
                 language={language}
               />
@@ -74,7 +76,7 @@ const PracticePage = async () => {
               practice.
             </p>
           </div>
-          <Link href="/vocabulary">
+          <Link href="/languages">
             <Button className="bg-purple-600 hover:bg-purple-700">
               <Languages className="mr-2 h-4 w-4" />
               Explore Languages

@@ -42,6 +42,7 @@ const DashboardPage = async () => {
   );
 
   const allAchievements = await db.select().from(achievements);
+
   const vocabAchievement = allAchievements
     .filter((a) => a.type === "vocabulary")
     .sort((a, b) => a.criteria - b.criteria)

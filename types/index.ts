@@ -104,7 +104,7 @@ export type TranslationTable =
   (typeof translationTables)[keyof typeof translationTables];
 
 export interface PracticeVocabularyWord {
-  id: string;
+  recordId: string;
   word: string;
   translation: string;
   type: string;

@@ -9,18 +9,13 @@ import { Progress } from "@/components/ui/progress";
 import { Card, CardContent } from "@/components/ui/card";
 import PracticeResult from "./PracticeResult";
 import PracticeStats from "./PracticeStats";
-
-interface VocabularyWord {
-  id: string;
-  word: string;
-  translation: string;
-  type: string;
-  status: "learning" | "reviewing" | "mastered";
-}
+import { incrementCorrectAnswersCount } from "@/lib/actions/words";
+import { LanguageCodeType, PracticeVocabularyWord } from "@/types";
+import { useRouter } from "next/navigation";
 
 interface PracticeInterfaceProps {
-  vocabulary: VocabularyWord[];
-  language: string;
+  vocabulary: PracticeVocabularyWord[];
+  language: LanguageCodeType;
 }
 
 const PracticeInterface = ({
@@ -39,6 +34,7 @@ const PracticeInterface = ({
     total: vocabulary.length,
   });
 
+  const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const currentWord = vocabulary[currentIndex];
 
@@ -48,7 +44,7 @@ const PracticeInterface = ({
     }
   }, [currentIndex]);
 
-  const checkAnswer = () => {
+  const checkAnswer = async () => {
     const isAnswerCorrect =
       userInput.trim().toLowerCase() === currentWord.translation.toLowerCase();
     setIsCorrect(isAnswerCorrect);
@@ -56,7 +52,11 @@ const PracticeInterface = ({
 
     if (isAnswerCorrect) {
       setStats((prev) => ({ ...prev, correct: prev.correct + 1 }));
-      
+
+      await incrementCorrectAnswersCount({
+        recordId: currentWord.recordId,
+        language,
+      });
     } else {
       setStats((prev) => ({ ...prev, incorrect: prev.incorrect + 1 }));
     }
@@ -88,17 +88,7 @@ const PracticeInterface = ({
   };
 
   const restartPractice = () => {
-    setCurrentIndex(0);
-    setUserInput("");
-    setShowAnswer(false);
-    setIsCorrect(null);
-    setPracticeComplete(false);
-    setStats({
-      correct: 0,
-      incorrect: 0,
-      skipped: 0,
-      total: vocabulary.length,
-    });
+    router.push("/practice");
   };
 
   if (practiceComplete) {
