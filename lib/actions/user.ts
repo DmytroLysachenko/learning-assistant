@@ -5,6 +5,7 @@ import { db } from "@/db/index";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { users } from "@/db/schema";
+import { LanguageCodeType } from "@/types";
 
 export const createUser = async (user: {
   email: string;
@@ -98,6 +99,8 @@ export const updateUser = async (
   data: Partial<{
     name: string;
     image: string;
+    learningLanguages: LanguageCodeType[];
+    interfaceLanguage: LanguageCodeType;
   }>
 ) => {
   try {
