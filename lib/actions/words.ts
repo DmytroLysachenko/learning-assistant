@@ -104,3 +104,52 @@ export const updateWordInUserVocabulary = async ({
     return { success: false, error };
   }
 };
+
+export const incrementCorrectAnswersCount = async ({
+  recordId,
+  language,
+}: {
+  recordId: string;
+  language: LanguageCodeType;
+}) => {
+  try {
+    console.log(recordId, language);
+    const userWordsTable = getUserWordsTable(language);
+
+    const currentRecord = await db
+      .select({
+        correctAnswersCount: userWordsTable.correctAnswersCount,
+      })
+      .from(userWordsTable)
+      .where(eq(userWordsTable.id, recordId))
+      .then((res) => res[0]);
+
+    if (!currentRecord) {
+      throw new Error("Word not found for user");
+    }
+
+    const newCount = currentRecord.correctAnswersCount + 1;
+    const newStatus =
+      newCount >= 4 ? "reviewing" : newCount >= 10 ? "mastered" : undefined;
+
+    const updatedWordRecord = await db
+      .update(userWordsTable)
+      .set({
+        correctAnswersCount: newCount,
+        lastReviewedAt: new Date(),
+        ...(newStatus && { status: newStatus }),
+      })
+      .where(eq(userWordsTable.id, recordId))
+      .returning({
+        status: userWordsTable.status,
+        correctAnswersCount: userWordsTable.correctAnswersCount,
+        lastReviewedAt: userWordsTable.lastReviewedAt,
+      })
+      .then((res) => res[0]);
+
+    return { success: true, data: updatedWordRecord };
+  } catch (error) {
+    console.error(error);
+    return { success: false, error };
+  }
+};
