@@ -5,24 +5,55 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { updateUser } from "@/lib/actions/user";
+import { LanguageCodeType } from "@/types";
+import { toast } from "sonner";
+import { useState } from "react";
 
 interface Language {
-  code: string;
+  code: LanguageCodeType;
   wordCount: number;
   name: string;
-  isLearning: boolean;
 }
 
 interface LanguageCardProps {
   language: Language;
   userId: string;
+  userLanguages: LanguageCodeType[];
 }
 
-const LanguageCard = ({ language, userId }: LanguageCardProps) => {
-  const { code, wordCount, isLearning, name } = language;
+const LanguageCard = ({
+  language,
+  userId,
+  userLanguages,
+}: LanguageCardProps) => {
+  const { code, wordCount, name } = language;
+
+  const [currentlyLearningLanguages, setCurrentlyLearningLanguages] =
+    useState<LanguageCodeType[]>(userLanguages);
+  const [isLearning, setIsLearning] = useState(
+    currentlyLearningLanguages.includes(code)
+  );
 
   const onToggleLearning = async () => {
-    await updateUser(userId, { learningLanguages: isLearning ? [] : [code] });
+    const { success } = await updateUser(userId, {
+      learningLanguages: isLearning
+        ? [...userLanguages.filter((lang) => lang !== code)]
+        : [...userLanguages, code],
+    });
+    setIsLearning(!isLearning);
+    setCurrentlyLearningLanguages((prev) => {
+      if (isLearning) {
+        return prev.filter((lang) => lang !== code);
+      } else {
+        return [...prev, code];
+      }
+    });
+
+    if (success) {
+      toast.success("Language updated successfully");
+    } else {
+      toast.error("Failed to update language");
+    }
   };
 
   return (
@@ -76,7 +107,7 @@ const LanguageCard = ({ language, userId }: LanguageCardProps) => {
 
           <div className="flex gap-2 mt-auto">
             <Button
-              onClick={() => onToggleLearning(code, isLearning)}
+              onClick={async () => await onToggleLearning()}
               variant={isLearning ? "outline" : "default"}
               className={cn(
                 "flex-1",

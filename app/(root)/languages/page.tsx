@@ -30,7 +30,6 @@ const LanguagesHubPage = async () => {
         code: language,
         name: SUPPORTED_LANGUAGES[language],
         wordCount,
-        isLearning: userLanguages.includes(language),
       };
     })
   );
@@ -48,10 +47,12 @@ const LanguagesHubPage = async () => {
         <p className="text-gray-600 mb-8">
           Select a language you would like to learn with us.
         </p>
+
         <Suspense fallback={<Loader className="animate-spin" />}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {languages.map((language) => (
               <LanguageCard
+                userLanguages={userLanguages}
                 key={language.code}
                 language={language}
                 userId={user.id}

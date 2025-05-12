@@ -44,17 +44,15 @@ const WordPairCard = ({
         </div>
 
         {!isUserVocabulary && (
-          <>
-            <div className="mt-3">
-              <AddToVocabularyButton
-                wordId={primaryWord.id}
-                userId={userId}
-                isAdded={pair.isLearning}
-                language={primaryWord.language}
-                label={`Add to my vocabulary`}
-              />
-            </div>
-          </>
+          <div className="mt-3">
+            <AddToVocabularyButton
+              wordId={primaryWord.id}
+              userId={userId}
+              isAdded={pair.isLearning}
+              language={primaryWord.language}
+              label={`Add to my vocabulary`}
+            />
+          </div>
         )}
 
         {/* Expand/collapse indicator */}

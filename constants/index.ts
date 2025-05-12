@@ -337,8 +337,17 @@ export const SUPPORTED_LANGUAGES_CODES = Object.keys(
 ) as LanguageCodeType[];
 
 const generateLanguagePairs = () => {
-  const languages = Object.entries(SUPPORTED_LANGUAGES);
-  const pairs = [];
+  const languages = Object.entries(SUPPORTED_LANGUAGES) as [
+    LanguageCodeType,
+    string
+  ][];
+
+  const pairs: {
+    code: string;
+    name: string;
+    source: { code: LanguageCodeType; name: string };
+    target: { code: LanguageCodeType; name: string };
+  }[] = [];
 
   for (let i = 0; i < languages.length; i++) {
     for (let j = 0; j < languages.length; j++) {
