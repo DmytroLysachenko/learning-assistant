@@ -16,13 +16,15 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   image: text("image"),
   passwordHash: text("password_hash"),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
   learningLanguages: jsonb("learning_languages")
     .default([])
-    .$type<LanguageCodeType[]>(),
+    .$type<LanguageCodeType[]>()
+    .notNull(),
   interfaceLanguage: text("interface_language")
     .default("ru")
-    .$type<LanguageCodeType>(),
+    .$type<LanguageCodeType>()
+    .notNull(),
   experience: integer("experience").default(0).notNull(),
 });
