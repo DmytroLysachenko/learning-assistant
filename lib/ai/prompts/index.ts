@@ -176,6 +176,66 @@ ${JSON.stringify(words, null, 2)}
   return { system, prompt };
 };
 
+export const validateVocabularyTranslationWordsPrompt = ({
+  fromLanguage,
+  toLanguage,
+  entries,
+  wordType,
+}: {
+  fromLanguage: LanguageCodeType;
+  toLanguage: LanguageCodeType;
+  entries: {
+    fromLanguageWord: GetWordType[typeof fromLanguage];
+    toLanguageWord: GetWordType[typeof toLanguage];
+  }[];
+  wordType: WordType;
+}) => {
+  const system = `You are a professional linguist fluent in both ${SUPPORTED_LANGUAGES[fromLanguage]} and ${SUPPORTED_LANGUAGES[toLanguage]}, verifying bilingual vocabulary data for a language learning app.`;
+
+  const wordTypeInstructions = WORD_TYPES_PROMPTS[toLanguage]?.[wordType] ?? "";
+
+  const prompt = `
+You are validating a list of bilingual vocabulary entries that map words from ${
+    SUPPORTED_LANGUAGES[fromLanguage]
+  } to ${SUPPORTED_LANGUAGES[toLanguage]}.
+
+Each entry contains:
+- A word in ${
+    SUPPORTED_LANGUAGES[fromLanguage]
+  } with its base form, word type, difficulty level, example sentence, and comment.
+- A corresponding translation in ${
+    SUPPORTED_LANGUAGES[toLanguage]
+  } with similar structure.
+
+Your task is to:
+- Ensure the **translated word** in ${
+    SUPPORTED_LANGUAGES[toLanguage]
+  } accurately matches the meaning and form of the ${
+    SUPPORTED_LANGUAGES[fromLanguage]
+  } word.
+- Ensure the **word type** in ${
+    SUPPORTED_LANGUAGES[toLanguage]
+  } is correct and consistent with the source.
+- Ensure the **difficulty level** reflects usage frequency and learner familiarity in ${
+    SUPPORTED_LANGUAGES[toLanguage]
+  }.
+- Ensure the **example sentence** is natural and correctly demonstrates the word in context.
+- Ensure the **comment** helps explain the word’s meaning **without reusing the word itself**.
+- All ${SUPPORTED_LANGUAGES[toLanguage]} content must be in ${
+    SUPPORTED_LANGUAGES[toLanguage]
+  } language only.
+
+${wordTypeInstructions}
+
+Correct all mistakes. Return only the **corrected \`toLanguageWord\` array**, preserving the original structure.
+
+Data to validate:
+${JSON.stringify(entries, null, 2)}
+`;
+
+  return { system, prompt };
+};
+
 export const formatWordsPrompt = ({
   words,
   language,

@@ -12,6 +12,7 @@ export const getTranslationTable = (
   const pairKey = [language1, language2]
     .sort()
     .join("_") as keyof typeof translationTables;
+
   const table = translationTables[pairKey];
 
   if (!table)
