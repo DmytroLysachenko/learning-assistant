@@ -9,9 +9,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex">
       <Sidebar userId={user.id} />
-      <div className="min-h-screen w-screen max-h-screen overflow-auto">
-        {children}
-      </div>
+      <div className="min-h-screen w-screen overflow-auto">{children}</div>
     </div>
   );
 };

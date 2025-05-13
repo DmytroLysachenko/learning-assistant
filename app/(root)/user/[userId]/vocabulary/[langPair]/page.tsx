@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { eq, count, inArray, and } from "drizzle-orm";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader } from "lucide-react";
 import { redirect } from "next/navigation";
 
 import VocabularyTable from "@/components/vocabulary/VocabularyTable";
@@ -32,9 +32,23 @@ interface PageProps {
 }
 
 const UserVocabularyPage = async ({ params, searchParams }: PageProps) => {
-  const { userId, langPair } = await params;
-
-  const user = await getUserFromSession();
+  const [
+    { userId, langPair },
+    user,
+    {
+      currentPage,
+      pageSize,
+      filter,
+      sortField,
+      wordType,
+      sortDirection,
+      offset,
+    },
+  ] = await Promise.all([
+    params,
+    getUserFromSession(),
+    parseSearchParams(searchParams),
+  ]);
 
   if (user.id !== userId) {
     redirect("/user/dashboard");
@@ -51,39 +65,14 @@ const UserVocabularyPage = async ({ params, searchParams }: PageProps) => {
     secondaryLanguageWordId,
   } = getLanguageData(langPair);
 
-  const {
-    currentPage,
-    pageSize,
-    filter,
-    sortField,
-    wordType,
-    sortDirection,
-    offset,
-  } = await parseSearchParams(searchParams);
-
   const localWordType = WORD_TYPES[primaryLanguage][wordType];
 
-  // Count of user's words in each language
-  const primaryWordsCount = await db
-    .select({ value: count() })
-    .from(userWordsTable)
-    .where(eq(userWordsTable.userId, userId))
-    .then((res) => res[0].value);
-
-  // Filtering condition - filter on the primary language
   const whereClause = buildWhereClause(
     primaryVocabTable,
     filter,
     localWordType
   );
 
-  const usersPrimaryVocabWordsIds = await db
-    .select({ wordId: userWordsTable.wordId })
-    .from(userWordsTable)
-    .where(eq(userWordsTable.userId, userId))
-    .then((res) => res.map((item) => item.wordId));
-
-  // Count translations with or without filter
   const countQueryBase = db
     .select({ value: count() })
     .from(translationTable)
@@ -95,13 +84,20 @@ const UserVocabularyPage = async ({ params, searchParams }: PageProps) => {
       secondaryVocabTable,
       eq(translationTable[secondaryLanguageWordId], secondaryVocabTable.id)
     );
-  const totalCountResult = await countQueryBase.where(
-    inArray(primaryVocabTable.id, usersPrimaryVocabWordsIds)
-  );
 
-  const totalCount = totalCountResult[0]?.value || 0;
+  const [primaryWordsCount, usersPrimaryVocabWordsIds] = await Promise.all([
+    db
+      .select({ value: count() })
+      .from(userWordsTable)
+      .where(eq(userWordsTable.userId, userId))
+      .then((res) => res[0].value),
+    db
+      .select({ wordId: userWordsTable.wordId })
+      .from(userWordsTable)
+      .where(eq(userWordsTable.userId, userId))
+      .then((res) => res.map((item) => item.wordId)),
+  ]);
 
-  // Build final filtered + sorted + paginated query
   const dataQuery = db
     .select({
       translationTable,
@@ -124,34 +120,46 @@ const UserVocabularyPage = async ({ params, searchParams }: PageProps) => {
     .limit(pageSize)
     .offset(offset);
 
-  const results = await dataQuery;
+  const [userWords, results, totalCountResult] = await Promise.all([
+    db.select().from(userWordsTable).where(eq(userWordsTable.userId, userId)),
+    dataQuery,
+    countQueryBase.where(
+      inArray(primaryVocabTable.id, usersPrimaryVocabWordsIds)
+    ),
+  ]);
 
-  const entries = results.map((entry) => ({
-    id: entry.translationTable.id,
-    primaryWord: {
-      id: entry.primaryVocabTable!.id,
-      word: entry.primaryVocabTable!.word,
-      example: entry.primaryVocabTable!.example,
-      type: entry.primaryVocabTable!.type,
-      difficulty: entry.primaryVocabTable!.difficulty,
-      createdAt: entry.primaryVocabTable!.createdAt,
-      comment: entry.primaryVocabTable!.comment,
-      language: primaryLanguage,
-    },
-    secondaryWord: {
-      id: entry.secondaryVocabTable!.id,
-      word: entry.secondaryVocabTable!.word,
-      example: entry.secondaryVocabTable!.example,
-      type: entry.secondaryVocabTable!.type,
-      difficulty: entry.secondaryVocabTable!.difficulty,
-      createdAt: entry.secondaryVocabTable!.createdAt,
-      comment: entry.secondaryVocabTable!.comment,
-      language: secondaryLanguage,
-    },
-  }));
+  const totalCount = totalCountResult[0]?.value || 0;
 
-  // Get user information - in a real app, you'd fetch this from your users table
-  const userName = "User"; // Replace with actual user name when available
+  const entries = results.map(
+    ({ primaryVocabTable, secondaryVocabTable, translationTable }) => ({
+      id: translationTable.id,
+      isLearning: userWords.some(
+        (word) => word.wordId === primaryVocabTable!.id
+      ),
+      primaryWord: {
+        id: primaryVocabTable!.id,
+        word: primaryVocabTable!.word,
+        example: primaryVocabTable!.example,
+        type: primaryVocabTable!.type,
+        difficulty: primaryVocabTable!.difficulty,
+        createdAt: primaryVocabTable!.createdAt,
+        comment: primaryVocabTable!.comment,
+        language: primaryLanguage,
+      },
+      secondaryWord: {
+        id: secondaryVocabTable!.id,
+        word: secondaryVocabTable!.word,
+        example: secondaryVocabTable!.example,
+        type: secondaryVocabTable!.type,
+        difficulty: secondaryVocabTable!.difficulty,
+        createdAt: secondaryVocabTable!.createdAt,
+        comment: secondaryVocabTable!.comment,
+        language: secondaryLanguage,
+      },
+    })
+  );
+
+  const userName = user.name;
 
   return (
     <div className="w-full flex flex-col justify-center py-6 px-4 md:px-8 gap-6">
@@ -194,7 +202,9 @@ const UserVocabularyPage = async ({ params, searchParams }: PageProps) => {
           <h2 className="text-xl font-bold text-gray-900 mb-4">
             Word Type Statistics
           </h2>
-          <Suspense fallback={<div>Loading statistics...</div>}>
+          <Suspense fallback={            <div className="flex justify-center items-center h-[300px]">
+              <Loader className="animate-spin text-primary size-8" />
+            </div>}>
             <WordTypeStats
               typeCounts={typeCounts}
               language={SUPPORTED_LANGUAGES[lang1.code]}
@@ -208,7 +218,14 @@ const UserVocabularyPage = async ({ params, searchParams }: PageProps) => {
           {SUPPORTED_LANGUAGES[primaryLanguage]}-
           {SUPPORTED_LANGUAGES[secondaryLanguage]} Vocabulary
         </h2>
-        <Suspense fallback={<div>Loading vocabulary...</div>}>
+
+        <Suspense
+          fallback={
+            <div className="flex justify-center items-center h-[300px]">
+              <Loader className="animate-spin text-primary size-8" />
+            </div>
+          }
+        >
           <VocabularyTable
             primaryLanguage={primaryLanguage}
             wordPairs={entries}

@@ -11,6 +11,7 @@ import {
   buildWhereClause,
 } from "@/lib/utils";
 import { getUserFromSession } from "@/lib/utils/getUserFromSession";
+import { Loader } from "lucide-react";
 
 interface VocabularyPageProps {
   searchParams: Promise<{
@@ -28,9 +29,23 @@ const VocabularyPage = async ({
   searchParams,
   params,
 }: VocabularyPageProps) => {
-  const { langPair } = await params;
-
-  const { id: userId } = await getUserFromSession();
+  const [
+    { langPair },
+    { id: userId },
+    {
+      currentPage,
+      pageSize,
+      filter,
+      sortField,
+      wordType,
+      sortDirection,
+      offset,
+    },
+  ] = await Promise.all([
+    params,
+    getUserFromSession(),
+    parseSearchParams(searchParams),
+  ]);
 
   const {
     primaryLanguage,
@@ -42,16 +57,6 @@ const VocabularyPage = async ({
     primaryLanguageWordId,
     secondaryLanguageWordId,
   } = getLanguageData(langPair);
-
-  const {
-    currentPage,
-    pageSize,
-    filter,
-    sortField,
-    wordType,
-    sortDirection,
-    offset,
-  } = await parseSearchParams(searchParams);
 
   const localWordType = WORD_TYPES[primaryLanguage][wordType];
 
@@ -84,12 +89,6 @@ const VocabularyPage = async ({
       eq(translationTable[secondaryLanguageWordId], secondaryVocabTable.id)
     );
 
-  const totalCount = await countQueryBase.then((res) => res[0].value);
-
-  const totalFilteredCount = await countQueryBase
-    .where(whereClause)
-    .then((res) => res[0].value);
-
   // Build final filtered + sorted + paginated query
   const dataQuery = db
     .select({
@@ -111,10 +110,13 @@ const VocabularyPage = async ({
     .limit(pageSize)
     .offset(offset);
 
-  const [userWords, results] = await Promise.all([
-    db.select().from(userWordsTable).where(eq(userWordsTable.userId, userId)),
-    dataQuery,
-  ]);
+  const [userWords, results, totalCount, totalFilteredCount] =
+    await Promise.all([
+      db.select().from(userWordsTable).where(eq(userWordsTable.userId, userId)),
+      dataQuery,
+      countQueryBase.then((res) => res[0].value),
+      countQueryBase.where(whereClause).then((res) => res[0].value),
+    ]);
 
   const entries = results.map(
     ({ primaryVocabTable, secondaryVocabTable, translationTable }) => ({
@@ -172,7 +174,13 @@ const VocabularyPage = async ({
 
       <div className="bg-white p-6 rounded-lg shadow">
         <h2 className="text-xl font-bold text-gray-900 mb-4">Vocabulary</h2>
-        <Suspense fallback={<div>Loading vocabulary...</div>}>
+        <Suspense
+          fallback={
+            <div className="flex justify-center items-center h-[300px]">
+              <Loader className="animate-spin text-primary size-8" />
+            </div>
+          }
+        >
           <VocabularyTable
             primaryLanguage={primaryLanguage}
             wordPairs={entries}

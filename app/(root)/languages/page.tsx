@@ -10,16 +10,11 @@ import LanguageCard from "@/components/languages/LanguageCard";
 import { Suspense } from "react";
 
 const LanguagesHubPage = async () => {
-  const user = await getUserFromSession();
-
   const userLanguages: LanguageCodeType[] = [];
 
-  if (user.learningLanguages) {
-    userLanguages.push(...user.learningLanguages);
-  }
-
-  const languages = await Promise.all(
-    Object.values(SUPPORTED_LANGUAGES_CODES).map(async (language) => {
+  const [user, ...languages] = await Promise.all([
+    getUserFromSession(),
+    ...Object.values(SUPPORTED_LANGUAGES_CODES).map(async (language) => {
       const languageVocabTable = getVocabTable(language);
       const wordCount = await db
         .select({ count: count() })
@@ -31,8 +26,12 @@ const LanguagesHubPage = async () => {
         name: SUPPORTED_LANGUAGES[language],
         wordCount,
       };
-    })
-  );
+    }),
+  ]);
+
+  if (user.learningLanguages) {
+    userLanguages.push(...user.learningLanguages);
+  }
 
   return (
     <div className="w-full flex flex-col justify-center py-6 px-4 md:px-8 gap-6">
@@ -48,7 +47,13 @@ const LanguagesHubPage = async () => {
           Select a language you would like to learn with us.
         </p>
 
-        <Suspense fallback={<Loader className="animate-spin" />}>
+        <Suspense
+          fallback={
+            <div className="flex justify-center items-center h-[300px]">
+              <Loader className="animate-spin text-primary size-8" />
+            </div>
+          }
+        >
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {languages.map((language) => (
               <LanguageCard

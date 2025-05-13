@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { Users, MessageSquare, TrendingUp, Search } from "lucide-react";
+import { Users, MessageSquare, TrendingUp, Search, Loader } from "lucide-react";
 import Link from "next/link";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -206,7 +206,13 @@ export default function CommunityPage() {
           </Link>
         </div>
 
-        <Suspense fallback={<div>Loading community content...</div>}>
+        <Suspense
+          fallback={
+            <div className="flex justify-center items-center h-[300px]">
+              <Loader className="animate-spin text-primary size-8" />
+            </div>
+          }
+        >
           <Tabs
             defaultValue="posts"
             className="mt-4"

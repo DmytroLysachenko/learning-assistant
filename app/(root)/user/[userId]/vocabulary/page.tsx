@@ -15,9 +15,7 @@ interface PageProps {
 }
 
 const UserVocabularyHub = async ({ params }: PageProps) => {
-  const { userId } = await params;
-
-  const user = await getUserFromSession();
+  const [{ userId }, user] = await Promise.all([params, getUserFromSession()]);
 
   if (user.id !== userId) {
     redirect("/user/dashboard");

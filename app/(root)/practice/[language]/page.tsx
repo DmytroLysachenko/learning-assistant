@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 
 import PracticeInterface from "@/components/practice/PracticeInterface";
 import { LanguageCodeType, PracticeVocabularyWord } from "@/types";
@@ -19,10 +19,11 @@ interface PracticePageProps {
 const categoryOptions = ["learning", "reviewing", "mastered"];
 
 const PracticePage = async ({ params, searchParams }: PracticePageProps) => {
-  const { language } = await params;
-  const { category } = await searchParams;
-
-  const user = await getUserFromSession();
+  const [{ language }, { category }, user] = await Promise.all([
+    params,
+    searchParams,
+    getUserFromSession(),
+  ]);
 
   const languageName = SUPPORTED_LANGUAGES[language];
 
@@ -64,7 +65,9 @@ const PracticePage = async ({ params, searchParams }: PracticePageProps) => {
       secondaryVocabTable,
       eq(translationTable[secondaryLanguageWordId], secondaryVocabTable.id)
     )
-    .where(eq(userWordsTable.userId, user.id))) as PracticeVocabularyWord[];
+    .where(eq(userWordsTable.userId, user.id))
+    .orderBy(asc(userWordsTable.correctAnswersCount))
+    .limit(10)) as PracticeVocabularyWord[];
 
   return (
     <div className="w-full flex flex-col justify-center py-6 px-4 md:px-8 gap-6">
