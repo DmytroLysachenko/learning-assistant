@@ -13,8 +13,8 @@ import { getTranslationTable, getVocabTable, sleep } from "@/lib/utils";
 export const translateWordsToLanguage = async ({
   batchSize = 10,
   delayMs = 5000,
-  sourceLanguage = "pl",
-  targetLanguage = "ru",
+  sourceLanguage,
+  targetLanguage,
   log = true,
 }: TranslateWordsOptions) => {
   let totalTranslated = 0;
@@ -77,10 +77,15 @@ export const translateWordsToLanguage = async ({
 
     for (const batch of wordBatches) {
       try {
-        const mappedWords = batch.map(({ id, word }) => ({
-          id,
-          word,
-        }));
+        const mappedWords = batch.map(
+          ({ id, word, comment, difficulty, example }) => ({
+            id,
+            word,
+            comment,
+            example,
+            difficulty,
+          })
+        );
 
         const {
           success: translatedWordsSuccess,

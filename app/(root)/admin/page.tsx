@@ -12,6 +12,8 @@ import MaintenancePanel from "@/components/admin/sections/MaintenanceSection";
 import ValidationPanel from "@/components/admin/sections/ValidationSection";
 import GenerationByAlphabet from "@/components/admin/sections/GenerationByAlphabetSection";
 import TranslateWordsSection from "@/components/admin/sections/TranslateWordsSection";
+import { Button } from "@/components/ui/button";
+import { deleteInvalidTranslationConnections } from "@/lib/actions/checks";
 
 const AdminDashboard = () => {
   // Centralized operation status state
@@ -39,6 +41,17 @@ const AdminDashboard = () => {
           </p>
           <Separator className="my-2" />
         </div>
+        <Button
+          onClick={async () => {
+            await deleteInvalidTranslationConnections({
+              fromLanguage: "pl",
+              toLanguage: "ru",
+              batchSize: 50,
+            });
+          }}
+        >
+          Delete
+        </Button>
 
         {/* Status Card */}
         <StatusCard operationStatus={operationStatus} />

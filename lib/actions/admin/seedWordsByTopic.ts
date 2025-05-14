@@ -12,7 +12,7 @@ export const seedWordsByTopic = async ({
   delayMs = 5000,
   level,
   wordType = "noun",
-  language = "pl",
+  language,
   log = true,
 }: SeedWordsOptions) => {
   const batches = Math.ceil(total / batchSize);
@@ -70,12 +70,4 @@ export const seedWordsByTopic = async ({
     console.log(error);
     return { success: false, error };
   }
-
-  // const issues = await checkGeneratedDataQuality();
-
-  // if (!issues.length) {
-  //   console.log("🎉 All looks clean!");
-  // } else {
-  //   console.warn(`⚠️ Found ${issues.length} potential issue(s).`);
-  // }
 };

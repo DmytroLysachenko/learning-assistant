@@ -6,6 +6,7 @@ import { z } from "zod";
 import { generateObject } from "ai";
 import { modelFlashLiteExp as model } from "../aiClient";
 import {
+  validateTranslationConnectionsPrompt,
   validateVocabularyTranslationWordsPrompt,
   validateVocabularyWordsPrompt,
 } from "../prompts";
@@ -82,6 +83,54 @@ export const validateVocabularyTranslationWords = async ({
     return { success: true, data: result.object };
   } catch (error) {
     console.log(error);
+    return { success: false, error };
+  }
+};
+
+export const validateTranslationConnections = async ({
+  fromLanguage,
+  toLanguage,
+  entries,
+}: {
+  fromLanguage: LanguageCodeType;
+  toLanguage: LanguageCodeType;
+  entries: {
+    id: string;
+    fromLanguageWord: {
+      word: string | null;
+      comment: string | null;
+      example: string | null;
+    };
+    toLanguageWord: {
+      word: string | null;
+      comment: string | null;
+      example: string | null;
+    };
+  }[];
+}): Promise<{
+  success: boolean;
+  invalidConnections?: { id: string; reason: string }[];
+  error?: unknown;
+}> => {
+  try {
+    const { system, prompt } = validateTranslationConnectionsPrompt({
+      fromLanguage,
+      toLanguage,
+      entries,
+    });
+
+    const result = await generateObject<{ id: string; reason: string }>({
+      model,
+      mode: "tool",
+      output: "array",
+      schema: z.object({ id: z.string(), reason: z.string() }),
+      system,
+      prompt,
+    });
+
+    return { success: true, invalidConnections: result.object };
+  } catch (error) {
+    console.error("❌ Failed to validate connections:", error);
     return { success: false, error };
   }
 };

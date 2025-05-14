@@ -81,7 +81,13 @@ ${exclusions}
 export const generateTranslationPrompt = (
   fromLang: LanguageCodeType,
   toLang: LanguageCodeType,
-  words: { word: string; id: string }[]
+  words: {
+    word: string;
+    id: string;
+    example: string | null;
+    comment: string | null;
+    difficulty: string | null;
+  }[]
 ) => {
   const system = `You are an AI translator assisting with language learning vocabulary.`;
 
@@ -92,19 +98,19 @@ Translate the following words from **${
 
 For each word:
 - Translate the word into ${SUPPORTED_LANGUAGES[toLang]} language.
+- Translation must be semantic and correct.
 - Example of word usage case can be changed to another sentence (more applicable to ${
     SUPPORTED_LANGUAGES[toLang]
   } language).
-- All comments and examples must be written in **${
+- All content must be written only in **${
     SUPPORTED_LANGUAGES[toLang]
   } language**.
 - Comment should be word explanation without using word itself, if applicable.
 - Pay attention to emphasis in the words where meaning depends on it.
-- Comment should be word explanation without using word itself, if applicable.
 
 Words to translate:
-${words.map((w) => w.word).join(", ")}
-  `.trim();
+${JSON.stringify(words, null, 2)}
+  `;
 
   return { system, prompt };
 };
@@ -265,6 +271,51 @@ Guidelines:
 
 Words to process:
 ${words.map((w) => `- ${w}`).join("\n")}
+`;
+
+  return { system, prompt };
+};
+
+export const validateTranslationConnectionsPrompt = ({
+  fromLanguage,
+  toLanguage,
+  entries,
+}: {
+  fromLanguage: LanguageCodeType;
+  toLanguage: LanguageCodeType;
+  entries: {
+    id: string;
+    fromLanguageWord: {
+      word: string | null;
+      comment: string | null;
+      example: string | null;
+    };
+    toLanguageWord: {
+      word: string | null;
+      comment: string | null;
+      example: string | null;
+    };
+  }[];
+}) => {
+  const system = `You are a professional bilingual linguist fluent in ${SUPPORTED_LANGUAGES[fromLanguage]} and ${SUPPORTED_LANGUAGES[toLanguage]}. You are evaluating translation pairs for a language learning application.`;
+
+  const prompt = `
+You are validating a list of ${SUPPORTED_LANGUAGES[fromLanguage]} to ${
+    SUPPORTED_LANGUAGES[toLanguage]
+  } translation pairs.
+
+For each pair:
+- Determine whether the translation is **accurate and contextually correct**.
+- If the translation is strongly **incorrect or mismatched**, mark it as invalid.
+- Only decide if the connection is valid or not and describe the reason.
+- Only return a list of entries that are strongly **invalid**.
+- Strongly incorrect or mismatched means that the translation is totally wrong and cannot be matched in any logic way.
+- Small differences in meaning, form or comments are not considered incorrect.
+- If no invalid translations are found, return an empty array.
+
+
+Data:
+${JSON.stringify(entries, null, 2)}
 `;
 
   return { system, prompt };

@@ -4,6 +4,7 @@ import { SUPPORTED_LANGUAGES, vocabTablesNames, WORD_TYPES } from "@/constants";
 import { db } from "@/db";
 import { GetWordType } from "@/db/types";
 import {
+  validateTranslationConnections,
   validateVocabularyTranslationWords,
   validateVocabularyWords,
 } from "@/lib/ai/validators/wordsValidator";
@@ -366,6 +367,120 @@ export const validateVocabularyTranslations = async ({
       `❌ Failed to validate vocabulary for "${toLanguage}":`,
       error
     );
+    return { success: false, error };
+  }
+};
+
+export const deleteInvalidTranslationConnections = async ({
+  fromLanguage,
+  toLanguage,
+  batchSize = 10,
+}: {
+  fromLanguage: LanguageCodeType;
+  toLanguage: LanguageCodeType;
+  batchSize?: number;
+}) => {
+  const [primaryLanguage, secondaryLanguage] = [
+    fromLanguage,
+    toLanguage,
+  ].sort();
+  const isPrimaryFirstLanguage = primaryLanguage === fromLanguage;
+
+  const primaryTable = getVocabTable(primaryLanguage);
+  const secondaryTable = getVocabTable(secondaryLanguage);
+  const translationsTable = getTranslationTable(
+    primaryLanguage,
+    secondaryLanguage
+  );
+
+  try {
+    const results = (await db
+      .select({
+        id: translationsTable.id,
+        fromLanguageWord: isPrimaryFirstLanguage
+          ? {
+              word: primaryTable.word,
+              comment: primaryTable.comment,
+              example: primaryTable.example,
+            }
+          : {
+              word: secondaryTable.word,
+              comment: secondaryTable.comment,
+              example: secondaryTable.example,
+            },
+        toLanguageWord: !isPrimaryFirstLanguage
+          ? {
+              word: primaryTable.word,
+              comment: primaryTable.comment,
+              example: primaryTable.example,
+            }
+          : {
+              word: secondaryTable.word,
+              comment: secondaryTable.comment,
+              example: secondaryTable.example,
+            },
+      })
+      .from(translationsTable)
+      .leftJoin(primaryTable, eq(translationsTable.wordId1, primaryTable.id))
+      .leftJoin(
+        secondaryTable,
+        eq(translationsTable.wordId2, secondaryTable.id)
+      )) as {
+      id: string;
+      fromLanguageWord: {
+        word: string | null;
+        comment: string | null;
+        example: string | null;
+      };
+      toLanguageWord: {
+        word: string | null;
+        comment: string | null;
+        example: string | null;
+      };
+    }[];
+
+    const filteredResults = results.filter(
+      (entry) => entry.fromLanguageWord && entry.toLanguageWord
+    );
+
+    if (filteredResults.length === 0) {
+      console.log("⚠️ No data to validate.");
+      return { success: true };
+    }
+
+    const batches = chunk(shuffle(filteredResults), batchSize);
+    let deleted = 0;
+    for (const batch of batches) {
+      const { success, invalidConnections, error } =
+        await validateTranslationConnections({
+          fromLanguage,
+          toLanguage,
+          entries: batch,
+        });
+
+      if (!success || !invalidConnections) {
+        console.error("❌ AI validation failed:", error);
+        continue;
+      }
+
+      await Promise.all(
+        invalidConnections.map(async (entry) => {
+          await db
+            .delete(translationsTable)
+            .where(eq(translationsTable.id, entry.id));
+        })
+      );
+      deleted += invalidConnections.length;
+      await sleep(5000);
+    }
+
+    console.log(
+      "✅ Translation connection validation complete. Deleted:",
+      deleted
+    );
+    return { success: true };
+  } catch (error) {
+    console.error("❌ Error during connection validation:", error);
     return { success: false, error };
   }
 };

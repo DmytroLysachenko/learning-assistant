@@ -13,7 +13,7 @@ export const seedWordsByAlphabet = async ({
   total = 100,
   delayMs = 5000,
   wordType = "noun",
-  language = "pl",
+  language,
   log = true,
 }: SeedWordsOptions) => {
   let totalGenerated = 0;

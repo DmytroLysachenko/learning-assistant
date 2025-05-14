@@ -8,7 +8,13 @@ import { generateTranslationPrompt } from "../prompts";
 export const generateTranslationWords = async (
   fromLang: LanguageCodeType,
   toLang: LanguageCodeType,
-  words: { word: string; id: string }[]
+  words: {
+    word: string;
+    id: string;
+    example: string | null;
+    comment: string | null;
+    difficulty: string | null;
+  }[]
 ) => {
   try {
     const schema = wordSchemas[toLang];
