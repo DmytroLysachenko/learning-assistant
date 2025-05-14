@@ -5,14 +5,13 @@ import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { OperationStatus } from "@/types";
+
 import StatusCard from "@/components/admin/StatusCard";
 import GenerationByTopic from "@/components/admin/sections/GenerationByTopicSection";
 import MaintenancePanel from "@/components/admin/sections/MaintenanceSection";
 import ValidationPanel from "@/components/admin/sections/ValidationSection";
 import GenerationByAlphabet from "@/components/admin/sections/GenerationByAlphabetSection";
 import TranslateWordsSection from "@/components/admin/sections/TranslateWordsSection";
-import { Button } from "@/components/ui/button";
-import { validateVocabularyTranslations } from "@/lib/actions/checks";
 
 const AdminDashboard = () => {
   // Centralized operation status state
@@ -40,36 +39,6 @@ const AdminDashboard = () => {
           </p>
           <Separator className="my-2" />
         </div>
-        <Button
-          onClick={async () => {
-            await validateVocabularyTranslations({
-              fromLanguage: "pl",
-              toLanguage: "ru",
-              wordType: "noun",
-              batchSize: 20,
-            });
-            await validateVocabularyTranslations({
-              fromLanguage: "pl",
-              toLanguage: "ru",
-              wordType: "verb",
-              batchSize: 20,
-            });
-            await validateVocabularyTranslations({
-              fromLanguage: "pl",
-              toLanguage: "ru",
-              wordType: "adjective",
-              batchSize: 20,
-            });
-            await validateVocabularyTranslations({
-              fromLanguage: "pl",
-              toLanguage: "ru",
-              wordType: "adverb",
-              batchSize: 20,
-            });
-          }}
-        >
-          Validate from PL to RU words translations (changing RU words)
-        </Button>
 
         {/* Status Card */}
         <StatusCard operationStatus={operationStatus} />

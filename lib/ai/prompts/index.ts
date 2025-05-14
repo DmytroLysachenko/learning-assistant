@@ -164,6 +164,7 @@ For each entry:
 - Ensure the **comment** is helpful and explaining the word without using it.
 - All content must be in ${SUPPORTED_LANGUAGES[language]} language only.
 - Changes should not affect primary word meaning.
+- Correct only words which really require corrections.
 
 ${wordTypeInstructions}
 
@@ -224,6 +225,7 @@ Your task is to:
 - All ${SUPPORTED_LANGUAGES[toLanguage]} content must be in ${
     SUPPORTED_LANGUAGES[toLanguage]
   } language only.
+- Correct only words which really require corrections.
 
 ${wordTypeInstructions}
 

@@ -24,19 +24,19 @@ const LanguageCards = ({ language }: LanguageCardsProps) => {
       />
 
       <LanguageCard
-        type="mastered"
-        languageName={name}
-        languageCode={code}
-        wordCount={wordsMastered}
-        description={`Practice your already mastered words in ${name}, not to forget them.`}
-      />
-
-      <LanguageCard
         type="reviewing"
         languageName={name}
         languageCode={code}
         wordCount={wordsReviewing}
         description={`Practice words you are familiar with in ${name}, to master them completely.`}
+      />
+
+      <LanguageCard
+        type="mastered"
+        languageName={name}
+        languageCode={code}
+        wordCount={wordsMastered}
+        description={`Practice your already mastered words in ${name}, not to forget them.`}
       />
     </>
   );
