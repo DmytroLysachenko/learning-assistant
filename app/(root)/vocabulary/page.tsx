@@ -8,7 +8,6 @@ import { getUserFromSession } from "@/lib/utils/getUserFromSession";
 import { getVocabTable } from "@/lib/utils";
 
 const VocabularyHubPage = async () => {
-  // Get counts for each supported language
   const [user, ...languageCounts] = await Promise.all([
     getUserFromSession(),
     ...SUPPORTED_LANGUAGES_CODES.map(async (langCode) => {
@@ -23,17 +22,14 @@ const VocabularyHubPage = async () => {
     }),
   ]);
 
-  // Create a map of language codes to their word counts
   const languageCountMap = Object.fromEntries(
     languageCounts.map((item) => [item.code, item.count])
   );
 
-  // Filter language pairs based on user's learning languages
   const userLanguagePairs = languagePairs.filter((pair) =>
     user.learningLanguages.includes(pair.source.code)
   );
 
-  // Check if user has any language pairs
   const hasLanguagePairs = userLanguagePairs.length > 0;
 
   return (

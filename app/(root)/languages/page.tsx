@@ -1,38 +1,9 @@
 import { Languages, Loader } from "lucide-react";
 
-import { getUserFromSession } from "@/lib/utils/getUserFromSession";
-import { SUPPORTED_LANGUAGES, SUPPORTED_LANGUAGES_CODES } from "@/constants";
-import { getVocabTable } from "@/lib/utils";
-import { db } from "@/db";
-import { count } from "drizzle-orm";
-import { LanguageCodeType } from "@/types";
-import LanguageCard from "@/components/languages/LanguageCard";
 import { Suspense } from "react";
+import LanguagesList from "@/components/languages/LanguagesList";
 
-const LanguagesHubPage = async () => {
-  const userLanguages: LanguageCodeType[] = [];
-
-  const [user, ...languages] = await Promise.all([
-    getUserFromSession(),
-    ...Object.values(SUPPORTED_LANGUAGES_CODES).map(async (language) => {
-      const languageVocabTable = getVocabTable(language);
-      const wordCount = await db
-        .select({ count: count() })
-        .from(languageVocabTable)
-        .then((res) => res[0]?.count || 0);
-
-      return {
-        code: language,
-        name: SUPPORTED_LANGUAGES[language],
-        wordCount,
-      };
-    }),
-  ]);
-
-  if (user.learningLanguages) {
-    userLanguages.push(...user.learningLanguages);
-  }
-
+const LanguagesHubPage = () => {
   return (
     <div className="w-full flex flex-col justify-center py-6 px-4 md:px-8 gap-6">
       <div className="bg-white p-6 rounded-lg shadow">
@@ -54,16 +25,7 @@ const LanguagesHubPage = async () => {
             </div>
           }
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {languages.map((language) => (
-              <LanguageCard
-                userLanguages={userLanguages}
-                key={language.code}
-                language={language}
-                userId={user.id}
-              />
-            ))}
-          </div>
+          <LanguagesList />
         </Suspense>
       </div>
     </div>
