@@ -15,7 +15,7 @@ import {
   sleep,
 } from "@/lib/utils";
 import { LanguageCodeType, WordType } from "@/types";
-import { and, eq, gte, inArray } from "drizzle-orm";
+import { and, eq, gte, inArray, isNull } from "drizzle-orm";
 import { chunk, shuffle } from "lodash";
 
 export const removeDuplicatesFromTable = async (table: LanguageCodeType) => {
@@ -421,6 +421,7 @@ export const deleteInvalidTranslationConnections = async ({
             },
       })
       .from(translationsTable)
+      .where(isNull(translationsTable.lastlyReviewedAt))
       .leftJoin(primaryTable, eq(translationsTable.wordId1, primaryTable.id))
       .leftJoin(
         secondaryTable,
@@ -451,27 +452,47 @@ export const deleteInvalidTranslationConnections = async ({
     const batches = chunk(shuffle(filteredResults), batchSize);
     let deleted = 0;
     for (const batch of batches) {
-      const { success, invalidConnections, error } =
-        await validateTranslationConnections({
-          fromLanguage,
-          toLanguage,
-          entries: batch,
-        });
+      try {
+        const { success, invalidConnections, error } =
+          await validateTranslationConnections({
+            fromLanguage,
+            toLanguage,
+            entries: batch,
+          });
 
-      if (!success || !invalidConnections) {
-        console.error("❌ AI validation failed:", error);
+        if (!success || !invalidConnections) {
+          console.error("❌ AI validation failed:", error);
+          continue;
+        }
+
+        await Promise.all(
+          invalidConnections.map(async (entry) => {
+            await db
+              .delete(translationsTable)
+              .where(eq(translationsTable.id, entry.id));
+          })
+        );
+
+        await Promise.all(
+          batch
+            .filter(
+              ({ id: batchId }) =>
+                !invalidConnections.map(({ id }) => id).includes(batchId)
+            )
+            .map(async (entry) => {
+              await db
+                .update(translationsTable)
+                .set({ lastlyReviewedAt: new Date() })
+                .where(eq(translationsTable.id, entry.id));
+            })
+        );
+        deleted += invalidConnections.length;
+        console.log(`🗑️ Deleted ${deleted} invalid connections.`);
+        await sleep(5000);
+      } catch (error) {
+        console.log("❌ Error during connection validation:", error);
         continue;
       }
-
-      await Promise.all(
-        invalidConnections.map(async (entry) => {
-          await db
-            .delete(translationsTable)
-            .where(eq(translationsTable.id, entry.id));
-        })
-      );
-      deleted += invalidConnections.length;
-      await sleep(5000);
     }
 
     console.log(

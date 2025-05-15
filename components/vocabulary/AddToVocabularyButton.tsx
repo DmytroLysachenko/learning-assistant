@@ -24,9 +24,9 @@ const AddToVocabularyButton = ({
 }: AddToVocabularyButtonProps) => {
   const [isAdded, setIsAdded] = useState(isAddedProp);
   const [isLoading, setIsLoading] = useState(false);
-  // Generate default label if not provided
+
   const buttonLabel = label || `Add ${language.slice(0, 2).toUpperCase()}`;
-  // console.log(isAdded);
+
   const handleClick = async () => {
     setIsLoading(true);
     try {

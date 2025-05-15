@@ -1,0 +1,1 @@
+ALTER TABLE "pl_ru_translations" ADD COLUMN "lastly_reviewed_at" timestamp;

@@ -68,7 +68,6 @@ const ValidationForm = ({ isValidating, onValidate }: ValidationFormProps) => {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
     await onValidate({
       language: values.language as LanguageCodeType,
       wordType: values.wordType as WordType,

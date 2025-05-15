@@ -113,7 +113,6 @@ export const incrementCorrectAnswersCount = async ({
   language: LanguageCodeType;
 }) => {
   try {
-    console.log(recordId, language);
     const userWordsTable = getUserWordsTable(language);
 
     const currentRecord = await db

@@ -13,7 +13,6 @@ import { sleep } from "../utils";
 
 export const seedDb = async () => {
   try {
-    console.log("started");
     const schema = wordSchemas["pl"];
     type WordType = z.infer<typeof schema>;
     const text_file = await fs.readFile("basic_forms.txt", "utf-8");
@@ -27,11 +26,7 @@ export const seedDb = async () => {
       .from(plVocabulary)
       .then((res) => res.map((w) => w.word.toLocaleLowerCase()));
 
-    console.log("existent words:", existentWords.length);
-
     const wordsToSeed = words.filter((w) => !existentWords.includes(w));
-
-    // console.log("similar words:", words.length - wordsToSeed.length);
 
     const wordsBatches = chunk(shuffle(wordsToSeed), 50);
     let total = 0;
