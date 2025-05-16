@@ -16,7 +16,7 @@ const Header = async () => {
   return (
     <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur-sm px-16">
       <div className="flex h-16 justify-between py-4">
-        <div className="flex h-14 items-center border-b px-4">
+        <div className="flex h-10 items-center px-4 justify-center">
           <Link
             href="/"
             className="flex items-center gap-2 font-semibold"
