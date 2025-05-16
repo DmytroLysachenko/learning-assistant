@@ -12,13 +12,13 @@ interface StatisticsCardProps {
   trend?: number;
 }
 
-export default function StatisticsCard({
+const StatisticsCard = ({
   title,
   value,
   description,
   icon,
   trend,
-}: StatisticsCardProps) {
+}: StatisticsCardProps) => {
   return (
     <Card>
       <CardContent className="p-6">
@@ -50,4 +50,6 @@ export default function StatisticsCard({
       </CardContent>
     </Card>
   );
-}
+};
+
+export default StatisticsCard;

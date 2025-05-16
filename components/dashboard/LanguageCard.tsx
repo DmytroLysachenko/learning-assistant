@@ -16,7 +16,7 @@ interface LanguageCardProps {
   };
 }
 
-export default function LanguageCard({ language }: LanguageCardProps) {
+const LanguageCard = ({ language }: LanguageCardProps) => {
   return (
     <Card className="overflow-hidden">
       <div className="bg-gradient-to-br from-primary/10 to-primary/5 p-4 flex items-center justify-between">
@@ -74,4 +74,6 @@ export default function LanguageCard({ language }: LanguageCardProps) {
       </CardFooter>
     </Card>
   );
-}
+};
+
+export default LanguageCard;

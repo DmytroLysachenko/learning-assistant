@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { asc, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 
 import PracticeInterface from "@/components/practice/PracticeInterface";
 import { LanguageCodeType, PracticeVocabularyWord } from "@/types";
@@ -65,7 +65,12 @@ const PracticePage = async ({ params, searchParams }: PracticePageProps) => {
       secondaryVocabTable,
       eq(translationTable[secondaryLanguageWordId], secondaryVocabTable.id)
     )
-    .where(eq(userWordsTable.userId, user.id))
+    .where(
+      and(
+        eq(userWordsTable.userId, user.id),
+        eq(userWordsTable.status, category)
+      )
+    )
     .orderBy(asc(userWordsTable.correctAnswersCount))
     .limit(10)) as PracticeVocabularyWord[];
 

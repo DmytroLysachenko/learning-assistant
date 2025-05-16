@@ -54,7 +54,6 @@ const AuthForm = ({ type }: AuthFormProps) => {
           name: registerValues.name,
           image: null,
           password: registerValues.password,
-          provider: "credentials",
         });
 
         if (!result.success) {
@@ -210,8 +209,11 @@ const AuthForm = ({ type }: AuthFormProps) => {
           </Button>
         </form>
       </Form>
+
       <Separator />
+
       <Button onClick={onGoogleAuth}>Google</Button>
+
       <Separator />
 
       <div className="text-center text-sm">

@@ -88,6 +88,20 @@ const PracticeInterface = ({
   };
 
   const restartPractice = () => {
+    setCurrentIndex(0);
+    setUserInput("");
+    setShowAnswer(false);
+    setIsCorrect(null);
+    setPracticeComplete(false);
+    setStats({
+      correct: 0,
+      incorrect: 0,
+      skipped: 0,
+      total: vocabulary.length,
+    });
+  };
+
+  const completePractice = () => {
     router.push("/practice");
   };
 
@@ -96,6 +110,7 @@ const PracticeInterface = ({
       <PracticeResult
         stats={stats}
         onRestart={restartPractice}
+        onComplete={completePractice}
       />
     );
   }

@@ -128,8 +128,9 @@ export const incrementCorrectAnswersCount = async ({
     }
 
     const newCount = currentRecord.correctAnswersCount + 1;
+    console.log(newCount);
     const newStatus =
-      newCount >= 4 ? "reviewing" : newCount >= 10 ? "mastered" : undefined;
+      newCount >= 10 ? "mastered" : newCount >= 4 ? "reviewing" : undefined;
 
     const updatedWordRecord = await db
       .update(userWordsTable)

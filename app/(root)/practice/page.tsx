@@ -3,7 +3,7 @@ import { Languages, BookOpen } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import LanguageCardsList from "@/components/languages/LanguageCardsList";
+import LanguageCardsList from "@/components/practice/LanguageCardsList";
 
 const PracticePage = async () => {
   return (

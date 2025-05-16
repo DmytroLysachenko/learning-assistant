@@ -21,10 +21,10 @@ interface AchievementCardProps {
   detailed?: boolean;
 }
 
-export default function AchievementCard({
+const AchievementCard = ({
   achievement,
   detailed = false,
-}: AchievementCardProps) {
+}: AchievementCardProps) => {
   const progressPercentage = Math.min(
     100,
     (achievement.progress / achievement.target) * 100
@@ -82,4 +82,6 @@ export default function AchievementCard({
       </div>
     </Card>
   );
-}
+};
+
+export default AchievementCard;

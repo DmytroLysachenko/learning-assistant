@@ -1,6 +1,12 @@
 "use client";
 
-import { CheckCircle, XCircle, HelpCircle, RotateCcw } from "lucide-react";
+import {
+  CheckCircle,
+  XCircle,
+  HelpCircle,
+  RotateCcw,
+  Check,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -12,8 +18,14 @@ interface PracticeResultProps {
     total: number;
   };
   onRestart: () => void;
+  onComplete: () => void;
 }
-const PracticeResult = ({ stats, onRestart }: PracticeResultProps) => {
+
+const PracticeResult = ({
+  stats,
+  onRestart,
+  onComplete,
+}: PracticeResultProps) => {
   const correctPercentage =
     Math.round((stats.correct / stats.total) * 100) || 0;
 
@@ -74,14 +86,22 @@ const PracticeResult = ({ stats, onRestart }: PracticeResultProps) => {
           {stats.correct} of {stats.total} words correct
         </div>
       </div>
-
-      <Button
-        onClick={onRestart}
-        className="mt-6 bg-purple-600 hover:bg-purple-700"
-      >
-        <RotateCcw className="mr-2 h-4 w-4" />
-        Practice Again
-      </Button>
+      <div className="flex mt-6 justify-center gap-4">
+        <Button
+          onClick={onRestart}
+          className=" bg-purple-600 hover:bg-purple-700"
+        >
+          <RotateCcw className="mr-2 h-4 w-4" />
+          Practice Again
+        </Button>
+        <Button
+          onClick={onComplete}
+          className=" bg-purple-600 hover:bg-purple-700"
+        >
+          <Check className="mr-2 h-4 w-4" />
+          Complete Practice
+        </Button>
+      </div>
     </div>
   );
 };
