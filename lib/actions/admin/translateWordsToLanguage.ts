@@ -6,7 +6,7 @@ import {
   generateTranslationConnections,
 } from "@/lib/ai/generators";
 import { TranslateWordsOptions } from "@/types";
-import { and, eq, inArray, notExists } from "drizzle-orm";
+import { and, eq, notExists } from "drizzle-orm";
 import { chunk, shuffle } from "lodash";
 import { getTranslationTable, getVocabTable, sleep } from "@/lib/utils";
 
@@ -101,35 +101,20 @@ export const translateWordsToLanguage = async ({
           throw new Error(String(translatedWordsError) ?? "No words generated");
         }
 
-        const existingTranslated = await db
-          .select()
-          .from(translationTable)
-          .where(
-            inArray(
-              translationTable.word,
-              translatedWords.map((w) => w.word)
-            )
-          );
-
-        const existingMap = new Map(existingTranslated.map((w) => [w.word, w]));
-
-        const newWords = translatedWords.filter(
-          (w) => !existingMap.has(w.word)
-        );
-
         const insertedTranslatedWords = await db
           .insert(translationTable)
-          .values(newWords)
+          .values(translatedWords)
           .returning();
 
-        const mappedTranslatedWords = translatedWords.map((w) => {
-          const existing = existingMap.get(w.word);
-          const inserted = insertedTranslatedWords.find(
-            (i) => i.word === w.word
-          );
-          const id = existing?.id ?? inserted!.id!;
-          return { id, word: w.word };
-        });
+        const mappedTranslatedWords = insertedTranslatedWords.map(
+          ({ id, word, comment, difficulty, example }) => ({
+            id,
+            word,
+            comment,
+            example,
+            difficulty,
+          })
+        );
 
         const {
           success: translationConnectionsSuccess,

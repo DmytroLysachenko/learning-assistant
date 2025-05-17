@@ -126,7 +126,7 @@ export const validateVocabulary = async ({
           )
         )
       );
-
+    console.log("totalwords", allWords.length);
     if (allWords.length === 0) {
       console.log(`⚠️ No words found for type "${wordType}" in "${language}".`);
       return { success: true };
