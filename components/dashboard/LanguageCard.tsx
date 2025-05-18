@@ -32,7 +32,9 @@ const LanguageCard = ({ language }: LanguageCardProps) => {
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span>Progress</span>
-              <span className="font-medium">{language.progress}%</span>
+              <span className="font-medium">
+                {language.progress.toFixed(1)}%
+              </span>
             </div>
             <Progress
               value={language.progress}
@@ -44,7 +46,7 @@ const LanguageCard = ({ language }: LanguageCardProps) => {
               {language.wordsLearned} words learned
             </span>
             <span className="text-muted-foreground">
-              Last: {language.lastPracticed}
+              Last Practiced: {language.lastPracticed}
             </span>
           </div>
         </div>

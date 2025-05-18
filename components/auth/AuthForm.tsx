@@ -45,62 +45,61 @@ const AuthForm = ({ type }: AuthFormProps) => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
 
-    try {
-      if (type === "register") {
-        const registerValues = values as z.infer<typeof registerSchema>;
+    if (type === "register") {
+      const registerValues = values as z.infer<typeof registerSchema>;
 
-        const result = await createUser({
-          email: registerValues.email,
-          name: registerValues.name,
-          image: null,
-          password: registerValues.password,
-        });
-
-        if (!result.success) {
-          toast.error("Authentication failed", {
-            description:
-              typeof result.error === "string"
-                ? result.error
-                : "Something went wrong",
-          });
-          return;
-        }
-
-        toast.success("Account created successfully", {
-          description: "Your account has been created. You can now log in.",
-        });
-
-        router.push("/login");
-      } else {
-        const loginValues = values as z.infer<typeof loginSchema>;
-
-        const result = await signIn("credentials", {
-          email: loginValues.email,
-          password: loginValues.password,
-          redirect: false,
-        });
-
-        if (result?.error) {
-          throw new Error(result.error);
-        }
-
-        toast.success("Logged in successfully", {
-          description: "Welcome back to your language assistant.",
-        });
-        router.push("/user/dashboard");
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("Authentication failed", {
-        description: "Please check your credentials and try again.",
+      const { success, error } = await createUser({
+        email: registerValues.email,
+        name: registerValues.name,
+        image: null,
+        password: registerValues.password,
       });
-    } finally {
-      setIsLoading(false);
+
+      if (!success) {
+        toast.error("Authentication failed", {
+          description:
+            typeof error === "string" ? error : "Something went wrong",
+        });
+        return;
+      }
+
+      toast.success("Account created successfully", {
+        description: "Your account has been created. You can now log in.",
+      });
+
+      router.push("/login");
+    } else {
+      const loginValues = values as z.infer<typeof loginSchema>;
+
+      const result = await signIn("credentials", {
+        email: loginValues.email,
+        password: loginValues.password,
+        redirect: false,
+      });
+
+      if (result?.ok === false) {
+        toast.error("Authentication failed", {
+          description: result.error,
+        });
+        return;
+      }
+
+      toast.success("Logged in successfully", {
+        description: "Welcome back to your language assistant.",
+      });
+      router.push("/user/dashboard");
     }
   };
 
   const onGoogleAuth = async () => {
-    await signIn("google");
+    try {
+      await signIn("google");
+    } catch (error) {
+      console.log(error);
+      toast.error("Authentication failed", {
+        description: typeof error === "string" ? error : "Something went wrong",
+      });
+    }
   };
 
   return (

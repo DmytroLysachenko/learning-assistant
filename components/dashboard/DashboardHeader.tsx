@@ -5,9 +5,10 @@ import Link from "next/link";
 import { LogOut, Settings, Trophy, Zap } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { signOut } from "@/auth";
+
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
+import { signOut } from "next-auth/react";
 
 const DashboardHeader = ({
   user,
@@ -23,10 +24,6 @@ const DashboardHeader = ({
     rank: number | null;
   };
 }) => {
-  const handleSignOut = async () => {
-    await signOut({ redirect: true, redirectTo: "/login" });
-  };
-
   return (
     <header className="flex px-6 mt-4 md:px-8 md:mt-6 overflow-y-auto items-center justify-between">
       <div className="flex items-center gap-4">
@@ -81,7 +78,9 @@ const DashboardHeader = ({
           variant="ghost"
           size="sm"
           className="rounded-full md:rounded-lg flex justify-center items-center"
-          onClick={handleSignOut}
+          onClick={async () =>
+            await signOut({ redirect: true, redirectTo: "/login" })
+          }
         >
           <LogOut className="h-4 w-4 md:mr-2" />
           <span className="hidden md:inline">Sign out</span>

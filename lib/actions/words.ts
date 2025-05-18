@@ -153,3 +153,48 @@ export const incrementCorrectAnswersCount = async ({
     return { success: false, error };
   }
 };
+
+export const incrementWrongAnswersCount = async ({
+  recordId,
+  language,
+}: {
+  recordId: string;
+  language: LanguageCodeType;
+}) => {
+  try {
+    const userWordsTable = getUserWordsTable(language);
+
+    const currentRecord = await db
+      .select({
+        value: userWordsTable.wrongAnswersCount,
+      })
+      .from(userWordsTable)
+      .where(eq(userWordsTable.id, recordId))
+      .then((res) => res[0].value ?? 0);
+
+    if (!currentRecord) {
+      throw new Error("Word not found for user");
+    }
+
+    const newCount = currentRecord + 1;
+
+    const updatedWordRecord = await db
+      .update(userWordsTable)
+      .set({
+        wrongAnswersCount: newCount,
+        lastReviewedAt: new Date(),
+      })
+      .where(eq(userWordsTable.id, recordId))
+      .returning({
+        status: userWordsTable.status,
+        wrongAnswersCount: userWordsTable.wrongAnswersCount,
+        lastReviewedAt: userWordsTable.lastReviewedAt,
+      })
+      .then((res) => res[0]);
+
+    return { success: true, data: updatedWordRecord };
+  } catch (error) {
+    console.error(error);
+    return { success: false, error };
+  }
+};

@@ -16,6 +16,7 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   image: text("image"),
   passwordHash: text("password_hash"),
+  streak: integer("streak").default(0).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
   learningLanguages: jsonb("learning_languages")

@@ -1,17 +1,23 @@
 import { auth } from "@/auth";
 import { getUserByEmail } from "../actions/user";
 import { redirect } from "next/navigation";
+import dayjs from "dayjs";
 
 export const getUserFromSession = async () => {
   const session = await auth();
 
-  if (!session || !session.user || !session.user.email) {
+  if (
+    !session ||
+    !session.user ||
+    !session.user.email ||
+    dayjs().isAfter(session.expires)
+  ) {
     redirect("/login");
   }
 
-  const { data: user } = await getUserByEmail(session.user.email);
+  const { success, data: user } = await getUserByEmail(session.user.email);
 
-  if (!user) {
+  if (!success || !user) {
     redirect("/login");
   }
 
