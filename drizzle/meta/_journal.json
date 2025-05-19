@@ -141,6 +141,13 @@
       "when": 1747674826263,
       "tag": "0019_classy_vermin",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1747675470241,
+      "tag": "0020_nosy_valkyrie",
+      "breakpoints": true
     }
   ]
 }

@@ -1,6 +1,7 @@
 import {
   integer,
   jsonb,
+  pgEnum,
   pgTable,
   text,
   timestamp,
@@ -8,6 +9,8 @@ import {
 } from "drizzle-orm/pg-core";
 
 import { LanguageCodeType } from "@/types";
+
+export const roleEnum = pgEnum("role", ["basic", "premium", "admin", "test"]);
 
 // Users table
 export const users = pgTable("users", {
@@ -28,4 +31,5 @@ export const users = pgTable("users", {
     .$type<LanguageCodeType>()
     .notNull(),
   experience: integer("experience").default(0).notNull(),
+  role: roleEnum("role").default("basic").notNull(),
 });
