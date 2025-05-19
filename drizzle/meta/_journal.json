@@ -134,6 +134,13 @@
       "when": 1747578956351,
       "tag": "0018_shocking_husk",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1747674826263,
+      "tag": "0019_classy_vermin",
+      "breakpoints": true
     }
   ]
 }
