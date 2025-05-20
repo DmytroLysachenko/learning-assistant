@@ -39,24 +39,24 @@ const HowItWorks = () => {
 
   const steps = [
     {
-      title: "Create your account",
+      title: "Choose Your Language",
       description:
-        "Sign up and tell us which language you want to learn and your current proficiency level.",
+        "Currently focusing on Polish, you'll soon be able to select <span className='font-fold'>Spanish</span> or Russian vocabulary to learn, with more languages coming.",
     },
     {
-      title: "Take the assessment",
+      title: "Build Your Vocabulary",
       description:
-        "Complete a quick assessment so we can personalize your learning experience.",
+        "Access our curated lists of core vocabulary for your chosen language, designed to give you a strong foundation.",
     },
     {
-      title: "Start learning",
+      title: "Practice Interactively",
       description:
-        "Begin your personalized lessons and practice with our AI language partner.",
+        "Engage with our practice interface by typing words in your chosen interface language (e.g., English, Spanish, or Russian) as Polish words appear.",
     },
     {
-      title: "Track your progress",
+      title: "Track Your Progress",
       description:
-        "Monitor your improvement and adjust your learning goals as you advance.",
+        "Monitor your expanding vocabulary and see how many words you've mastered in your personal lexicon.",
     },
   ];
 
@@ -68,11 +68,11 @@ const HowItWorks = () => {
       <div className="container mx-auto px-5">
         <div className="text-center mb-16">
           <h2 className="font-heading text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
-            How <span className="text-gradient gradient-primary">It Works</span>
+            How Our App{" "}
+            <span className="text-gradient gradient-primary">Works</span>
           </h2>
           <p className="mt-4 text-xl text-muted-foreground max-w-3xl mx-auto">
-            Getting started with our language assistant is easy. Follow these
-            simple steps to begin your language learning journey.
+            Get started on your vocabulary journey with these simple steps.
           </p>
         </div>
 
@@ -113,21 +113,22 @@ const HowItWorks = () => {
           >
             <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-purple-600/20"></div>
             <Image
-              src="/placeholder.svg?height=600&width=800"
-              alt="Language learning app interface"
+              src="/images/polish-practice-screen.jpg"
+              alt="Polish vocabulary practice interface"
               width={800}
               height={600}
               className="object-cover"
+              priority
             />
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
               <div className="progress-container">
                 <div
                   className="progress-bar bg-gradient-to-r from-green-500 to-blue-500"
-                  style={{ width: "65%" }}
+                  style={{ width: "80%" }}
                 ></div>
               </div>
               <p className="mt-2 text-sm text-white">
-                Your Spanish journey: 65% to next level
+                Your Polish vocabulary: 80 words mastered!
               </p>
             </div>
           </motion.div>

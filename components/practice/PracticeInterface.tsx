@@ -12,6 +12,7 @@ import PracticeStats from "./PracticeStats";
 import { incrementCorrectAnswersCount } from "@/lib/actions/words";
 import { LanguageCodeType, PracticeVocabularyWord } from "@/types";
 import { useRouter } from "next/navigation";
+import { SUPPORTED_LANGUAGES } from "@/constants";
 
 interface PracticeInterfaceProps {
   vocabulary: PracticeVocabularyWord[];
@@ -147,7 +148,7 @@ const PracticeInterface = ({
                 htmlFor="translation"
                 className="block text-sm font-medium text-gray-700 mb-2"
               >
-                Translate to {language}:
+                Translate to {SUPPORTED_LANGUAGES[language]}:
               </label>
               <div className="relative">
                 <input

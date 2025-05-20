@@ -3,12 +3,12 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import {
-  Brain,
-  MessageSquare,
-  Headphones,
-  PenTool,
   BookOpen,
-  BarChart4,
+  Target,
+  Headphones,
+  Keyboard,
+  ListTodo,
+  CheckCircle,
 } from "lucide-react";
 
 import FeatureCard from "@/components/ui/feature-card";
@@ -29,40 +29,40 @@ const FeaturesSection = () => {
 
   const features = [
     {
-      icon: <Brain className="h-10 w-10 text-primary" />,
-      title: "AI-Powered Learning",
+      icon: <BookOpen className="h-10 w-10 text-primary" />,
+      title: "Core Polish Vocabulary",
       description:
-        "Our advanced AI adapts to your learning style and pace, creating a personalized experience that helps you learn faster.",
+        "Expand your knowledge with essential Polish words and phrases, carefully curated to build a strong foundation.",
     },
     {
-      icon: <MessageSquare className="h-10 w-10 text-primary" />,
-      title: "Conversation Practice",
+      icon: <Target className="h-10 w-10 text-primary" />,
+      title: "Focused Vocabulary Building",
       description:
-        "Practice real conversations with our AI language partner that provides instant feedback on pronunciation and grammar.",
+        "Master vocabulary from our main Polish vocabulary list, ensuring you learn the most relevant words first.",
     },
     {
       icon: <Headphones className="h-10 w-10 text-primary" />,
-      title: "Listening Comprehension",
+      title: "Pronunciation Practice",
       description:
-        "Improve your listening skills with audio exercises tailored to your proficiency level and interests.",
+        "Hear native pronunciations for each word and refine your own speaking skills to sound more natural.",
     },
     {
-      icon: <PenTool className="h-10 w-10 text-primary" />,
-      title: "Writing Assistant",
+      icon: <Keyboard className="h-10 w-10 text-primary" />,
+      title: "Interactive Practice",
       description:
-        "Get real-time corrections and suggestions as you write in your target language to improve your writing skills.",
+        "Engage in hands-on practice by typing the words as they appear, reinforcing your spelling and recall.",
     },
     {
-      icon: <BookOpen className="h-10 w-10 text-primary" />,
-      title: "Vocabulary Builder",
+      icon: <ListTodo className="h-10 w-10 text-primary" />,
+      title: "Personalized Word Lists",
       description:
-        "Build your vocabulary with smart flashcards that use spaced repetition to help you remember words effectively.",
+        "Build your own vocabulary list based on the words you've learned, making it easy to review and track your progress.",
     },
     {
-      icon: <BarChart4 className="h-10 w-10 text-primary" />,
-      title: "Progress Tracking",
+      icon: <CheckCircle className="h-10 w-10 text-primary" />,
+      title: "Progress Overview",
       description:
-        "Track your progress with detailed analytics and insights to see how your language skills are improving over time.",
+        "Monitor your learning journey and see how your vocabulary grows as you master new Polish words.",
     },
   ];
 
@@ -74,14 +74,15 @@ const FeaturesSection = () => {
       <div className="container mx-auto px-5">
         <div className="text-center mb-16">
           <h2 className="font-heading text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
-            Powerful Features for{" "}
+            Boost Your{" "}
             <span className="text-gradient gradient-primary">
-              Effective Learning
-            </span>
+              Polish Vocabulary
+            </span>{" "}
+            Effectively
           </h2>
           <p className="mt-4 text-xl text-muted-foreground max-w-3xl mx-auto">
-            Our language assistant combines cutting-edge AI technology with
-            proven language learning methods to help you achieve fluency faster.
+            Our app is designed to help you rapidly expand your Polish
+            vocabulary and reinforce learning through engaging practice.
           </p>
         </div>
 

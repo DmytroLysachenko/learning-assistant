@@ -36,46 +36,46 @@ const FuturePlans = () => {
 
   const roadmapItems = [
     {
-      icon: <Sparkles className="h-5 w-5" />,
-      title: "Advanced AI Conversation",
-      description:
-        "We're enhancing our AI to handle more complex conversations and cultural nuances.",
-      quarter: "Q3 2023",
-    },
-    {
       icon: <Globe className="h-5 w-5" />,
-      title: "More Languages",
+      title: "New Vocabulary Languages",
       description:
-        "Expanding our language offerings to include less common but important languages.",
-      quarter: "Q4 2023",
+        "We're expanding beyond Polish to introduce core vocabulary for Spanish and Russian, with more languages on the horizon.",
+      quarter: "Soon",
     },
     {
       icon: <Users className="h-5 w-5" />,
-      title: "Community Features",
+      title: "Additional Interface Languages",
       description:
-        "Connect with other learners for practice sessions and language exchange.",
-      quarter: "Q1 2024",
+        "The app's interface will soon be available in <span className='font-fold'>Spanish</span> and Russian, making learning even more accessible for diverse users.",
+      quarter: "Upcoming",
     },
     {
-      icon: <Lightbulb className="h-5 w-5" />,
-      title: "Immersive Learning",
+      icon: <Sparkles className="h-5 w-5" />,
+      title: "Enhanced Practice Modes",
       description:
-        "Virtual reality experiences for immersive language practice in realistic scenarios.",
-      quarter: "Q2 2024",
-    },
-    {
-      icon: <Smartphone className="h-5 w-5" />,
-      title: "Mobile App",
-      description:
-        "Native mobile applications for iOS and Android with offline learning capabilities.",
+        "We're developing new and exciting practice interfaces to make vocabulary retention even more effective and engaging.",
       quarter: "Q3 2024",
     },
     {
-      icon: <Calendar className="h-5 w-5" />,
-      title: "Certification Program",
+      icon: <Lightbulb className="h-5 w-5" />,
+      title: "Contextual Learning",
       description:
-        "Official language proficiency certification recognized by educational institutions.",
+        "Learn words within sentences and real-world contexts to deepen understanding and improve recall.",
       quarter: "Q4 2024",
+    },
+    {
+      icon: <Smartphone className="h-5 w-5" />,
+      title: "Dedicated Mobile Apps",
+      description:
+        "Native mobile applications for iOS and Android are in the works, offering seamless learning on the go.",
+      quarter: "Q1 2025",
+    },
+    {
+      icon: <Calendar className="h-5 w-5" />,
+      title: "Personalized Learning Paths",
+      description:
+        "Future updates will include AI-driven personalized learning paths tailored to your individual progress and goals.",
+      quarter: "Q2 2025",
     },
   ];
 
@@ -87,11 +87,13 @@ const FuturePlans = () => {
       <div className="container mx-auto px-5">
         <div className="text-center mb-16">
           <h2 className="font-heading text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
-            Our <span className="text-gradient gradient-primary">Roadmap</span>
+            Our Exciting{" "}
+            <span className="text-gradient gradient-primary">Roadmap</span>
           </h2>
           <p className="mt-4 text-xl text-muted-foreground max-w-3xl mx-auto">
-            We&apos;re constantly improving our language assistant. Here&apos;s
-            what we&apos;re working on for the future.
+            We&apos;re continuously enhancing our language learning app to bring
+            you even more features and languages. Here&apos;s a glimpse of
+            what&apos;s coming next!
           </p>
         </div>
 
