@@ -50,7 +50,6 @@ const Header = async () => {
         </nav>
         <div className="flex items-center gap-4">
           {isAuthenticated ? (
-            // Show dashboard button for authenticated users
             <Link
               href="/user/dashboard"
               className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
@@ -58,7 +57,6 @@ const Header = async () => {
               Dashboard
             </Link>
           ) : (
-            // Show sign in and register buttons for unauthenticated users
             <>
               <Link
                 href="/login"

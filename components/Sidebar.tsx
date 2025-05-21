@@ -26,41 +26,39 @@ const Sidebar = ({ userId }: { userId: string }) => {
     {
       title: "Dashboard",
       href: "/user/dashboard",
-      icon: <LayoutDashboard className="h-5 w-5" />, // Standard and clear
+      icon: <LayoutDashboard className="h-5 w-5" />,
     },
     {
-      title: "Vocabularies", // General vocabulary sets or a public library
+      title: "Vocabularies",
       href: "/vocabulary",
-      icon: <LibraryBig className="h-5 w-5" />, // Suggests a larger collection/resource
+      icon: <LibraryBig className="h-5 w-5" />,
     },
     {
       title: "My Vocabulary",
-      href: `/user/${userId}/vocabulary`, // Ensure userId is available here
-      icon: <BookMarked className="h-5 w-5" />, // More personal than a generic book
+      href: `/user/${userId}/vocabulary`,
+      icon: <BookMarked className="h-5 w-5" />,
     },
 
     {
-      title: "Languages", // Exploring or managing languages
+      title: "Languages",
       href: "/languages",
-      icon: <Languages className="h-5 w-5" />, // Specific and appropriate
+      icon: <Languages className="h-5 w-5" />,
     },
 
     {
       title: "Practice",
       href: "/practice",
-      icon: <Brain className="h-5 w-5" />, // Focuses on the learning/cognitive aspect of practice
-      // GraduationCap is also good, Zap for quick practice
+      icon: <Brain className="h-5 w-5" />,
     },
     {
       title: "Community",
       href: "/community",
-      icon: <Users className="h-5 w-5" />, // Standard and clear for user groups
+      icon: <Users className="h-5 w-5" />,
     },
     {
       title: "Admin",
       href: "/admin",
-      icon: <Settings2 className="h-5 w-5" />, // General settings/management often suit "Admin"
-      // ShieldCheck or UserCog are also strong alternatives
+      icon: <Settings2 className="h-5 w-5" />,
     },
   ];
 

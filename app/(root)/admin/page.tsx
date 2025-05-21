@@ -16,7 +16,6 @@ import { Button } from "@/components/ui/button";
 import { deleteInvalidTranslationConnections } from "@/lib/actions/checks";
 
 const AdminDashboard = () => {
-  // Centralized operation status state
   const [operationStatus, setOperationStatus] = useState<OperationStatus>({
     isGeneratingByTopic: false,
     isGeneratingByAlphabet: false,
@@ -26,7 +25,6 @@ const AdminDashboard = () => {
     isValidating: false,
   });
 
-  // Update operation status helper
   const updateStatus = (key: keyof OperationStatus, value: boolean) => {
     setOperationStatus((prev) => ({ ...prev, [key]: value }));
   };
@@ -53,10 +51,8 @@ const AdminDashboard = () => {
           Delete
         </Button>
 
-        {/* Status Card */}
         <StatusCard operationStatus={operationStatus} />
 
-        {/* Main Tabs */}
         <Tabs
           defaultValue="generation"
           className="w-full"
@@ -68,7 +64,6 @@ const AdminDashboard = () => {
             </TabsTrigger>
           </TabsList>
 
-          {/* Generation Tab */}
           <TabsContent value="generation">
             <Tabs
               defaultValue="words-by-alphabet"
@@ -111,7 +106,6 @@ const AdminDashboard = () => {
             </Tabs>
           </TabsContent>
 
-          {/* Maintenance Tab */}
           <TabsContent value="maintenance">
             <Tabs
               defaultValue="maintenance-actions"

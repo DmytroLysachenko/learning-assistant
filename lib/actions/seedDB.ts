@@ -37,7 +37,6 @@ export const seedDb = async () => {
           words: batch,
           language: "pl",
         });
-        console.log(prompt);
 
         const result = await generateObject<WordType>({
           model,
@@ -48,7 +47,6 @@ export const seedDb = async () => {
           prompt,
         });
 
-        console.log(result.object);
         if (result.object.length > 0) {
           await db.insert(plVocabulary).values(result.object);
         }

@@ -33,7 +33,6 @@ const enumValues = LANGUAGE_OPTIONS.map((option) => option.value) as [
   ...string[]
 ];
 
-// Define the form schema with Zod
 const formSchema = z.object({
   level: z.string(),
   language: z.enum(enumValues, {
@@ -74,7 +73,6 @@ const GenerationByTopicForm = ({
   isGenerating,
   onGenerate,
 }: GenerationByTopicFormProps) => {
-  // Initialize the form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -87,7 +85,6 @@ const GenerationByTopicForm = ({
     },
   });
 
-  // Submit handler
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     await onGenerate({
       level: values.level as LanguageLevelsType,

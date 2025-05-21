@@ -1,4 +1,5 @@
 "use client";
+
 import type { Word, WordPair } from "@/types";
 import AddToVocabularyButton from "./AddToVocabularyButton";
 import { SUPPORTED_LANGUAGES } from "@/constants";
@@ -8,6 +9,10 @@ interface WordPairCardProps {
   userId: string;
   expandedId: string | null;
   onToggleExpand: (id: string) => void;
+}
+
+interface WordDetailsProps {
+  words: Word[];
 }
 
 const WordPairCard = ({
@@ -51,21 +56,15 @@ const WordPairCard = ({
           />
         </div>
 
-        {/* Expand/collapse indicator */}
         <div className="text-center mt-4 text-gray-400">
           {isExpanded ? "▲ Less details" : "▼ More details"}
         </div>
       </div>
 
-      {/* Expanded details */}
       {isExpanded && <WordDetails words={[primaryWord, secondaryWord]} />}
     </div>
   );
 };
-
-interface WordDetailsProps {
-  words: Word[];
-}
 
 const WordDetails = ({ words }: WordDetailsProps) => {
   return (

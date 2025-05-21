@@ -9,7 +9,7 @@ import CommunityPosts from "@/components/community/CommunityPosts";
 import CommunityGroups from "@/components/community/CommunityGroups";
 import CommunityLeaderboard from "@/components/community/CommunityLeaderboard";
 
-// Mock community data
+
 const mockPosts = [
   {
     id: "1",
