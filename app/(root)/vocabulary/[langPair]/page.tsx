@@ -5,7 +5,7 @@ import { Loader } from "lucide-react";
 import { SUPPORTED_LANGUAGES } from "@/constants";
 import { db } from "@/db";
 import { getLanguageData, parseSearchParams } from "@/lib/utils";
-import VocabularyTableWrapper from "@/components/vocabulary/VocabularyTableWrapper";
+import GeneralVocabularyTable from "@/components/vocabulary/GeneralVocabularyTable";
 
 interface VocabularyPageProps {
   searchParams: Promise<{
@@ -86,7 +86,7 @@ const VocabularyPage = async ({
             </div>
           }
         >
-          <VocabularyTableWrapper
+          <GeneralVocabularyTable
             langPair={langPair}
             searchParams={parsedSearchParams}
           />

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { db } from "@/db";
 import { getLanguageData, parseSearchParams } from "@/lib/utils";
 import { getUserFromSession } from "@/lib/utils/getUserFromSession";
-import UserVocabularyTableWrapper from "@/components/vocabulary/UserVocabularyTableWrapper";
+import UserVocabularyTable from "@/components/vocabulary/UserVocabularyTable";
 
 interface PageProps {
   params: Promise<{
@@ -93,7 +93,7 @@ const UserVocabularyPage = async ({ params, searchParams }: PageProps) => {
             </div>
           }
         >
-          <UserVocabularyTableWrapper
+          <UserVocabularyTable
             langPair={langPair}
             userId={userId}
             searchParams={parsedSearchParams}

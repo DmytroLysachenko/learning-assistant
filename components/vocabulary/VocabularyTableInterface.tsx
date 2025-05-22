@@ -12,10 +12,10 @@ import type {
 import TableControls from "./TableControls";
 import Pagination from "./Pagination";
 import useUrlParams from "@/lib/hooks/useUrlParams";
-import EmptyState from "./EmpryState";
+import EmptyState from "./EmptyState";
 import WordPairCard from "./WordPairCard";
 
-interface VocabularyTableProps {
+interface VocabularyTableInterfaceProps {
   primaryLanguage: LanguageCodeType;
   wordPairs: WordPair[];
   totalCount: number;
@@ -25,14 +25,14 @@ interface VocabularyTableProps {
   isUserVocabulary?: boolean;
 }
 
-const VocabularyTable = ({
+const VocabularyTableInterface = ({
   primaryLanguage,
   wordPairs,
   totalCount,
   currentPage,
   pageSize,
   userId,
-}: VocabularyTableProps) => {
+}: VocabularyTableInterfaceProps) => {
   const { updateSearchParams, getParam } = useUrlParams();
 
   const [filter, setFilter] = useState(getParam("filter", ""));
@@ -157,4 +157,4 @@ const VocabularyTable = ({
   );
 };
 
-export default VocabularyTable;
+export default VocabularyTableInterface;

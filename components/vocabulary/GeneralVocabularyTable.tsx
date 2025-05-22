@@ -1,8 +1,9 @@
-import { db } from "@/db";
 import { count, eq } from "drizzle-orm";
+
+import { db } from "@/db";
 import { getLanguageData, getSortOrder, buildWhereClause } from "@/lib/utils";
 import { getUserFromSession } from "@/lib/utils/getUserFromSession";
-import VocabularyTable from "./VocabularyTable";
+import VocabularyTableInterface from "./VocabularyTableInterface";
 import { WordType } from "@/types";
 import { WORD_TYPES } from "@/constants";
 
@@ -19,7 +20,7 @@ interface Props {
   };
 }
 
-const VocabularyTableWrapper = async ({ langPair, searchParams }: Props) => {
+const GeneralVocabularyTable = async ({ langPair, searchParams }: Props) => {
   const user = await getUserFromSession();
   const {
     currentPage,
@@ -114,7 +115,7 @@ const VocabularyTableWrapper = async ({ langPair, searchParams }: Props) => {
   );
 
   return (
-    <VocabularyTable
+    <VocabularyTableInterface
       primaryLanguage={primaryLanguage}
       wordPairs={entries}
       totalCount={totalFilteredCount}
@@ -125,4 +126,4 @@ const VocabularyTableWrapper = async ({ langPair, searchParams }: Props) => {
   );
 };
 
-export default VocabularyTableWrapper;
+export default GeneralVocabularyTable;
