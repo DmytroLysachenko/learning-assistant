@@ -13,6 +13,7 @@ import {
 } from "../ui/select";
 import { Input } from "../ui/input";
 import { capitalize } from "lodash";
+import SortButton from "./SortButton";
 
 interface TableControlsProps {
   primaryLanguage: LanguageCodeType;
@@ -80,6 +81,7 @@ const TableControls = ({
 
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-500">Show</span>
+
           <select
             value={pageSize}
             onChange={onPageSizeChange}
@@ -99,6 +101,7 @@ const TableControls = ({
 
       <div className="mb-4 flex flex-wrap gap-2">
         <span className="text-sm text-gray-500">Sort by:</span>
+
         <SortButton
           field="word"
           currentField={sortField}
@@ -115,35 +118,5 @@ const TableControls = ({
     </>
   );
 };
-
-interface SortButtonProps {
-  field: SortField;
-  currentField: SortField;
-  direction: SortDirection;
-  onClick: () => void;
-}
-
-function SortButton({
-  field,
-  currentField,
-  direction,
-  onClick,
-}: SortButtonProps) {
-  const isActive = currentField === field;
-  const label = field.charAt(0).toUpperCase() + field.slice(1);
-
-  return (
-    <button
-      onClick={onClick}
-      className={`px-3 py-1 text-sm rounded-md ${
-        isActive
-          ? "bg-purple-100 text-purple-700"
-          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-      }`}
-    >
-      {label} {isActive && (direction === "asc" ? "↑" : "↓")}
-    </button>
-  );
-}
 
 export default TableControls;
