@@ -29,7 +29,6 @@ const AchievementCard = ({ achievement }: AchievementCardProps) => {
     reward,
   } = achievement;
 
-  // Format date if available
   const formattedDate = completedDate
     ? new Date(completedDate).toLocaleDateString("en-US", {
         year: "numeric",

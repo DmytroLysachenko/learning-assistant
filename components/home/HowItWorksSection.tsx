@@ -41,7 +41,7 @@ const HowItWorks = () => {
     {
       title: "Choose Your Language",
       description:
-        "Currently focusing on Polish, you'll soon be able to select <span className='font-fold'>Spanish</span> or Russian vocabulary to learn, with more languages coming.",
+        "Currently focusing on Polish, you'll soon be able to select Spanish or Russian vocabulary to learn, with more languages coming.",
     },
     {
       title: "Build Your Vocabulary",

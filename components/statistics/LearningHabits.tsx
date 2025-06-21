@@ -12,10 +12,8 @@ interface LearningHabitsProps {
 }
 
 const LearningHabits = ({ practiceTimeByHour }: LearningHabitsProps) => {
-  // Find the maximum minutes to scale the chart
   const maxMinutes = Math.max(...practiceTimeByHour.map((d) => d.minutes));
 
-  // Create an array of all 24 hours with their practice time
   const allHours = Array.from({ length: 24 }, (_, i) => {
     const existingData = practiceTimeByHour.find((d) => d.hour === i);
     return {
@@ -24,7 +22,6 @@ const LearningHabits = ({ practiceTimeByHour }: LearningHabitsProps) => {
     };
   });
 
-  // Format hour for display (12-hour format with AM/PM)
   const formatHour = (hour: number) => {
     if (hour === 0) return "12 AM";
     if (hour === 12) return "12 PM";
@@ -40,11 +37,9 @@ const LearningHabits = ({ practiceTimeByHour }: LearningHabitsProps) => {
         <div className="h-[300px] mt-4">
           <div className="flex h-full items-end">
             {allHours.map((data, index) => {
-              // Calculate bar height as percentage of max value
               const heightPercentage =
                 maxMinutes > 0 ? (data.minutes / maxMinutes) * 100 : 0;
 
-              // Determine if this is a peak learning time (top 3 hours)
               const isPeakTime = practiceTimeByHour
                 .sort((a, b) => b.minutes - a.minutes)
                 .slice(0, 3)

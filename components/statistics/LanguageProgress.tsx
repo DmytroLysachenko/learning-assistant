@@ -8,18 +8,15 @@ interface LanguageProgressProps {
 }
 
 const LanguageProgress = ({ wordsPerLanguage }: LanguageProgressProps) => {
-  // Calculate total words
   const totalWords = Object.values(wordsPerLanguage).reduce(
     (sum, count) => sum + count,
     0
   );
 
-  // Sort languages by word count (descending)
   const sortedLanguages = Object.entries(wordsPerLanguage).sort(
     ([, countA], [, countB]) => countB - countA
   );
 
-  // Generate a color for each language
   const colors = [
     "bg-purple-500",
     "bg-indigo-500",

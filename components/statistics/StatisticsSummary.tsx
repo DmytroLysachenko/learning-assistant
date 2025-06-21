@@ -23,7 +23,6 @@ const StatsSummary = ({ stats }: StatsSummaryProps) => {
     timeSpent,
   } = stats;
 
-  // Convert minutes to hours and minutes
   const hours = Math.floor(timeSpent / 60);
   const minutes = timeSpent % 60;
 

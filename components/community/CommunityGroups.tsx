@@ -34,7 +34,6 @@ const CommunityGroups = ({ groups }: CommunityGroupsProps) => {
   const [filter, setFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  // Filter groups by language and search query
   const filteredGroups = groups.filter((group) => {
     const matchesLanguage =
       filter === "all" ||
@@ -49,12 +48,10 @@ const CommunityGroups = ({ groups }: CommunityGroupsProps) => {
     return matchesLanguage && matchesSearch;
   });
 
-  // Get unique languages for filter
   const languages = Array.from(
     new Set(groups.flatMap((group) => group.languages))
   );
 
-  // Get activity color
   const getActivityColor = (activity: string) => {
     switch (activity) {
       case "Very High":

@@ -45,7 +45,6 @@ const UserVocabularyHub = async ({ params }: PageProps) => {
     user.learningLanguages.includes(pair.source.code)
   );
 
-  // Check if user has any language pairs
   const hasLanguagePairs = userLanguagePairs.length > 0;
 
   return (

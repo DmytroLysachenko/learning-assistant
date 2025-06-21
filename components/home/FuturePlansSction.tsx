@@ -46,7 +46,7 @@ const FuturePlans = () => {
       icon: <Users className="h-5 w-5" />,
       title: "Additional Interface Languages",
       description:
-        "The app's interface will soon be available in <span className='font-fold'>Spanish</span> and Russian, making learning even more accessible for diverse users.",
+        "The app's interface will soon be available in Spanish and Russian, making learning even more accessible for diverse users.",
       quarter: "Upcoming",
     },
     {
