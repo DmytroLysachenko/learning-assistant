@@ -18,7 +18,6 @@ interface CommunityLeaderboardProps {
 }
 
 const CommunityLeaderboard = ({ users }: CommunityLeaderboardProps) => {
-  // Get medal color based on rank
   const getMedalColor = (rank: number) => {
     switch (rank) {
       case 1:

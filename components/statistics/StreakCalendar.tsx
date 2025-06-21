@@ -14,13 +14,11 @@ const StreakCalendar = ({
   currentStreak,
   longestStreak,
 }: StreakCalendarProps) => {
-  // Get current date and calculate dates for the last 3 months
   const today = new Date();
   const startDate = new Date(today);
-  startDate.setMonth(today.getMonth() - 2); // 3 months including current
-  startDate.setDate(1); // Start from the 1st of the month
+  startDate.setMonth(today.getMonth() - 2);
+  startDate.setDate(1);
 
-  // Generate all dates for the calendar
   const dates: Date[] = [];
   const currentDate = new Date(startDate);
 
@@ -29,7 +27,6 @@ const StreakCalendar = ({
     currentDate.setDate(currentDate.getDate() + 1);
   }
 
-  // Group dates by month
   const months: { name: string; dates: Date[] }[] = [];
   let currentMonth: number | null = null;
 
@@ -47,15 +44,12 @@ const StreakCalendar = ({
     months[months.length - 1].dates.push(date);
   });
 
-  // Get day of week (0 = Sunday, 6 = Saturday)
   const getDayOfWeek = (date: Date) => date.getDay();
 
-  // Format date as YYYY-MM-DD for lookup in streakData
   const formatDateKey = (date: Date) => {
     return date.toISOString().split("T")[0];
   };
 
-  // Get color intensity based on practice count
   const getColorIntensity = (count: number) => {
     if (count === 0) return "bg-gray-100";
     if (count === 1) return "bg-purple-200";
@@ -85,7 +79,6 @@ const StreakCalendar = ({
             <div key={monthIndex}>
               <h4 className="text-sm font-medium mb-2">{month.name}</h4>
               <div className="grid grid-cols-7 gap-1">
-                {/* Day labels */}
                 {["S", "M", "T", "W", "T", "F", "S"].map((day, i) => (
                   <div
                     key={i}
@@ -95,7 +88,6 @@ const StreakCalendar = ({
                   </div>
                 ))}
 
-                {/* Empty cells for alignment */}
                 {Array.from({ length: getDayOfWeek(month.dates[0]) }).map(
                   (_, i) => (
                     <div
@@ -105,7 +97,6 @@ const StreakCalendar = ({
                   )
                 )}
 
-                {/* Date cells */}
                 {month.dates.map((date, i) => {
                   const dateKey = formatDateKey(date);
                   const practiceCount = streakData[dateKey] || 0;

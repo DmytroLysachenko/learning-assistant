@@ -31,7 +31,6 @@ const enumValues = LANGUAGE_OPTIONS.map((option) => option.value) as [
   ...string[]
 ];
 
-// Define the form schema with Zod
 const formSchema = z.object({
   language: z.enum(enumValues, {
     required_error: "Please select a language",
@@ -53,7 +52,6 @@ const MaintenanceForm = ({
   isOperationRunning,
   onRemoveDuplicates,
 }: MaintenanceFormProps) => {
-  // Initialize the form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -61,7 +59,6 @@ const MaintenanceForm = ({
     },
   });
 
-  // Submit handler for removing duplicates
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     await onRemoveDuplicates({ language: values.language as LanguageCodeType });
   };

@@ -26,16 +26,13 @@ const ActivityChart = ({ activityData }: ActivityChartProps) => {
     "wordsLearned" | "timeSpent" | "accuracy"
   >("wordsLearned");
 
-  // Find the maximum value for the selected metric to scale the chart
   const maxValue = Math.max(...activityData.map((d) => d[metric]));
 
-  // Format date for display
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   };
 
-  // Get label for the metric
   const getMetricLabel = () => {
     switch (metric) {
       case "wordsLearned":
@@ -71,11 +68,9 @@ const ActivityChart = ({ activityData }: ActivityChartProps) => {
         <div className="h-[300px] mt-4">
           <div className="flex h-full items-end gap-2">
             {activityData.map((data, index) => {
-              // Calculate bar height as percentage of max value
               const heightPercentage =
                 maxValue > 0 ? (data[metric] / maxValue) * 100 : 0;
 
-              // Skip rendering bars for days with no activity
               if (data[metric] === 0) {
                 return (
                   <div

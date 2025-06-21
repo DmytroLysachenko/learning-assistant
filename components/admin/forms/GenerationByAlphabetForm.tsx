@@ -74,7 +74,6 @@ const GenerationByAlphabetForm = ({
   isGenerating,
   onGenerate,
 }: GenerationByAlphabetFormProps) => {
-  // Initialize the form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -86,7 +85,6 @@ const GenerationByAlphabetForm = ({
     },
   });
 
-  // Submit handler
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     await onGenerate({
       total: values.total,

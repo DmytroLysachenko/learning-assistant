@@ -42,7 +42,6 @@ interface CommunityPostsProps {
 const CommunityPosts = ({ posts }: CommunityPostsProps) => {
   const [filter, setFilter] = useState<string>("all");
 
-  // Format date for display
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
@@ -52,7 +51,6 @@ const CommunityPosts = ({ posts }: CommunityPostsProps) => {
     });
   };
 
-  // Filter posts by language
   const filteredPosts =
     filter === "all"
       ? posts
@@ -60,7 +58,6 @@ const CommunityPosts = ({ posts }: CommunityPostsProps) => {
           (post) => post.language.toLowerCase() === filter.toLowerCase()
         );
 
-  // Get unique languages for filter
   const languages = Array.from(new Set(posts.map((post) => post.language)));
 
   return (
