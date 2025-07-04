@@ -5,12 +5,10 @@ import React, { Fragment } from "react";
 import { SUPPORTED_LANGUAGES } from "@/constants";
 import { db } from "@/db";
 import { getUserWordsTable } from "@/lib/utils";
-import { getUserFromSession } from "@/lib/utils/getUserFromSession";
 import LanguageCard from "./LanguageCard";
+import { User } from "@/db/types";
 
-const LanguageCardsList = async () => {
-  const user = await getUserFromSession();
-
+const LanguageCardsList = async ({ user }: { user: User }) => {
   if (!user.learningLanguages || !user.learningLanguages?.length) {
     redirect("/user/dashboard");
   }
@@ -36,6 +34,7 @@ const LanguageCardsList = async () => {
       };
     })
   );
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {userLanguages.map(

@@ -4,8 +4,8 @@ import Image from "next/image";
 import AuthForm from "@/components/auth/AuthForm";
 
 export const metadata: Metadata = {
-  title: "Login | Language Assistant",
-  description: "Login to your language assistant account",
+  title: "Login | Polish Language Assistant",
+  description: "Login to your Polish language assistant account",
 };
 
 const LoginPage = () => {

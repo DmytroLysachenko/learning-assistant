@@ -4,8 +4,11 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import LanguageCardsList from "@/components/practice/LanguageCardsList";
+import { getUserFromSession } from "@/lib/utils/getUserFromSession";
 
 const PracticePage = async () => {
+  const user = await getUserFromSession();
+
   return (
     <div className="w-full flex flex-col justify-center py-6 px-4 md:px-8 gap-6">
       <div className="bg-white p-6 rounded-lg shadow">
@@ -22,7 +25,7 @@ const PracticePage = async () => {
         </p>
 
         <Suspense fallback={<LanguageListSkeleton />}>
-          <LanguageCardsList />
+          <LanguageCardsList user={user} />
         </Suspense>
 
         <div className="mt-8 flex flex-col sm:flex-row items-center gap-4 pt-6 border-t">

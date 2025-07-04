@@ -6,7 +6,7 @@ import {
   BookMarked,
   Brain,
   Flame,
-  Languages,
+  // Languages,
   LayoutDashboard,
   LibraryBig,
   Settings,
@@ -39,11 +39,11 @@ const Sidebar = ({ userId }: { userId: string }) => {
       icon: <BookMarked className="h-5 w-5" />,
     },
 
-    {
-      title: "Languages",
-      href: "/languages",
-      icon: <Languages className="h-5 w-5" />,
-    },
+    // {
+    //   title: "Languages",
+    //   href: "/languages",
+    //   icon: <Languages className="h-5 w-5" />,
+    // },
 
     {
       title: "Practice",
