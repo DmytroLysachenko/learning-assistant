@@ -1,6 +1,6 @@
 {
-  "id": "5d7c887f-4020-4c97-aa8c-5c1ce8ac1a21",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "68984400-63a7-4e9b-b530-7f9c50e00f7e",
+  "prevId": "5d7c887f-4020-4c97-aa8c-5c1ce8ac1a21",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -710,6 +710,71 @@
           ]
         }
       },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.pl_en_translations": {
+      "name": "pl_en_translations",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "word_id_1": {
+          "name": "word_id_1",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "word_id_2": {
+          "name": "word_id_2",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lastly_reviewed_at": {
+          "name": "lastly_reviewed_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "pl_en_translations_word_id_1_pl_vocabulary_id_fk": {
+          "name": "pl_en_translations_word_id_1_pl_vocabulary_id_fk",
+          "tableFrom": "pl_en_translations",
+          "tableTo": "pl_vocabulary",
+          "columnsFrom": [
+            "word_id_1"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "pl_en_translations_word_id_2_en_vocabulary_id_fk": {
+          "name": "pl_en_translations_word_id_2_en_vocabulary_id_fk",
+          "tableFrom": "pl_en_translations",
+          "tableTo": "en_vocabulary",
+          "columnsFrom": [
+            "word_id_2"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
