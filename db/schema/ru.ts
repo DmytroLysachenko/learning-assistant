@@ -46,7 +46,7 @@ export const userRuWords = pgTable("user_ru_words", {
     .notNull(),
   status: wordStatusEnum("status").default("learning").notNull(),
   correctAnswersCount: integer("correct_answers_count").default(0).notNull(),
-  wrongAnswersCount: integer("correct_answers_count").default(0).notNull(),
+  wrongAnswersCount: integer("wrong_answers_count").default(0).notNull(),
   lastReviewedAt: timestamp("last_reviewed_at"),
   createdAt: timestamp("created_at").defaultNow(),
 });

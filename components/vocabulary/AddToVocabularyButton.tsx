@@ -34,12 +34,12 @@ const AddToVocabularyButton = ({
         await removeWordFromUserVocabulary({ wordId, userId, language });
         console.log("Word removed from vocabulary");
       } else {
-        const result = await addWordToUserVocabulary({
+        await addWordToUserVocabulary({
           wordId,
           userId,
           language,
         });
-        console.log("Word added to vocabulary", result);
+        console.log("Word added to vocabulary");
       }
 
       setIsAdded(!isAdded);

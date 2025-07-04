@@ -1,158 +1,11 @@
 {
-  "id": "ea41d882-e558-4eb9-b85d-93381ab068e5",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "prevId": "",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.polish_vocabulary": {
-      "name": "polish_vocabulary",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "word": {
-          "name": "word",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "example": {
-          "name": "example",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "type": {
-          "name": "type",
-          "type": "polish_word_type",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "difficulty": {
-          "name": "difficulty",
-          "type": "language_level",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'A1'"
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
-        "comment": {
-          "name": "comment",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.user_polish_words": {
-      "name": "user_polish_words",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "word_id": {
-          "name": "word_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "status": {
-          "name": "status",
-          "type": "word_status",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'learning'"
-        },
-        "correct_answers_count": {
-          "name": "correct_answers_count",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "default": 0
-        },
-        "last_reviewed_at": {
-          "name": "last_reviewed_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "user_polish_words_user_id_users_id_fk": {
-          "name": "user_polish_words_user_id_users_id_fk",
-          "tableFrom": "user_polish_words",
-          "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "user_polish_words_word_id_polish_vocabulary_id_fk": {
-          "name": "user_polish_words_word_id_polish_vocabulary_id_fk",
-          "tableFrom": "user_polish_words",
-          "tableTo": "polish_vocabulary",
-          "columnsFrom": [
-            "word_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.rus_vocabulary": {
-      "name": "rus_vocabulary",
+    "public.ru_vocabulary": {
+      "name": "ru_vocabulary",
       "schema": "",
       "columns": {
         "id": {
@@ -201,18 +54,92 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
         }
       },
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
-      "policies": {},
       "checkConstraints": {},
+      "policies": {},
       "isRLSEnabled": false
     },
-    "public.user_rus_words": {
-      "name": "user_rus_words",
+    "public.pl_vocabulary": {
+      "name": "pl_vocabulary",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "word": {
+          "name": "word",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "example": {
+          "name": "example",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "type": {
+          "name": "type",
+          "type": "polish_word_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "difficulty": {
+          "name": "difficulty",
+          "type": "language_level",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'A1'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "comment": {
+          "name": "comment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.user_achievements": {
+      "name": "user_achievements",
       "schema": "",
       "columns": {
         "id": {
@@ -228,35 +155,14 @@
           "primaryKey": false,
           "notNull": true
         },
-        "word_id": {
-          "name": "word_id",
+        "achievement_id": {
+          "name": "achievement_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "status": {
-          "name": "status",
-          "type": "word_status",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'learning'"
-        },
-        "correct_answers_count": {
-          "name": "correct_answers_count",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "default": 0
-        },
-        "last_reviewed_at": {
-          "name": "last_reviewed_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_at": {
-          "name": "created_at",
+        "achieved_at": {
+          "name": "achieved_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
@@ -265,10 +171,11 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "user_rus_words_user_id_users_id_fk": {
-          "name": "user_rus_words_user_id_users_id_fk",
-          "tableFrom": "user_rus_words",
+        "user_achievements_user_id_users_id_fk": {
+          "name": "user_achievements_user_id_users_id_fk",
+          "tableFrom": "user_achievements",
           "tableTo": "users",
+          "schemaTo": "public",
           "columnsFrom": [
             "user_id"
           ],
@@ -278,12 +185,13 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "user_rus_words_word_id_rus_vocabulary_id_fk": {
-          "name": "user_rus_words_word_id_rus_vocabulary_id_fk",
-          "tableFrom": "user_rus_words",
-          "tableTo": "rus_vocabulary",
+        "user_achievements_achievement_id_achievements_id_fk": {
+          "name": "user_achievements_achievement_id_achievements_id_fk",
+          "tableFrom": "user_achievements",
+          "tableTo": "achievements",
+          "schemaTo": "public",
           "columnsFrom": [
-            "word_id"
+            "achievement_id"
           ],
           "columnsTo": [
             "id"
@@ -294,8 +202,8 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
-      "policies": {},
       "checkConstraints": {},
+      "policies": {},
       "isRLSEnabled": false
     },
     "public.users": {
@@ -333,12 +241,108 @@
           "primaryKey": false,
           "notNull": false
         },
-        "provider": {
-          "name": "provider",
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "learning_languages": {
+          "name": "learning_languages",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'[]'::jsonb"
+        },
+        "interface_language": {
+          "name": "interface_language",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
-          "default": "'credentials'"
+          "notNull": true,
+          "default": "'ru'"
+        },
+        "experience": {
+          "name": "experience",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "streak": {
+          "name": "streak",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "role": {
+          "name": "role",
+          "type": "role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'basic'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "users_email_unique": {
+          "columns": [
+            "email"
+          ],
+          "nullsNotDistinct": false,
+          "name": "users_email_unique"
+        }
+      },
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.achievements": {
+      "name": "achievements",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "type": {
+          "name": "type",
+          "type": "achievement_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "criteria": {
+          "name": "criteria",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",
@@ -347,32 +351,24 @@
           "notNull": false,
           "default": "now()"
         },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
+        "level": {
+          "name": "level",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
+          "notNull": true,
+          "default": 0
         }
       },
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "users_email_unique": {
-          "name": "users_email_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
-        }
-      },
-      "policies": {},
+      "uniqueConstraints": {},
       "checkConstraints": {},
+      "policies": {},
       "isRLSEnabled": false
     },
-    "public.translations": {
-      "name": "translations",
+    "public.pl_ru_translations": {
+      "name": "pl_ru_translations",
       "schema": "",
       "columns": {
         "id": {
@@ -393,14 +389,21 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
+        },
+        "lastly_reviewed_at": {
+          "name": "lastly_reviewed_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "translations_word_id_1_polish_vocabulary_id_fk": {
-          "name": "translations_word_id_1_polish_vocabulary_id_fk",
-          "tableFrom": "translations",
-          "tableTo": "polish_vocabulary",
+        "pl_ru_translations_word_id_1_pl_vocabulary_id_fk": {
+          "name": "pl_ru_translations_word_id_1_pl_vocabulary_id_fk",
+          "tableFrom": "pl_ru_translations",
+          "tableTo": "pl_vocabulary",
+          "schemaTo": "public",
           "columnsFrom": [
             "word_id_1"
           ],
@@ -410,10 +413,11 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "translations_word_id_2_rus_vocabulary_id_fk": {
-          "name": "translations_word_id_2_rus_vocabulary_id_fk",
-          "tableFrom": "translations",
-          "tableTo": "rus_vocabulary",
+        "pl_ru_translations_word_id_2_ru_vocabulary_id_fk": {
+          "name": "pl_ru_translations_word_id_2_ru_vocabulary_id_fk",
+          "tableFrom": "pl_ru_translations",
+          "tableTo": "ru_vocabulary",
+          "schemaTo": "public",
           "columnsFrom": [
             "word_id_2"
           ],
@@ -426,15 +430,216 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
-      "policies": {},
       "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.user_polish_words": {
+      "name": "user_polish_words",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "word_id": {
+          "name": "word_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "word_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'learning'"
+        },
+        "correct_answers_count": {
+          "name": "correct_answers_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "last_reviewed_at": {
+          "name": "last_reviewed_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "wrong_answers_count": {
+          "name": "wrong_answers_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "user_polish_words_user_id_users_id_fk": {
+          "name": "user_polish_words_user_id_users_id_fk",
+          "tableFrom": "user_polish_words",
+          "tableTo": "users",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "user_polish_words_word_id_pl_vocabulary_id_fk": {
+          "name": "user_polish_words_word_id_pl_vocabulary_id_fk",
+          "tableFrom": "user_polish_words",
+          "tableTo": "pl_vocabulary",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "word_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.user_ru_words": {
+      "name": "user_ru_words",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "word_id": {
+          "name": "word_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "word_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'learning'"
+        },
+        "correct_answers_count": {
+          "name": "correct_answers_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "last_reviewed_at": {
+          "name": "last_reviewed_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "wrong_answers_count": {
+          "name": "wrong_answers_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "user_ru_words_user_id_users_id_fk": {
+          "name": "user_ru_words_user_id_users_id_fk",
+          "tableFrom": "user_ru_words",
+          "tableTo": "users",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "user_ru_words_word_id_ru_vocabulary_id_fk": {
+          "name": "user_ru_words_word_id_ru_vocabulary_id_fk",
+          "tableFrom": "user_ru_words",
+          "tableTo": "ru_vocabulary",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "word_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
       "isRLSEnabled": false
     }
   },
   "enums": {
+    "public.achievement_type": {
+      "name": "achievement_type",
+      "values": [
+        "vocabulary",
+        "streak",
+        "practice",
+        "high_score"
+      ],
+      "schema": "public"
+    },
     "public.language_level": {
       "name": "language_level",
-      "schema": "public",
       "values": [
         "A0",
         "A1",
@@ -443,20 +648,11 @@
         "B2",
         "C1",
         "C2"
-      ]
-    },
-    "public.word_status": {
-      "name": "word_status",
-      "schema": "public",
-      "values": [
-        "learning",
-        "reviewing",
-        "mastered"
-      ]
+      ],
+      "schema": "public"
     },
     "public.polish_word_type": {
       "name": "polish_word_type",
-      "schema": "public",
       "values": [
         "rzeczownik",
         "czasownik",
@@ -465,12 +661,23 @@
         "zaimek",
         "przysłówek",
         "przyimek",
-        "partykuła"
-      ]
+        "partykuła",
+        "spójnik"
+      ],
+      "schema": "public"
+    },
+    "public.role": {
+      "name": "role",
+      "values": [
+        "basic",
+        "premium",
+        "admin",
+        "test"
+      ],
+      "schema": "public"
     },
     "public.russian_word_type": {
       "name": "russian_word_type",
-      "schema": "public",
       "values": [
         "существительное",
         "глагол",
@@ -479,8 +686,19 @@
         "местоимение",
         "наречие",
         "предлог",
-        "частица"
-      ]
+        "частица",
+        "союз"
+      ],
+      "schema": "public"
+    },
+    "public.word_status": {
+      "name": "word_status",
+      "values": [
+        "learning",
+        "reviewing",
+        "mastered"
+      ],
+      "schema": "public"
     }
   },
   "schemas": {},
@@ -489,8 +707,11 @@
   "policies": {},
   "views": {},
   "_meta": {
-    "columns": {},
     "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
     "tables": {}
   }
 }

@@ -1,1 +1,0 @@
-DROP TABLE "server_state" CASCADE;
