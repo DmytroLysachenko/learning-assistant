@@ -189,6 +189,17 @@ export const WORD_TYPES: Record<
     conjunction: "союз",
     particle: "частица",
   },
+  en: {
+    noun: "noun",
+    verb: "verb",
+    adjective: "adjective",
+    adverb: "adverb",
+    numeral: "numeral",
+    pronoun: "pronoun",
+    preposition: "preposition",
+    conjunction: "conjunction",
+    particle: "particle",
+  },
 };
 
 export const WORDS_TYPES_OPTIONS = [
@@ -244,6 +255,29 @@ export const WORD_TYPES_PROMPTS: Record<
 - Никаких дополнительных слов.`,
     particle: `- Слово должно быть **частицей**, например: "не", "ли", "же".
 - Только одно слово. Исключите сложные фразы или наречия.`,
+  },
+  en: {
+    noun: `- The word must be a **noun** in singular form and in the nominative case (e.g., "table", "day").
+- Only single words (not phrases).
+- It should not contain prepositions, particles, or other elements.`,
+    verb: `- The word must be a **verb** in its base (infinitive) form, e.g., "read", "run".
+- Only single words, without personal pronouns (e.g., "I", "we").`,
+    adjective: `- The word must be an **adjective** in masculine, singular, and nominative form, e.g., "tall", "beautiful".
+- Only one word. No adverbs or compound expressions.`,
+    adverb: `- The word must be an **adverb** in its basic, indeclinable form, e.g., "quickly", "often".
+- **No phrases** (e.g., "without a doubt" should be rejected).
+- Avoid words containing prepositions, particles, or other word classes.`,
+    numeral: `- The word must be a **cardinal numeral** in its basic form, e.g., "one", "three".
+- Only single words (no combinations like "twenty-one").`,
+    pronoun: `- The word must be a **pronoun** (personal, possessive, or demonstrative) in the nominative case, e.g., "I", "this", "my".
+- Only single words, without additional elements.`,
+    preposition: `- The word must be a **preposition** commonly used in modern English, e.g., "on", "to", "without".
+- No full phrases with nouns, e.g., "without a doubt" should be rejected.`,
+    conjunction: `- The word must be a **conjunction** that connects parts of sentences, e.g., "but", "and", "or".
+- It cannot contain additional words.`,
+    particle: `- The word must be a **particle**, e.g., "not", "just", "even".
+- Only one word — phrases or compounds should be rejected.
+- Make sure it is not an adverb, preposition, or other type.`,
   },
 } as const;
 
@@ -315,6 +349,34 @@ export const ALPHABETS = {
     "ю",
     "я",
   ],
+  en: [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+    "g",
+    "h",
+    "i",
+    "j",
+    "k",
+    "l",
+    "m",
+    "n",
+    "o",
+    "p",
+    "q",
+    "r",
+    "s",
+    "t",
+    "u",
+    "v",
+    "w",
+    "x",
+    "y",
+    "z",
+  ],
 };
 
 export const vocabTablesNames = {
@@ -325,11 +387,13 @@ export const vocabTablesNames = {
 export const SUPPORTED_LANGUAGES: Record<LanguageCodeType, string> = {
   pl: "Polish",
   ru: "Russian",
+  en: "English",
 };
 
 export const SUPPORTED_LANGUAGES_FLAGS: Record<LanguageCodeType, string> = {
   pl: "🇵🇱",
   ru: "🇷🇺",
+  en: "🇬🇧",
 };
 
 export const SUPPORTED_LANGUAGES_CODES = Object.keys(

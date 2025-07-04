@@ -4,14 +4,17 @@ import { modelFlash as model } from "../aiClient";
 import { ShortWordEntry, TranslationType } from "@/types";
 import { generateTranslationConnectionsPrompt } from "../prompts";
 
-export const generateTranslationConnections = async (
-  primaryLanguageWords: ShortWordEntry[],
-  translationLanguageWords: ShortWordEntry[]
-) => {
+export const generateTranslationConnections = async ({
+  primaryLanguageWords,
+  secondaryLanguageWords,
+}: {
+  primaryLanguageWords: ShortWordEntry[];
+  secondaryLanguageWords: ShortWordEntry[];
+}) => {
   try {
     const { system, prompt } = generateTranslationConnectionsPrompt(
       primaryLanguageWords,
-      translationLanguageWords
+      secondaryLanguageWords
     );
 
     const result = await generateObject<TranslationType>({

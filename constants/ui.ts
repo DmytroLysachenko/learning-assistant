@@ -13,4 +13,5 @@ export const LEVEL_OPTIONS = [
 export const LANGUAGE_OPTIONS: LanguageOption[] = [
   { value: "pl", label: "Polish" },
   { value: "ru", label: "Russian" },
+  { value: "en", label: "English" },
 ];

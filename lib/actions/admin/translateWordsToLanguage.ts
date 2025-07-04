@@ -121,10 +121,12 @@ export const translateWordsToLanguage = async ({
           success: translationConnectionsSuccess,
           data: translationConnections,
           error: translationConnectionsError,
-        } = await generateTranslationConnections(
-          mappedWords,
-          mappedTranslatedWords
-        );
+        } = await generateTranslationConnections({
+          primaryLanguageWords:
+            firstLang === sourceLanguage ? mappedWords : mappedTranslatedWords,
+          secondaryLanguageWords:
+            firstLang !== sourceLanguage ? mappedWords : mappedTranslatedWords,
+        });
 
         if (!translationConnectionsSuccess || !translationConnections?.length) {
           throw new Error(

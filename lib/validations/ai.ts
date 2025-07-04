@@ -35,6 +35,18 @@ export const russianTypeEnum = z.enum([
   "частица",
 ]);
 
+export const englishWordTypeEnum = z.enum([
+  "noun",
+  "verb",
+  "adjective",
+  "adverb",
+  "preposition",
+  "conjunction",
+  "pronoun",
+  "interjection",
+  "article",
+]);
+
 // === Shared Word Shape Generator ===
 const baseWordSchema = z.object({
   word: z.string().min(1).describe("The word itself in its basic form"),
@@ -62,6 +74,11 @@ export const wordSchemas = {
   ru: baseWordSchema.extend({
     type: russianTypeEnum.describe("Word type in corresponding language"),
   }),
+  en: baseWordSchema.extend({
+    type: englishWordTypeEnum.describe(
+      "Word type in corresponding language (if applicable)"
+    ),
+  }),
 };
 
 export const wordsValidationSchemas = {
@@ -69,6 +86,9 @@ export const wordsValidationSchemas = {
     id: z.string().describe("Original unchangeable word id."),
   }),
   ru: wordSchemas.ru.extend({
+    id: z.string().describe("Original unchangeable word id."),
+  }),
+  en: wordSchemas.en.extend({
     id: z.string().describe("Original unchangeable word id."),
   }),
 };

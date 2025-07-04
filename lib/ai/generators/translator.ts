@@ -27,6 +27,8 @@ export const generateTranslationWords = async (
       words
     );
 
+    console.log(prompt);
+
     const result = await generateObject<WordType>({
       model,
       output: "array",

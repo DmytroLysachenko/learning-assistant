@@ -25,10 +25,12 @@ export type CreateWordType = {
 
 type PlWordType = (typeof schema.polishWordTypeEnum.enumValues)[number];
 type RuWordType = (typeof schema.russianWordTypeEnum.enumValues)[number];
+type EnWordType = (typeof schema.englishWordTypeEnum.enumValues)[number];
 
 export type LanguageWordType = {
   ru: Record<WordType, RuWordType>;
   pl: Record<WordType, PlWordType>;
+  en: Record<WordType, EnWordType>;
 };
 
 export type UpdateUserWordType = Pick<
