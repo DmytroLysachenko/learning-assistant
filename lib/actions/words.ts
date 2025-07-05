@@ -128,7 +128,7 @@ export const incrementCorrectAnswersCount = async ({
     }
 
     const newCount = currentRecord.correctAnswersCount + 1;
-    console.log(newCount);
+
     const newStatus =
       newCount >= 10 ? "mastered" : newCount >= 4 ? "reviewing" : undefined;
 

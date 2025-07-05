@@ -51,7 +51,7 @@ export const seedDb = async () => {
           await db.insert(plVocabulary).values(result.object);
         }
 
-        console.log("added", result.object.length);
+        console.log("Added:", result.object.length);
         total += result.object.length;
         await sleep(5000);
       } catch (error) {
@@ -60,7 +60,7 @@ export const seedDb = async () => {
       }
     }
 
-    console.log("completed, total:", total);
+    console.log("Completed, Total:", total);
   } catch (error) {
     console.log(error);
   }

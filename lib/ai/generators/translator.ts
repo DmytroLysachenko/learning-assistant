@@ -1,5 +1,5 @@
 import { generateObject } from "ai";
-import { modelFlash as model } from "../aiClient";
+import { modelFlashLiteExp as model } from "../aiClient";
 import { LanguageCodeType } from "@/types";
 import { wordSchemas } from "@/lib/validations/ai";
 import { z } from "zod";
@@ -26,8 +26,6 @@ export const generateTranslationWords = async (
       toLang,
       words
     );
-
-    console.log(prompt);
 
     const result = await generateObject<WordType>({
       model,
