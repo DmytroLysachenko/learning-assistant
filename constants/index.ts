@@ -382,6 +382,7 @@ export const ALPHABETS = {
 export const vocabTablesNames = {
   pl: "pl_vocabulary",
   ru: "ru_vocabulary",
+  en: "en_vocabulary",
 };
 
 export const SUPPORTED_LANGUAGES: Record<LanguageCodeType, string> = {

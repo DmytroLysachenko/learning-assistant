@@ -39,12 +39,12 @@ export const englishWordTypeEnum = z.enum([
   "noun",
   "verb",
   "adjective",
+  "numeral",
+  "pronoun",
   "adverb",
   "preposition",
+  "particle",
   "conjunction",
-  "pronoun",
-  "interjection",
-  "article",
 ]);
 
 // === Shared Word Shape Generator ===
@@ -75,9 +75,7 @@ export const wordSchemas = {
     type: russianTypeEnum.describe("Word type in corresponding language"),
   }),
   en: baseWordSchema.extend({
-    type: englishWordTypeEnum.describe(
-      "Word type in corresponding language (if applicable)"
-    ),
+    type: englishWordTypeEnum.describe("Word type in corresponding language"),
   }),
 };
 
