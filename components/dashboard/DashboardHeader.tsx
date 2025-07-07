@@ -3,12 +3,11 @@
 import React from "react";
 import Link from "next/link";
 import { LogOut, Settings, Trophy, Zap } from "lucide-react";
+import { signOut } from "next-auth/react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
-import { signOut } from "next-auth/react";
 
 const DashboardHeader = ({
   user,

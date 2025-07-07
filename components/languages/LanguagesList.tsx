@@ -1,11 +1,12 @@
 import React from "react";
+import { count } from "drizzle-orm";
+
+import { getUserFromSession } from "@/lib/utils/getUserFromSession";
+import { LanguageCodeType } from "@/types";
 import LanguageCard from "./LanguageCard";
 import { getVocabTable } from "@/lib/utils";
 import { SUPPORTED_LANGUAGES, SUPPORTED_LANGUAGES_CODES } from "@/constants";
 import { db } from "@/db";
-import { count } from "drizzle-orm";
-import { getUserFromSession } from "@/lib/utils/getUserFromSession";
-import { LanguageCodeType } from "@/types";
 
 const LanguagesList = async () => {
   const userLanguages: LanguageCodeType[] = [];

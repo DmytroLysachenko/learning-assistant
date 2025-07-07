@@ -1,11 +1,12 @@
 "use client";
 
+import { useState } from "react";
+
 import {
   addWordToUserVocabulary,
   removeWordFromUserVocabulary,
 } from "@/lib/actions/words";
 import { LanguageCodeType } from "@/types";
-import { useState } from "react";
 
 interface AddToVocabularyButtonProps {
   wordId: string;

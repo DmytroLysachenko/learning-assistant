@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import { Users, ArrowRight } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,8 +16,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Link from "next/link";
-import Image from "next/image";
 
 interface CommunityGroup {
   id: string;

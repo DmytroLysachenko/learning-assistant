@@ -1,13 +1,14 @@
 "use client";
 
 import { BookOpen, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { toast } from "sonner";
+import { useState } from "react";
+
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { updateUser } from "@/lib/actions/user";
 import { LanguageCodeType } from "@/types";
-import { toast } from "sonner";
-import { useState } from "react";
 
 interface Language {
   code: LanguageCodeType;

@@ -3,6 +3,7 @@
 import type React from "react";
 import { useState, useEffect, useRef } from "react";
 import { Check, X, ArrowRight, Lightbulb } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -11,7 +12,6 @@ import PracticeResult from "./PracticeResult";
 import PracticeStats from "./PracticeStats";
 import { incrementCorrectAnswersCount } from "@/lib/actions/words";
 import { LanguageCodeType, PracticeVocabularyWord } from "@/types";
-import { useRouter } from "next/navigation";
 import { SUPPORTED_LANGUAGES } from "@/constants";
 
 interface PracticeInterfaceProps {

@@ -1,7 +1,8 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FlameIcon as Fire } from "lucide-react";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface StreakCalendarProps {
   streakData: Record<string, number>;

@@ -1,5 +1,7 @@
 "use client";
 
+import { capitalize } from "lodash";
+
 import type React from "react";
 import type { LanguageCodeType, SortDirection, SortField } from "@/types";
 import { WORD_TYPES } from "@/constants";
@@ -12,7 +14,6 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Input } from "../ui/input";
-import { capitalize } from "lodash";
 import SortButton from "./SortButton";
 
 interface TableControlsProps {

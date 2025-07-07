@@ -1,8 +1,9 @@
-import { auth } from "@/auth";
-import { getUserByEmail } from "@/lib/actions/user";
 import { Flame } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+
+import { auth } from "@/auth";
+import { getUserByEmail } from "@/lib/actions/user";
 
 const Header = async () => {
   const session = await auth();

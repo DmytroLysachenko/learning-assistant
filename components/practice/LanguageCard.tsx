@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, BookOpen, CheckCircle, RefreshCw } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 
 type CardType = "learning" | "mastered" | "reviewing";
